@@ -166,6 +166,14 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
     </FxCompile>
+    <FxCompile Include="ObjPS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+    </FxCompile>
+    <FxCompile Include="ObjVS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MathFunc.h" />
@@ -182,6 +190,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Basic.hlsli" />
+    <None Include="Obj .hlsli" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="DirectXTex\DirectXTex_Desktop_2022_Win10.vcxproj">

@@ -27,7 +27,7 @@ void UpdateObject3d(Object3d* object, XMMATRIX& matView, XMMATRIX& matProjection
 // 3Dオブジェクト描画
 void DrawObject3d(Object3d* object, ID3D12GraphicsCommandList* commandList, D3D12_VERTEX_BUFFER_VIEW& vbView, D3D12_INDEX_BUFFER_VIEW& ibView, UINT numIndices);
 
-
+Mesh::Material Mesh::material;
 
 void Mesh::Init(ID3D12Device* device) {
 	//頂点データの全体サイズ　＝　頂点データ一つ分のサイズ　*　頂点データの要素数

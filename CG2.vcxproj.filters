@@ -52,6 +52,12 @@
   <ItemGroup>
     <FxCompile Include="BasicVS.hlsl" />
     <FxCompile Include="BasicPS.hlsl" />
+    <FxCompile Include="ObjPS.hlsl">
+      <Filter>リソース ファイル</Filter>
+    </FxCompile>
+    <FxCompile Include="ObjVS.hlsl">
+      <Filter>リソース ファイル</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Transration.h">
@@ -90,5 +96,8 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Basic.hlsli" />
+    <None Include="Obj .hlsli">
+      <Filter>リソース ファイル</Filter>
+    </None>
   </ItemGroup>
 </Project>
