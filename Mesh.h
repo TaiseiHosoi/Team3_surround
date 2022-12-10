@@ -42,11 +42,27 @@ struct ConstBufferDataTransform {
 	XMMATRIX mat;
 };
 
+//定数バッファ用データ構造体
+struct ConstBufferDataB0{
+	XMMATRIX mat;
+};
+
+struct ConstBufferDataB1 {
+	XMFLOAT3 ambient;
+	float pad1;
+	XMFLOAT3 diffuse;
+	float pad2;
+	XMFLOAT3 specular;
+	float alpha;
+};
 
 
 
 struct Object3d {
-	ComPtr<ID3D12Resource> constBuffTransform;
+	//ComPtr<ID3D12Resource> constBuffTransform;
+	ComPtr<ID3D12Resource> constBuffB0;
+	ComPtr<ID3D12Resource> constBuffB1;
+
 	ConstBufferDataTransform* constMapTransform = nullptr;
 
 	XMFLOAT3 scale = { 1,1,1 };
@@ -154,7 +170,7 @@ private:
 	
 	static Material material;
 
-
+	
 
 
 
