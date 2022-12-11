@@ -59,7 +59,6 @@ struct ConstBufferDataB1 {
 
 
 struct Object3d {
-	//ComPtr<ID3D12Resource> constBuffTransform;
 	ComPtr<ID3D12Resource> constBuffB0;
 	ComPtr<ID3D12Resource> constBuffB1;
 

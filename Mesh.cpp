@@ -30,6 +30,8 @@ void DrawObject3d(Object3d* object, ID3D12GraphicsCommandList* commandList, D3D1
 Mesh::Material Mesh::material;
 
 void Mesh::Init(ID3D12Device* device) {
+
+
 	//頂点データの全体サイズ　＝　頂点データ一つ分のサイズ　*　頂点データの要素数
 	UINT sizeVB = static_cast<UINT>(sizeof(vertices[0]) * vertices.size());
 	//頂点バッファの設定
@@ -913,12 +915,27 @@ void InitializeObject3d(Object3d* object, ID3D12Device* device) {
 		&resdesc,
 		D3D12_RESOURCE_STATE_GENERIC_READ,
 		nullptr,
-		IID_PPV_ARGS(&object->constBuffTransform));
+		IID_PPV_ARGS(&object->constBuffB0));
 	assert(SUCCEEDED(result));
 
 	// 定数バッファのマッピング
-	result = object->constBuffTransform->Map(0, nullptr, (void**)&object->constMapTransform);
+	result = object->constBuffB0->Map(0, nullptr, (void**)&object->constMapTransform);
 	assert(SUCCEEDED(result));
+
+	// B1用
+	resdesc = CD3DX12_RESOURCE_DESC::Buffer((sizeof(ConstBufferDataB1) + 0xff) &~0xff);
+	// 定数バッファの生成
+	result = device->CreateCommittedResource(
+		&heapProp,
+		D3D12_HEAP_FLAG_NONE,
+		&resdesc,
+		D3D12_RESOURCE_STATE_GENERIC_READ,
+		nullptr,
+		IID_PPV_ARGS(&object->constBuffB1)
+	);
+
+
+
 }
 
 void UpdateObject3d(Object3d* object, XMMATRIX& matView, XMMATRIX& matProjection) {
@@ -947,6 +964,12 @@ void UpdateObject3d(Object3d* object, XMMATRIX& matView, XMMATRIX& matProjection
 	// 定数バッファへデータ転送
 	object->constMapTransform->mat = object->matWorld * matView * matProjection;
 
+	//B1
+	ConstBufferDataB1* constMap1 = nullptr;
+	HRESULT result = object->constBuffB1->Map(0, nullptr, (void**)&constMap1);
+	
+
+
 }
 
 // 3Dオブジェクト描画
@@ -962,7 +985,7 @@ void DrawObject3d(
 	// インデックスバッファの設定
 	commandList->IASetIndexBuffer(&ibView);
 	// 定数バッファビュー（CBV）の設定コマンド
-	commandList->SetGraphicsRootConstantBufferView(2, object->constBuffTransform->GetGPUVirtualAddress());
+	commandList->SetGraphicsRootConstantBufferView(2, object->constBuffB0->GetGPUVirtualAddress());
 	// 描画コマンド
 	commandList->DrawIndexedInstanced(numIndices, 1, 0, 0, 0);
 
