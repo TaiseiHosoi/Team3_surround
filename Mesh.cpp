@@ -20,6 +20,8 @@ Mesh::~Mesh() {
 //
 //}
 
+Mesh::Material Mesh::material;
+
 // 3Dオブジェクト初期化
 void InitializeObject3d(Object3d* object, ID3D12Device* device);
 // 3Dオブジェクト更新
@@ -27,7 +29,7 @@ void UpdateObject3d(Object3d* object, XMMATRIX& matView, XMMATRIX& matProjection
 // 3Dオブジェクト描画
 void DrawObject3d(Object3d* object, ID3D12GraphicsCommandList* commandList, D3D12_VERTEX_BUFFER_VIEW& vbView, D3D12_INDEX_BUFFER_VIEW& ibView, UINT numIndices);
 
-Mesh::Material Mesh::material;
+
 
 void Mesh::Init(ID3D12Device* device) {
 
@@ -113,7 +115,7 @@ void Mesh::Init(ID3D12Device* device) {
 
 	//頂点シェーダの読み込みとコンパイル
 	result = D3DCompileFromFile(
-		L"BasicVS.hlsl",	//シェーダファイル名
+		L"ObjVS.hlsl",	//シェーダファイル名
 		nullptr,
 		D3D_COMPILE_STANDARD_FILE_INCLUDE,	//インクルード可能にする
 		"main", "vs_5_0",	//エントリーポイント名、シェーダーモデル指定
@@ -137,7 +139,7 @@ void Mesh::Init(ID3D12Device* device) {
 
 	// ピクセルシェーダの読み込みとコンパイル
 	result = D3DCompileFromFile(
-		L"BasicPS.hlsl", // シェーダファイル名
+		L"ObjPS.hlsl", // シェーダファイル名
 		nullptr,
 		D3D_COMPILE_STANDARD_FILE_INCLUDE, // インクルード可能にする
 		"main", "ps_5_0", // エントリーポイント名、シェーダーモデル指定
@@ -965,8 +967,14 @@ void UpdateObject3d(Object3d* object, XMMATRIX& matView, XMMATRIX& matProjection
 	object->constMapTransform->mat = object->matWorld * matView * matProjection;
 
 	//B1
+	HRESULT result;
 	ConstBufferDataB1* constMap1 = nullptr;
-	HRESULT result = object->constBuffB1->Map(0, nullptr, (void**)&constMap1);
+	result = object->constBuffB1->Map(0, nullptr, (void**)&constMap1);
+	constMap1->ambient = Mesh::material.ambient;
+	constMap1->ambient = Mesh::material.diffuse;
+	constMap1->ambient = Mesh::material.specular;
+	constMap1->alpha = Mesh::material.alpha;
+	object->constBuffB1->Unmap(0, nullptr);
 	
 
 

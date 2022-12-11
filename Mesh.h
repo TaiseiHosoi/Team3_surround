@@ -149,7 +149,7 @@ public:
 	// 頂点インデックス配列
 	std::vector<unsigned short> indices;
 
-private:
+public:
 
 	struct Material {
 		std::string name; // マテリアル名
