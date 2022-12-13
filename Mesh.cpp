@@ -320,6 +320,7 @@ void Mesh::Init(ID3D12Device* device) {
 	rootParams[2].Descriptor.ShaderRegister = 1;                   // 定数バッファ番号
 	rootParams[2].Descriptor.RegisterSpace = 0;                    // デフォルト値
 	rootParams[2].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;  // 全てのシェーダから見える
+	
 
 
 
