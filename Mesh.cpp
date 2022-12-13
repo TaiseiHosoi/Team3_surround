@@ -304,7 +304,7 @@ void Mesh::Init(ID3D12Device* device) {
 #pragma endregion デスクリプタレンジ
 
 	// ルートパラメータの設定
-	D3D12_ROOT_PARAMETER rootParams[3] = {};
+	D3D12_ROOT_PARAMETER rootParams[4] = {};
 	// 定数バッファ0番
 	rootParams[0].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;   // 種類
 	rootParams[0].Descriptor.ShaderRegister = 0;                   // 定数バッファ番号
@@ -320,6 +320,11 @@ void Mesh::Init(ID3D12Device* device) {
 	rootParams[2].Descriptor.ShaderRegister = 1;                   // 定数バッファ番号
 	rootParams[2].Descriptor.RegisterSpace = 0;                    // デフォルト値
 	rootParams[2].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;  // 全てのシェーダから見える
+	//B1
+	rootParams[3].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;   // 種類
+	rootParams[3].Descriptor.ShaderRegister = 2;                   // 定数バッファ番号
+	rootParams[3].Descriptor.RegisterSpace = 0;                    // デフォルト値
+	rootParams[3].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;  // 全てのシェーダから見える
 	
 
 
@@ -696,7 +701,7 @@ void Mesh::Draw(ID3D12GraphicsCommandList* commandList) {
 
 	// 2枚目を指し示すようにしたsrvのハンドルをルートパラメータ1番に設定
 	srvGpuHandle.ptr += incrementSize;
-	commandList->SetGraphicsRootDescriptorTable(1, srvGpuHandle);
+	commandList->SetGraphicsRootDescriptorTable(2, srvGpuHandle);	//B0,B1でIndexが2
 
 
 	// インデックスバッファビューの設定コマンド
@@ -994,7 +999,9 @@ void DrawObject3d(
 	// インデックスバッファの設定
 	commandList->IASetIndexBuffer(&ibView);
 	// 定数バッファビュー（CBV）の設定コマンド
-	commandList->SetGraphicsRootConstantBufferView(2, object->constBuffB0->GetGPUVirtualAddress());
+	commandList->SetGraphicsRootConstantBufferView(2, object->constBuffB0->GetGPUVirtualAddress());	//B0
+	commandList->SetGraphicsRootConstantBufferView(3, object->constBuffB1->GetGPUVirtualAddress()); //B1
+	
 	// 描画コマンド
 	commandList->DrawIndexedInstanced(numIndices, 1, 0, 0, 0);
 
