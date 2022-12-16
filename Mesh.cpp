@@ -640,10 +640,6 @@ void Mesh::Update(ID3D12Device* device, Input* input) {
 	// NULLポインタチェック
 	assert(input);
 
-
-	
-
-
 	//透視投影変換
 		//射影変換行列の計算
 	matProjection =
@@ -896,6 +892,70 @@ void Mesh::LoadModel() {
 		21 , 23 , 22 ,
 	};
 
+}
+
+void Mesh::LoadMaterial(const std::string& directoryPath,const std::string& filename)
+{
+	//ファイルストリーム
+	std::ifstream file;
+	//マテリアlファイル
+	file.open(directoryPath + filename);
+	//ファイルオープン
+
+	if (file.fail()) {
+		assert(0);
+	}
+
+	//1行ずつ読み込む
+	string line;
+	while (getline(file, line)) {
+		std::istringstream line_stream(line);
+		//半角スペース
+		string key;
+		getline(line_stream, key, ' ');
+
+		//先頭のタブ文字は無視
+		if (key[0] == '\t') {
+			key.erase(key.begin()); //先頭の文字を削除
+		}
+		//先頭文字列がnewmtlならマテリアル名
+		if (key == "newmtl") {
+			//マテリアル名読み込み
+			line_stream >> material.name;
+		}
+		//先頭文字列がkaならアンビエント色
+		if (key == "Ka") {
+			line_stream >> material.ambient.x;
+			line_stream >> material.ambient.y;
+			line_stream >> material.ambient.z;
+		}
+		//先頭文字列がKdならディフューズ
+		if (key == "Kd") {
+			line_stream >> material.diffuse.x;
+			line_stream >> material.diffuse.y;
+			line_stream >> material.diffuse.z;
+		}
+		//先頭文字列がKsならスペキュラー
+		if (key == "Ks") {
+			line_stream >> material.specular.x;
+			line_stream >> material.specular.y;
+			line_stream >> material.specular.z;
+		}
+		if (key == "map_Kd") {
+			//テクスチャのファイル
+			line_stream >> material.textureFilename;
+			//テクスチャ読み込み
+			LoadTexture(directoryPath, material.textureFilename);	//作ってない
+		}
+	}
+
+	file.close();
+
+}
+
+void Mesh::LoadTexture(const std::string& directoryPath, const std::string& filename)
+{
+	
 }
 
 

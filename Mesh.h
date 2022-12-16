@@ -190,4 +190,6 @@ public:
 
 	void LoadModel(const char* fileName);
 	void LoadModel();
+	void LoadMaterial(const std::string& directoryPath, const std::string& filename);
+	void LoadTexture(const std::string& directoryPath, const std::string& filename);
 };
