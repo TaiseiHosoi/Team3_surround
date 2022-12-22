@@ -4,7 +4,7 @@ cbuffer cbuff0 : register(b0) {
 
 
 cbuffer cbuff1 : register(b1) {
-    flaot3 m_ambient : packoffset(c0);  //アンビエント
+    float3 m_ambient : packoffset(c0);  //アンビエント
     float3 m_diffuse : packoffset(c1);  //ディフューズ
     float3 m_specular : packoffset(c2); //スペキュラー
     float m_alpha : packoffset(c2.w); //アルファ
