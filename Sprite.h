@@ -6,7 +6,7 @@ using namespace DirectX;
 
 
 // 頂点データ構造体
-struct Vertex
+struct Vertex2
 {
 	XMFLOAT3 pos; // xyz座標
 	XMFLOAT2 uv;  // uv座標
@@ -25,24 +25,24 @@ public:
 
 	//頂点番号
 	enum VertexNumber {
-		LT,//左下
-		LB,//左上
-		RT,//右下
-		RB,//右上
+		LB,//左下
+		LT,//左上
+		RB,//右下
+		RT,//右上
 	};
 public:
 	//初期化
-	void Initialize(SpriteCommon* spritecommon_);
+	void Initialize(SpriteCommon* spritecommon_, uint32_t texturerIndex = UINT32_MAX);
 
 	void Draw();
 
 	void Update();
 
-	void SetPozition(const XMFLOAT2& position_) { position = position_; }
+	void SetPozition(const XMFLOAT2& position_);
 
 	const XMFLOAT2& GetPosition() const { return position; }
 
-	void SetRotation(float rotation_) { rotation = rotation_; }
+	void SetRotation(float rotation_);
 
 	float GetRotation() { return rotation; }
 
@@ -68,13 +68,26 @@ public:
 
 	XMFLOAT2 GetSize() { return size_; }
 
-	void SetSize(XMFLOAT2 size) { size_ = size; }
+	void SetSize(XMFLOAT2 size);
+
+	/*void SetAnchorPoint(const XMFLOAT2& anchorpoint_) { anchorpoint = anchorpoint_; };*/
+
+	XMFLOAT2 GetAnchorPonit() { return anchorpoint; }
+
+	/// 上下反転の設定
+	void SetIsFlipY(bool isFlipY);
+
+	/// 左右反転の設定
+	void SetIsFlipX(bool isFlipX);
+
+	//テクスチャサイズをイメージに合わせる
+	void AdjustTextureSize();
 
 private:
 	SpriteCommon* spritecomon;
 	HRESULT result;
 	// 頂点データ
-	Vertex vertices[4] = {
+	Vertex2 vertices[4] = {
 		// x      y     z       u     v
 		{{-0.4f, -0.7f, 0.0f}, {0.0f, 1.0f}}, // 左下
 		{{-0.4f, +0.7f, 0.0f}, {0.0f, 0.0f}}, // 左上
@@ -98,7 +111,7 @@ private:
 
 	XMFLOAT3 scale{ 0.5f, 0.5f, 1.0f };
 
-	XMFLOAT2 size_ = { 1.0f,1.0f };
+	XMFLOAT2 size_ = { 100.0f,100.0f };
 
 	float rotation = 0.0f;
 	XMFLOAT2 position = { 0.0f, 0.0f };
@@ -114,9 +127,9 @@ private:
 
 	ID3D12Resource* constBuffMaterial = nullptr;
 
-	Vertex vertices_[4];
+	Vertex2 vertices_[4];
 
-	Vertex* vertMap = nullptr;
+	Vertex2* vertMap = nullptr;
 
 	//テクスチャ番号
 	uint32_t textureIndex_ = 0;
@@ -126,5 +139,16 @@ private:
 	//テクスチャ切り出しサイズ
 	XMFLOAT2 textureSize = { 100.0f,100.0f };
 
+	XMMATRIX matProjection;
 
+	// アンカーポイント
+	XMFLOAT2 anchorpoint = { 0, 0 };
+
+	// 頂点バッファの生成
+	ID3D12Resource* vertBuff = nullptr;
+
+	// 左右反転
+	bool isFlipX = false;
+	// 上下反転
+	bool isFlipY = false;
 };

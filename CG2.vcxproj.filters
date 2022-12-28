@@ -54,18 +54,23 @@
     <ClCompile Include="Sprite.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
+    <ClCompile Include="Audio.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Model.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Object3d.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="BasicVS.hlsl" />
     <FxCompile Include="BasicPS.hlsl" />
-    <FxCompile Include="ObjPS.hlsl">
-      <Filter>リソース ファイル</Filter>
-    </FxCompile>
-    <FxCompile Include="ObjVS.hlsl">
-      <Filter>リソース ファイル</Filter>
-    </FxCompile>
-    <FxCompile Include="SpriteVS.hlsl" />
-    <FxCompile Include="SpritePS.hlsl" />
+    <FxCompile Include="Resources\shaders\ObjPS.hlsl" />
+    <FxCompile Include="Resources\shaders\ObjVS.hlsl" />
+    <FxCompile Include="Resources\shaders\SpritePS.hlsl" />
+    <FxCompile Include="Resources\shaders\SpriteVS.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Transration.h">
@@ -107,12 +112,19 @@
     <ClInclude Include="Sprite.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
+    <ClInclude Include="Audio.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Model.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Object3d.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Basic.hlsli" />
-    <None Include="Obj .hlsli">
-      <Filter>リソース ファイル</Filter>
-    </None>
-    <None Include="Sprite.hlsli" />
+    <None Include="Resources\shaders\Obj.hlsli" />
+    <None Include="Resources\shaders\Sprite.hlsli" />
   </ItemGroup>
 </Project>

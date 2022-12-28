@@ -1,6 +1,6 @@
 #include"Sprite.h"
 
-void Sprite::Initialize(SpriteCommon* spritecommon_)
+void Sprite::Initialize(SpriteCommon* spritecommon_, uint32_t texturerIndex)
 {
 
 	spritecomon = spritecommon_;
@@ -10,8 +10,10 @@ void Sprite::Initialize(SpriteCommon* spritecommon_)
 	D3D12_HEAP_PROPERTIES heapProp{}; // ヒープ設定
 	heapProp.Type = D3D12_HEAP_TYPE_UPLOAD; // GPUへの転送用
 
+	
+
 	// 頂点バッファの生成
-	ID3D12Resource* vertBuff = nullptr;
+	
 	result = spritecomon->GetDxCommon()->GetDevice()->CreateCommittedResource(
 		&heapProp, // ヒープ設定
 		D3D12_HEAP_FLAG_NONE,
@@ -38,7 +40,7 @@ void Sprite::Initialize(SpriteCommon* spritecommon_)
 	// 頂点1つ分のデータサイズ
 	vbView.StrideInBytes = sizeof(vertices[0]);
 
-
+	Update();
 
 	{
 		// ヒープ設定
@@ -85,6 +87,12 @@ void Sprite::Initialize(SpriteCommon* spritecommon_)
 	cbResourceDesc.SampleDesc.Count = 1;
 	cbResourceDesc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
 
+	// 射影行列計算
+	matProjection = XMMatrixOrthographicOffCenterLH(
+		0.0f, (float)WinApp::window_width,
+		(float)WinApp::window_height, 0.0f,
+		0.0f, 1.0f);
+
 	// 定数バッファの生成
 	result = spritecomon->GetDxCommon()->GetDevice()->CreateCommittedResource(
 		&cbHeapProp, // ヒープ設定
@@ -103,12 +111,38 @@ void Sprite::Initialize(SpriteCommon* spritecommon_)
 	// 値を書き込むと自動的に転送される
 	constMapMaterial->color = XMFLOAT4(1, 0, 0, 0.5f);              // RGBAで半透明の赤
 
-
+	//テクスチャサイズをイメージに合わせる
+	if (texturerIndex != UINT32_MAX) {
+		textureIndex_ = texturerIndex;
+		AdjustTextureSize();
+		//テクスチャサイズをスプライトのサイズに適応
+		size_ = textureSize;
+	}
 
 }
 
 void Sprite::Draw()
 {
+	matRot = XMMatrixIdentity();
+	matRot *= XMMatrixRotationZ(XMConvertToRadians(rotation));//Z軸周りに0度回転してから
+	matTrans = XMMatrixTranslation(position.x, position.y, 0.0f);//(-50,0,0)平行移動
+
+	matWorld = XMMatrixIdentity();//変形をリセット
+	//matWorld *= matScale;//ワールド行列にスケーリングを反映
+	matWorld *= matRot;//ワールド行列にスケーリングを反映
+	matWorld *= matTrans;
+
+
+	// 定数バッファにデータ転送
+	HRESULT result = constBuffTransform->Map(0, nullptr, (void**)&constMapTransform);
+	if (SUCCEEDED(result)) {
+		constMapTransform->mat = matWorld * matProjection;	// 行列の合成	
+	}
+	result= constBuffMaterial->Map(0, nullptr, (void**)&constMapMaterial);
+	if (SUCCEEDED(result)) {
+		constMapMaterial->color = color;
+	}
+
 	spritecomon->SetTextureCommands(textureIndex_);
 
 	//頂点バッファビューの設定コマンド
@@ -129,6 +163,28 @@ void Sprite::Update()
 {
 	ID3D12Resource* textureBuffer = spritecomon->GetTextureBuffer(textureIndex_);
 
+	float left = (0.0f - anchorpoint.x) * size_.x;
+	float right = (1.0f - anchorpoint.x) * size_.x;
+	float top = (0.0f - anchorpoint.x) * size_.y;
+	float bottom = (1.0f - anchorpoint.x) * size_.y;
+
+	if (isFlipX)
+	{// 左右入れ替え
+		left = -left;
+		right = -right;
+	}
+
+	if (isFlipY)
+	{// 上下入れ替え
+		top = -top;
+		bottom = -bottom;
+	}
+
+	vertices[LB].pos = { left,	bottom,	0.0f }; // 左下
+	vertices[LT].pos = { left,	top,	0.0f }; // 左上
+	vertices[RB].pos = { right,	bottom,	0.0f }; // 右下
+	vertices[RT].pos = { right,	top,	0.0f }; // 右上
+
 	//指定番号の画像が読み込み済みなら
 	if (textureBuffer) {
 		//テクスチャ情報取得
@@ -145,46 +201,68 @@ void Sprite::Update()
 		vertices[RT].uv = { tex_right,tex_top };
 
 	}
-	//頂点データ
-	vertices[LB].pos = { 0.0f,size_.y,0.0f };
-	vertices[LT].pos = { 0.0f,0.0f,0.0f };
-	vertices[RB].pos = { size_.x,size_.y,0.0f };
-	vertices[RT].pos = { size_.x,0.0f,0.0f };
+	////頂点データ
+	//vertices[LB].pos = { 0.0f,size_.y,0.0f };
+	//vertices[LT].pos = { 0.0f,0.0f,0.0f };
+	//vertices[RB].pos = { size_.x,size_.y,0.0f };
+	//vertices[RT].pos = { size_.x,0.0f,0.0f };
 
-	//for (int i = 0; i < _countof(vertices); i++) {
-	//	vertices[i].pos.x *= vertices_[i].pos.x;
-	//	vertices[i].pos.y *= vertices_[i].pos.y;
-	//	vertices[i].pos.z *= vertices_[i].pos.z;
-	//
-	//}
 
-	//for (int i = 0; i < _countof(vertices); i++) {
-	//	vertMap[i].pos.x *= vertices[i].pos.x; // 座標をコピー
-	//	vertMap[i].pos.y *= vertices[i].pos.y;
-	//	vertMap[i].pos.z *= vertices[i].pos.z;
-
-	//	vertMap[i].uv.x *= vertices[i].uv.x;
-	//	vertMap[i].uv.y *= vertices[i].uv.y;
-	//}
-
-	std::copy(std::begin(vertices), std::end(vertices), vertMap);
+	/*std::copy(std::begin(vertices), std::end(vertices), vertMap);*/
 
 	/*matScale = XMMatrixScaling(scale.x, scale.y, scale.z);*/
 
 
-	matRot = XMMatrixIdentity();
-	matRot *= XMMatrixRotationZ(XMConvertToRadians(rotation));//Z軸周りに0度回転してから
 
-	matTrans = XMMatrixTranslation(position.x, position.y, 0.0f);//(-50,0,0)平行移動
-
-
-	matWorld = XMMatrixIdentity();//変形をリセット
-	//matWorld *= matScale;//ワールド行列にスケーリングを反映
-	matWorld *= matRot;//ワールド行列にスケーリングを反映
-	matWorld *= matTrans;
-
-	constMapTransform->mat = matWorld;
-
-	constMapMaterial->color = color;
+	result = vertBuff->Map(0, nullptr, (void**)&vertMap);
+	if (SUCCEEDED(result)) {
+		memcpy(vertMap, vertices, sizeof(vertices));
+		vertBuff->Unmap(0, nullptr);
+	}
 
 }
+
+void Sprite::SetPozition(const XMFLOAT2& position_)
+{
+	position = position_;
+	Update();
+}
+
+void Sprite::SetRotation(float rotation_)
+{
+	rotation = rotation_;
+	Update();
+}
+
+void Sprite::SetSize(XMFLOAT2 size)
+{
+	size_ = size;
+	Update();
+}
+
+void Sprite::SetIsFlipY(bool isFlipY)
+{
+	this->isFlipY = isFlipY;
+
+	Update();
+}
+
+void Sprite::SetIsFlipX(bool isFlipX)
+{
+	this->isFlipX = isFlipX;
+
+	Update();
+}
+
+void Sprite::AdjustTextureSize()
+{
+	ID3D12Resource* textureBuffer = spritecomon->GetTextureBuffer(textureIndex_);
+	assert(textureBuffer);
+
+	//テクスチャ情報取得
+	D3D12_RESOURCE_DESC resDesc = textureBuffer->GetDesc();
+
+	textureSize.x = static_cast<float>(resDesc.Width);
+	textureSize.y = static_cast<float>(resDesc.Height);
+}
+

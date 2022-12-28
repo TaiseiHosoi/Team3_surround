@@ -26,7 +26,7 @@ void SpriteCommon::Initialize(DirectXCommon* dxcommon)
 	resDesc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
 	// 頂点シェーダの読み込みとコンパイル
 	result = D3DCompileFromFile(
-		L"SpriteVS.hlsl", // シェーダファイル名
+		L"Resources/shaders/SpriteVS.hlsl", // シェーダファイル名
 		nullptr,
 		D3D_COMPILE_STANDARD_FILE_INCLUDE, // インクルード可能にする
 		"main", "vs_5_0", // エントリーポイント名、シェーダーモデル指定
@@ -48,7 +48,7 @@ void SpriteCommon::Initialize(DirectXCommon* dxcommon)
 	}
 	// ピクセルシェーダの読み込みとコンパイル
 	result = D3DCompileFromFile(
-		L"SpritePS.hlsl", // シェーダファイル名
+		L"Resources/shaders/SpritePS.hlsl", // シェーダファイル名
 		nullptr,
 		D3D_COMPILE_STANDARD_FILE_INCLUDE, // インクルード可能にする
 		"main", "ps_5_0", // エントリーポイント名、シェーダーモデル指定
@@ -97,6 +97,7 @@ void SpriteCommon::Initialize(DirectXCommon* dxcommon)
 	pipelineDesc.RasterizerState.FillMode = D3D12_FILL_MODE_SOLID; // ポリゴン内塗りつぶし
 	pipelineDesc.RasterizerState.DepthClipEnable = true; // 深度クリッピングを有効に
 
+	pipelineDesc.DepthStencilState;
 	//// ブレンドステート
 	//pipelineDesc.BlendState.RenderTarget[0].RenderTargetWriteMask
 	//	= D3D12_COLOR_WRITE_ENABLE_ALL; // RBGA全てのチャンネルを描画
