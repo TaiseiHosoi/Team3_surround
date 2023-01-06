@@ -55,55 +55,16 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	input_ = new Input;
 	input_->Initialize(winApp_);
 	
-	////頂点データ
-	//Vertex vertices[] = {
-	//	//前
-	//	//x      y     z       u     v
-	//	{{-5.0f, -5.0f, -5.0f}, {}, {0.0f, 1.0f}}, //左下
-	//	{{-5.0f, 5.0f, -5.0f}, {}, {0.0f, 0.0f}}, //左上
-	//	{{5.0f, -5.0f, -5.0f}, {}, {1.0f, 1.0f}}, //右下
-	//	{{5.0f, 5.0f, -5.0f}, {}, {1.0f, 0.0f}}, //右上
+	// 3Dオブジェクト静的初期化
+	Object3d::StaticInitialize(dxCommon_->GetDevice(), WinApp::window_width, WinApp::window_height);
 
-	//	//後ろ
-	//	//x      y     z       u     v
-	//	{{-5.0f, -5.0f, 5.0f},{}, {0.0f, 1.0f}}, //左下
-	//	{{-5.0f, 5.0f, 5.0f},{}, {0.0f, 0.0f}}, //左上
-	//	{{5.0f, -5.0f, 5.0f},{}, {1.0f, 1.0f}}, //右下
-	//	{{5.0f, 5.0f, 5.0f}, {}, {1.0f, 0.0f}}, //右上
+	//OBJからモデルデータを読み込む
+	Model* model = Model::LoadFormOBJ("cube");
 
-	//	//左
-	//	//x      y     z       u     v
-	//	{{-5.0f, -5.0f, -5.0f}, {}, {0.0f, 1.0f}}, //左下
-	//	{{-5.0f, -5.0f, 5.0f},{}, {0.0f, 0.0f}}, //左上
-	//	{{-5.0f, 5.0f, -5.0f},{}, {1.0f, 1.0f}}, //右下
-	//	{{-5.0f, 5.0f, 5.0f}, {}, {1.0f, 0.0f}}, //右上
+	Object3d* object3d = Object3d::Create();
+	object3d->SetModel(model);
 
-	//	//右
-	//	{{5.0f, -5.0f, -5.0f},{}, {0.0f, 1.0f}}, //左下
-	//	{{5.0f, -5.0f, 5.0f}, {}, {0.0f, 0.0f}}, //左上
-	//	{{5.0f, 5.0f, -5.0f}, {}, {1.0f, 1.0f}}, //右下
-	//	{{5.0f, 5.0f, 5.0f}, {}, {1.0f, 0.0f}}, //右上
-
-	//	//下
-	//	{{-5.0f, -5.0f, -5.0f},{}, {0.0f, 1.0f}}, //左下
-	//	{{5.0f, -5.0f, -5.0f},{}, {0.0f, 0.0f}}, //左上
-	//	{{-5.0f, -5.0f, 5.0f},{}, {1.0f, 1.0f}}, //右下
-	//	{{5.0f, -5.0f, 5.0f},{}, {1.0f, 0.0f}}, //右上
-
-	//	//上
-	//	{{-5.0f, 5.0f, -5.0f},{}, {0.0f, 1.0f}}, //左下
-	//	{{5.0f, 5.0f, -5.0f},{}, {0.0f, 0.0f}}, //左上
-	//	{{-5.0f, 5.0f, 5.0f},{}, {1.0f, 1.0f}}, //右下
-	//	{{5.0f, 5.0f, 5.0f},{}, {1.0f, 0.0f}}, //右上
-
-
-	//};
-
-	//Mesh* mesh_ = nullptr;
-	//mesh_ = new Mesh();
-	//mesh_->LoadModel("Resources/bumeObj/bume.obj");
-	//mesh_->Init(dxCommon_->GetDevice());
-	
+	object3d->Update();
 
 	
 	while (true) {
@@ -113,21 +74,34 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 
 		//更新
 		input_->Update();
-
+		object3d->Update();
 		
 		//mesh_->Update(dxCommon_->GetDevice(), input_);
 		
 		//描画
 		dxCommon_->PreDraw();
 
+		Object3d::PreDraw(dxCommon_->GetCommandList());
+
+		object3d->Draw();
+
+		Object3d::PostDraw();
+
 		//mesh_->Draw(dxCommon_->GetCommandList());
 
 		dxCommon_->PostDraw();
 
 	}
+	//3Dオブジェクトの解放
+	delete object3d;
+	//3Dモデル開放
+	delete model;
+	//入力開放
+	delete input_;
 
 	winApp_->Finalize();
-
+	//WindowsAPI解放
+	delete winApp_;
 	//元データ解放
 	//delete[] imageData;
 
