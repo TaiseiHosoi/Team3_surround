@@ -98,6 +98,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 
 	Mesh* mesh_ = nullptr;
 	mesh_ = new Mesh();
+	
 	mesh_->LoadModel("Resources/bumeObj/bume.obj");
 	mesh_->Init(dxCommon_->GetDevice());
 	

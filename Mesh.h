@@ -82,7 +82,8 @@ struct Object3d {
 
 class Mesh
 {
-public:
+private:
+	
 	// リザルト
 	HRESULT result;
 	// 頂点バッファビューの作成
@@ -99,6 +100,18 @@ public:
 	ID3D12Resource* constBuffMaterial = nullptr;
 	// 定数バッファのマッピング
 	ConstBufferDataMaterial* constMapMaterial = nullptr;
+	//テクスチャバッファ
+	ID3D12Resource* texBuff = nullptr;
+	ID3D12Resource* texBuff2 = nullptr;
+	//シェーダーリソースビューハンドル
+	// シェーダリソースビューのハンドル(CPU)
+	CD3DX12_CPU_DESCRIPTOR_HANDLE cpuDescHandleSRV;
+	// シェーダリソースビューのハンドル(GPU)
+	CD3DX12_GPU_DESCRIPTOR_HANDLE gpuDescHandleSRV;
+	// デスクリプタサイズ
+	UINT descriptorHandleIncrementSize;
+	// デスクリプタヒープ
+	ComPtr<ID3D12DescriptorHeap> descHeap;
 
 	//3Dオブジェクトの数
 	//static const size_t kObjectCount = 50;
@@ -190,6 +203,6 @@ public:
 
 	void LoadModel(const char* fileName);
 	void LoadModel();
-	void LoadMaterial(const std::string& directoryPath, const std::string& filename);
-	void LoadTexture(const std::string& directoryPath, const std::string& filename);
+	void LoadMaterial(ID3D12Device* device, const std::string& directoryPath, const std::string& filename);
+	bool LoadTexture(ID3D12Device* device, const std::string& directoryPath, const std::string& filename);
 };

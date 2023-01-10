@@ -455,6 +455,7 @@ void Mesh::Init(ID3D12Device* device) {
 
 	}
 
+	//spriteに分けられる ここから
 #pragma region 画像イメージデータの作成
 
 
@@ -522,7 +523,7 @@ void Mesh::Init(ID3D12Device* device) {
 	textureResourceDesc.SampleDesc.Count = 1;
 
 	// テクスチャバッファの生成
-	ID3D12Resource* texBuff = nullptr;
+	
 	result = device->CreateCommittedResource(
 		&textureHeapProp,
 		D3D12_HEAP_FLAG_NONE,
@@ -541,7 +542,7 @@ void Mesh::Init(ID3D12Device* device) {
 	textureResourceDesc2.MipLevels = (UINT)metadata2.mipLevels;
 	textureResourceDesc2.SampleDesc.Count = 1;
 	// テクスチャバッファの生成
-	ID3D12Resource* texBuff2 = nullptr;
+	
 	result = device->CreateCommittedResource(
 		&textureHeapProp,
 		D3D12_HEAP_FLAG_NONE,
@@ -633,6 +634,8 @@ void Mesh::Init(ID3D12Device* device) {
 
 	//ハンドルの指す位置にシェーダーリソースビュー作成
 	device->CreateShaderResourceView(texBuff2, &srvDesc2, srvHandle);
+
+	//spriteに分けられる　ここまで
 
 }
 
@@ -894,7 +897,7 @@ void Mesh::LoadModel() {
 
 }
 
-void Mesh::LoadMaterial(const std::string& directoryPath,const std::string& filename)
+void Mesh::LoadMaterial(ID3D12Device* device, const std::string& directoryPath,const std::string& filename)
 {
 	//ファイルストリーム
 	std::ifstream file;
@@ -945,7 +948,7 @@ void Mesh::LoadMaterial(const std::string& directoryPath,const std::string& file
 			//テクスチャのファイル
 			line_stream >> material.textureFilename;
 			//テクスチャ読み込み
-			LoadTexture(directoryPath, material.textureFilename);	//作ってない
+			LoadTexture(device,directoryPath, material.textureFilename);	//作ってない
 		}
 	}
 
@@ -953,11 +956,92 @@ void Mesh::LoadMaterial(const std::string& directoryPath,const std::string& file
 
 }
 
-void Mesh::LoadTexture(const std::string& directoryPath, const std::string& filename)
+ bool Mesh::LoadTexture(ID3D12Device* device, const std::string& directoryPath, const std::string& filename)
 {
-	
-}
+	HRESULT result = S_FALSE;
 
+	TexMetadata metadata{};
+	ScratchImage scratchImg{};
+
+	//ファイルパスを結合
+	string filepath = directoryPath + filename;
+
+	//ユニコード文字列に変換する
+	wchar_t wfilepath[128];
+	int iBufferSize = MultiByteToWideChar(CP_ACP, 0, filepath.c_str(), -1, wfilepath, _countof(wfilepath));
+
+
+	//// WICテクスチャのロード
+	//result = LoadFromWICFile(L"Resources/tex1.png", WIC_FLAGS_NONE, &metadata, scratchImg);
+	//assert(SUCCEEDED(result));
+	// WICテクスチャのロード
+	result = LoadFromWICFile(wfilepath, WIC_FLAGS_NONE, &metadata, scratchImg);
+	assert(SUCCEEDED(result));
+
+	ScratchImage mipChain{};
+	// ミップマップ生成
+	result = GenerateMipMaps(
+		scratchImg.GetImages(), scratchImg.GetImageCount(), scratchImg.GetMetadata(),
+		TEX_FILTER_DEFAULT, 0, mipChain);
+	if (SUCCEEDED(result)) {
+		scratchImg = std::move(mipChain);
+		metadata = scratchImg.GetMetadata();
+	}
+
+	// 読み込んだディフューズテクスチャをSRGBとして扱う
+	metadata.format = MakeSRGB(metadata.format);
+
+	// リソース設定
+	CD3DX12_RESOURCE_DESC texresDesc = CD3DX12_RESOURCE_DESC::Tex2D(
+		metadata.format, metadata.width, (UINT)metadata.height, (UINT16)metadata.arraySize,
+		(UINT16)metadata.mipLevels);
+
+	// ヒーププロパティ
+	CD3DX12_HEAP_PROPERTIES heapProps =
+		CD3DX12_HEAP_PROPERTIES(D3D12_CPU_PAGE_PROPERTY_WRITE_BACK, D3D12_MEMORY_POOL_L0);
+
+	// テクスチャ用バッファの生成
+	result = device->CreateCommittedResource(
+		&heapProps, D3D12_HEAP_FLAG_NONE, &texresDesc,
+		D3D12_RESOURCE_STATE_GENERIC_READ, // テクスチャ用指定
+		nullptr, IID_PPV_ARGS(&texBuff));
+	assert(SUCCEEDED(result));
+
+	// テクスチャバッファにデータ転送
+	for (size_t i = 0; i < metadata.mipLevels; i++) {
+		const Image* img = scratchImg.GetImage(i, 0, 0); // 生データ抽出
+		result = texBuff->WriteToSubresource(
+			(UINT)i,
+			nullptr,              // 全領域へコピー
+			img->pixels,          // 元データアドレス
+			(UINT)img->rowPitch,  // 1ラインサイズ
+			(UINT)img->slicePitch // 1枚サイズ
+		);
+		assert(SUCCEEDED(result));
+	}
+
+	// シェーダリソースビュー作成
+	cpuDescHandleSRV = CD3DX12_CPU_DESCRIPTOR_HANDLE(descHeap->GetCPUDescriptorHandleForHeapStart(), 0, descriptorHandleIncrementSize);
+	gpuDescHandleSRV = CD3DX12_GPU_DESCRIPTOR_HANDLE(descHeap->GetGPUDescriptorHandleForHeapStart(), 0, descriptorHandleIncrementSize);
+
+	D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc{}; // 設定構造体
+	D3D12_RESOURCE_DESC resDesc = texBuff->GetDesc();
+
+	srvDesc.Format = resDesc.Format;
+	srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
+	srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;//2Dテクスチャ
+	srvDesc.Texture2D.MipLevels = 1;
+
+	device->CreateShaderResourceView(texBuff, //ビューと関連付けるバッファ
+		&srvDesc, //テクスチャ設定情報
+		cpuDescHandleSRV
+	);
+	if (result == NULL) {
+		return false;
+	}
+
+	return true;
+}
 
 void InitializeObject3d(Object3d* object, ID3D12Device* device) {
 
