@@ -6,7 +6,7 @@ using namespace DirectX;
 
 
 // 頂点データ構造体
-struct Vertex2
+struct Vertex
 {
 	XMFLOAT3 pos; // xyz座標
 	XMFLOAT2 uv;  // uv座標
@@ -87,7 +87,7 @@ private:
 	SpriteCommon* spritecomon;
 	HRESULT result;
 	// 頂点データ
-	Vertex2 vertices[4] = {
+	Vertex vertices[4] = {
 		// x      y     z       u     v
 		{{-0.4f, -0.7f, 0.0f}, {0.0f, 1.0f}}, // 左下
 		{{-0.4f, +0.7f, 0.0f}, {0.0f, 0.0f}}, // 左上
@@ -127,9 +127,9 @@ private:
 
 	ID3D12Resource* constBuffMaterial = nullptr;
 
-	Vertex2 vertices_[4];
+	Vertex vertices_[4];
 
-	Vertex2* vertMap = nullptr;
+	Vertex* vertMap = nullptr;
 
 	//テクスチャ番号
 	uint32_t textureIndex_ = 0;

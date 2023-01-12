@@ -2,7 +2,7 @@
 
 void Sprite::Initialize(SpriteCommon* spritecommon_, uint32_t texturerIndex)
 {
-
+	assert(spritecommon_);
 	spritecomon = spritecommon_;
 
 
@@ -40,7 +40,7 @@ void Sprite::Initialize(SpriteCommon* spritecommon_, uint32_t texturerIndex)
 	// 頂点1つ分のデータサイズ
 	vbView.StrideInBytes = sizeof(vertices[0]);
 
-	Update();
+
 
 	{
 		// ヒープ設定
@@ -108,8 +108,8 @@ void Sprite::Initialize(SpriteCommon* spritecommon_, uint32_t texturerIndex)
 	result = constBuffMaterial->Map(0, nullptr, (void**)&constMapMaterial); // マッピング
 	assert(SUCCEEDED(result));
 
-	// 値を書き込むと自動的に転送される
-	constMapMaterial->color = XMFLOAT4(1, 0, 0, 0.5f);              // RGBAで半透明の赤
+	//// 値を書き込むと自動的に転送される
+	//constMapMaterial->color = XMFLOAT4(1, 0, 0, 0.5f);              // RGBAで半透明の赤
 
 	//テクスチャサイズをイメージに合わせる
 	if (texturerIndex != UINT32_MAX) {
@@ -118,7 +118,7 @@ void Sprite::Initialize(SpriteCommon* spritecommon_, uint32_t texturerIndex)
 		//テクスチャサイズをスプライトのサイズに適応
 		size_ = textureSize;
 	}
-
+	Update();
 }
 
 void Sprite::Draw()
@@ -143,10 +143,9 @@ void Sprite::Draw()
 		constMapMaterial->color = color;
 	}
 
-	spritecomon->SetTextureCommands(textureIndex_);
-
 	//頂点バッファビューの設定コマンド
 	spritecomon->GetDxCommon()->GetCommandList()->IASetVertexBuffers(0, 1, &vbView);
+
 	// 定数バッファビュー(CBV)の設定コマンド
 	spritecomon->GetDxCommon()->GetCommandList()->SetGraphicsRootConstantBufferView(0, constBuffMaterial->GetGPUVirtualAddress());
 
@@ -154,6 +153,8 @@ void Sprite::Draw()
 
 	// 定数バッファビュー(CBV)の設定コマンド
 	spritecomon->GetDxCommon()->GetCommandList()->SetGraphicsRootConstantBufferView(2, constBuffTransform->GetGPUVirtualAddress());
+
+	spritecomon->SetTextureCommands(textureIndex_);
 
 	// 描画コマンド
 	spritecomon->GetDxCommon()->GetCommandList()->DrawInstanced(_countof(vertices), 1, 0, 0); // 全ての頂点を使って描画

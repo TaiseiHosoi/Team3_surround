@@ -5,6 +5,13 @@
 #include <map>
 #include <string>
 #include <cassert>
+#include <vector>
+
+#include <mfapi.h>
+#include <mfidl.h>
+#include <mfreadwrite.h>
+#include <propvarutil.h>
+
 
 class Audio
 {
@@ -43,7 +50,7 @@ public:
 	};
 public:
 	//初期化
-	void Initialize(const std::string directoryPath="Resources/");
+	void Initialize(const std::string directoryPath = "Resources/");
 
 	//終了処理
 	void Finalize();
@@ -54,7 +61,7 @@ public:
 	/// <param name="filename">WAVファイル名</param>
 	void LoadWave(const std::string filename);
 
-	
+
 	/// <summary>
 	///	サウンドデータの開放
 	/// </summary>
@@ -64,7 +71,9 @@ public:
 	/// サウンドデータ名
 	/// </summary>
 	/// <param name="filename">WAVファイル名</param>
-	void PlayWave(const std::string filename);
+	void PlayWave(const std::string filename, bool LoopFlag = false, float sourceRate=1.0f, float targetRate=1.0f);
+
+	void SetPitch(const std::string filename,float sourceRate,float targetRate);
 
 private:
 	//xAudioのインスタンス

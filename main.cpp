@@ -6,6 +6,7 @@
 #include"Audio.h"
 #include"Object3d.h"
 #include"Sprite.h"
+#include"GameScene.h"
 
 
 const float PI = 3.14f;
@@ -58,15 +59,17 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	// 3Dオブジェクト静的初期化
 	Object3d::StaticInitialize(dxCommon_->GetDevice(), WinApp::window_width, WinApp::window_height);
 
-	//OBJからモデルデータを読み込む
-	Model* model = Model::LoadFormOBJ("cube");
+	////OBJからモデルデータを読み込む
+	//Model* model = Model::LoadFormOBJ("cube");
 
-	Object3d* object3d = Object3d::Create();
-	object3d->SetModel(model);
+	//Object3d* object3d = Object3d::Create();
+	//object3d->SetModel(model);
 
-	object3d->Update();
-
+	//object3d->Update();
 	
+	GameScene* gamescne = nullptr;
+	gamescne = new GameScene();
+	gamescne->Initialize(dxCommon_);
 	while (true) {
 		if (winApp_->ProcessMessage()) {
 			break;
@@ -74,28 +77,32 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 
 		//更新
 		input_->Update();
-		object3d->Update();
+		gamescne->Update();
+		//object3d->Update();
 		
 		//mesh_->Update(dxCommon_->GetDevice(), input_);
 		
 		//描画
 		dxCommon_->PreDraw();
+		
 
-		Object3d::PreDraw(dxCommon_->GetCommandList());
 
-		object3d->Draw();
+		//Object3d::PreDraw(dxCommon_->GetCommandList());
 
-		Object3d::PostDraw();
+		gamescne->Draw();
+		//object3d->Draw();
+
+		//Object3d::PostDraw();
 
 		//mesh_->Draw(dxCommon_->GetCommandList());
 
 		dxCommon_->PostDraw();
 
 	}
-	//3Dオブジェクトの解放
-	delete object3d;
-	//3Dモデル開放
-	delete model;
+	////3Dオブジェクトの解放
+	//delete object3d;
+	////3Dモデル開放
+	//delete model;
 	//入力開放
 	delete input_;
 

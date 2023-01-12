@@ -110,7 +110,7 @@ void Audio::Unload(SoundData* soundData)
 	soundData->wfex = {};
 }
 
-void Audio::PlayWave(const std::string filename)
+void Audio::PlayWave(const std::string filename, bool LoopFlag, float sourceRate, float targetRate)
 {
 	HRESULT result;
 
@@ -130,8 +130,23 @@ void Audio::PlayWave(const std::string filename)
 	buf.pAudioData = soundData.pBuffer;
 	buf.AudioBytes = soundData.bufferSize;
 	buf.Flags = XAUDIO2_END_OF_STREAM;
+	if (LoopFlag) {
+		buf.LoopCount = XAUDIO2_LOOP_INFINITE;
+	}
+
+	float frequencyRatio = sourceRate / targetRate;
 
 	//波形データの再生
 	result = pSourceVoice->SubmitSourceBuffer(&buf);
+	pSourceVoice->SetFrequencyRatio(frequencyRatio);
 	result = pSourceVoice->Start();
+}
+
+void Audio::SetPitch(const std::string filename, float sourceRate, float targetRate)
+{
+	HRESULT result;
+
+	std::map<std::string, SoundData>::iterator it = soundDatas_.find(filename);
+	assert(it != soundDatas_.end());
+
 }

@@ -142,6 +142,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Audio.cpp" />
+    <ClCompile Include="GameScene.cpp" />
     <ClCompile Include="MathFunc.cpp" />
     <ClCompile Include="DirectXCommon.cpp" />
     <ClCompile Include="input.cpp" />
@@ -198,6 +199,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Audio.h" />
+    <ClInclude Include="GameScene.h" />
     <ClInclude Include="MathFunc.h" />
     <ClInclude Include="DirectXCommon.h" />
     <ClInclude Include="Error.h" />
