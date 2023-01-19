@@ -6,6 +6,8 @@
 #include <DirectXMath.h>
 #include <d3dx12.h>
 #include "Model.h"
+#include"Vector3.h"
+#include"Matrix4.h"
 
 
 /// <summary>
@@ -38,16 +40,7 @@ public: // サブクラス
 		XMMATRIX mat;	// ３Ｄ変換行列
 	};
 
-	//// 定数バッファ用データ構造体B1
-	//struct ConstBufferDataB1
-	//{
-	//	XMFLOAT3 ambient;	//アンビエント係数
-	//	float pad1;			//パディング
-	//	XMFLOAT3 diffuse;	//ディフューズ係数
-	//	float pad2;			//パディング
-	//	XMFLOAT3 specular;	//スペキュラー係数
-	//	float alpha;		//アルファ
-	//};
+
 	//マテリアル
 	struct Material {
 		std::string name;	//マテリアル名
@@ -177,7 +170,7 @@ private:// 静的メンバ関数
 	/// <summary>
 	/// デスクリプタヒープの初期化
 	/// </summary>
-	static void InitializeDescriptorHeap();
+
 
 	/// <summary>
 	/// カメラ初期化
@@ -191,17 +184,6 @@ private:// 静的メンバ関数
 	/// </summary>
 	/// <returns>成否</returns>
 	static void InitializeGraphicsPipeline();
-
-	///// <summary>
-	///// テクスチャ読み込み
-	///// </summary>
-	///// <returns>成否</returns>
-	//static bool LoadTexture(const std::string& directoryPath, const std::string& filename);
-
-	/// <summary>
-	/// モデル作成
-	/// </summary>
-	static void CreateModel();
 
 	/// <summary>
 	/// ビュー行列を更新
@@ -220,55 +202,41 @@ public: // メンバ関数
 	/// </summary>
 	void Draw();
 
+public:
 	/// <summary>
 	/// 座標の取得
 	/// </summary>
 	/// <returns>座標</returns>
-	const XMFLOAT3& GetPosition() const { return position; }
+	const Vector3& GetPosition() const { return position; }
 
 	/// <summary>
 	/// 座標の設定
 	/// </summary>
 	/// <param name="position">座標</param>
-	void SetPosition(const XMFLOAT3& position) { this->position = position; }
+	void SetPosition(const Vector3& position) { this->position = position; }
 
-	///// <summary>
-	///// マテリアルの読み込み
-	///// </summary>
-	//static void LoadMaterial(const std::string& directoryPath, const std::string& filename);
 
-	//setter
+	//アクセッサ
 	void SetModel(Model* model) { this->model = model; }
 
-	XMMATRIX GetMatView() { return matView; }
 
-	XMMATRIX GetMatProjection() { return matProjection; }
 
-	void SetRotetion(XMFLOAT3 rotation_) { rotation = rotation_; }
-
-	void SetScale(XMFLOAT3 scale_) { scale = scale_; }
-
-private: // メンバ変数
-	//ComPtr<ID3D12Resource> constBuff; // 定数バッファ
 	ComPtr<ID3D12Resource> constBuffB0; // 定数バッファ
 	ComPtr<ID3D12Resource> constBuffB1; // 定数バッファ
+public: // メンバ変数
 	// 色
 	XMFLOAT4 color = { 1,1,1,1 };
 	// ローカルスケール
-	XMFLOAT3 scale = { 1,1,1 };
+	Vector3 scale = { 1,1,1 };
 	// X,Y,Z軸回りのローカル回転角
-	XMFLOAT3 rotation = { 0,0,0 };
+	Vector3 rotation = { 0,0,0 };
 	// ローカル座標
-	XMFLOAT3 position = { 0,0,20 };
+	Vector3 position = { 0,0,0 };
 	// ローカルワールド変換行列
-	XMMATRIX matWorld;
+	Matrix4 matWorld;
 	// 親オブジェクト
 	Object3d* parent = nullptr;
-
-	////マテリアル
-	//static Material material;
 
 	//モデル
 	Model* model = nullptr;
 };
-

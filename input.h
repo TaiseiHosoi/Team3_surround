@@ -32,6 +32,8 @@ public:
 	/// <returns>ƒgƒŠƒK[‚©</returns>
 	bool TriggerKey(BYTE keyNumber);
 
+	static Input* GetInstance();
+
 public:
 
 
