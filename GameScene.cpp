@@ -47,11 +47,22 @@ void GameScene::Initialize(DirectXCommon* dxcomon)
 
 	audio->LoadWave("se_amd06.wav");
 	audio->PlayWave("se_amd06.wav");
+
+	//シングルトン
+	input_ = Input::GetInstance();
+
+	//リソース
+	whiteCube = Model::LoadFormOBJ("cube");
+
+	//ゲームシーンインスタンス
+	player_ = new Player;
+	player_->Initialize(model);
 }
 
 void GameScene::Update()
 {
 	object3d->Update();
+	player_->Update();
 }
 
 void GameScene::Draw()
@@ -66,6 +77,7 @@ void GameScene::Draw()
 	Object3d::PreDraw(dxCommon_->GetCommandList());
 
 	object3d->Draw();
+	player_->Draw();
 
 	Object3d::PostDraw();
 

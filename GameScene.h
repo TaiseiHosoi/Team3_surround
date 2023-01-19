@@ -5,6 +5,7 @@
 #include "Object3d.h"
 #include "Audio.h"
 #include "Model.h"
+#include "Player.h"
 
 class GameScene {
 public:
@@ -43,5 +44,13 @@ private:
 	Sprite* sprite3 = nullptr;
 	Object3d* object3d = nullptr;
 	Model* model = nullptr;
+
+	Input* input_ = nullptr;
+
+	//リソース
+	Model* whiteCube = nullptr;
+
+	//シーンインスタンス
+	Player* player_ = nullptr;
 	
 };

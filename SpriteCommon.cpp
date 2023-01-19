@@ -289,7 +289,7 @@ void SpriteCommon::LoadTexture(uint32_t index, const std::string& fileName)
 	textureResourceDesc.DepthOrArraySize = (UINT16)metadata.arraySize;
 	textureResourceDesc.MipLevels = (UINT16)metadata.mipLevels;
 	textureResourceDesc.SampleDesc.Count = 1;
-	for (std::size_t i = 0; i < texBuff.size(); ++i) {
+	
 		result = dxcommon_->GetDevice()->CreateCommittedResource(
 			&textureHeapProp,
 			D3D12_HEAP_FLAG_NONE,
@@ -312,7 +312,7 @@ void SpriteCommon::LoadTexture(uint32_t index, const std::string& fileName)
 			);
 			assert(SUCCEEDED(result));
 		}
-	}
+	
 	// シェーダリソースビュー設定
 	D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc{};
 	/*D3D12_RESOURCE_DESC resDesc;*/

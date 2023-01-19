@@ -27,6 +27,7 @@ namespace MathFunc {
 
 	Vector3 AddVector(const Vector3 v1, const Vector3 v2);
 
+	Vector3 bVelocity(Vector3& velocity, Object3d& worldTransform);
 	//ç¿ïWïœä∑
 	Vector3 wDivision(const Vector3& v, const Matrix4& m);
 

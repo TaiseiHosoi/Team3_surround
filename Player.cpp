@@ -1,26 +1,29 @@
 #include "Player.h"
 #include <cmath>
 #include "math.h"
+#include"MathFunc.h"
 #define PI 3.141592653589
 
-void Player::Initialize(Model* model, uint32_t textureHandle)
+void Player::Initialize(Model* model)
 {
 	// NULLポインタチェック
 	assert(model);
 	model_ = model;
-	textureHandle_ = textureHandle;
+	
 
 	//シングルトン
 	input_ = Input::GetInstance();
 
 	//初期座標をセット
 	worldTransform_.Initialize();
-	worldTransform_. = { -5,0,0 };
-	worldTransform_.scale_ = { 1,1,1 };
-	worldTransform_.rotation_ = { 0,0.5 * PI,0 };
+	worldTransform_.SetModel(model_);
+	worldTransform_.position = { -5,0,0 };
+	worldTransform_.scale = { 1,1,1 };
+	worldTransform_.rotation = { 0,0.5 * PI,0 };
 	pVelocity_ = { 0,0,0.4f };	//プレイヤーの移動量
 
 	nowLineWorldTransform_.Initialize();	//自機の位置
+	nowLineWorldTransform_.SetModel(model_);
 
 	//自機旋回フレームカウント
 	maxFlameCount_ = 70;
@@ -28,16 +31,17 @@ void Player::Initialize(Model* model, uint32_t textureHandle)
 
 	for (int i = 0; i < _countof(line_); i++) {
 		line_[i].worldTransform.Initialize();
+		line_[i].worldTransform.SetModel(model_);
 		line_[i].sLineVec2 = {};
 		line_[i].eLineVec2 = {};
 		line_[i].isDraw = false;
-		line_[i].worldTransform.translation_.x += i * 2;
-		worldTransformUpdate(&line_[i].worldTransform);
+		line_[i].worldTransform.position.x += i * 2;
+		line_[i].worldTransform.Update();
 
 	}
 
 	nextLine_ = 0;
-	worldTransformUpdate(&worldTransform_);
+	worldTransform_.Update();
 
 }
 
@@ -57,10 +61,10 @@ void Player::Update()
 #pragma endregion
 
 #pragma region 自機とライン保存
-	nowEndPos = worldTransform_.translation_;//ライン用の終点(毎フレーム更新)
+	nowEndPos = worldTransform_.position;//ライン用の終点(毎フレーム更新)
 
 	//lineのトランスフォーム計算
-	nowLineWorldTransform_.translation_ =	//始点終点の中心が座標
+	nowLineWorldTransform_.position =	//始点終点の中心が座標
 	{ (nowStartPos.x + nowEndPos.x) / 2,
 		(nowStartPos.y + nowEndPos.y) / 2,
 		(nowStartPos.z + nowEndPos.z) / 2
@@ -70,16 +74,16 @@ void Player::Update()
 		pow(nowEndPos.y - nowStartPos.y, 2) +
 		pow(nowEndPos.z - nowStartPos.z, 2));
 
-	nowLineWorldTransform_.scale_ = { 0.3,0.3,
+	nowLineWorldTransform_.scale = { 0.3,0.3,
 		len / 2
 	};
 
-	nowLineWorldTransform_.rotation_ = worldTransform_.rotation_;
+	nowLineWorldTransform_.rotation = worldTransform_.rotation;
 
 
-	Vector3 vel = bVelocity(pVelocity_, worldTransform_);
+	Vector3 vel = MathFunc::bVelocity(pVelocity_, worldTransform_);
 
-	worldTransform_.translation_ += vel;
+	worldTransform_.position += vel;
 
 	nowFlameCount_++;
 	if (nowFlameCount_ > maxFlameCount_) {	//時が来たら90度回転
@@ -87,16 +91,16 @@ void Player::Update()
 
 
 		nowFlameCount_ = 0;
-		worldTransform_.rotation_.x += 0.5 * PI;
+		worldTransform_.rotation.x += 0.5 * PI;
 
 		int lineCount = 0;
 		for (int i = 0; i < _countof(line_); i++) {	// ライン保存
 			lineCount++;
 			if (line_[i].isDraw == false) {
 				line_[i].isDraw = true;
-				line_[i].worldTransform.translation_ = nowLineWorldTransform_.translation_;
-				line_[i].worldTransform.rotation_ = nowLineWorldTransform_.rotation_;
-				line_[i].worldTransform.scale_ = nowLineWorldTransform_.scale_;
+				line_[i].worldTransform.position = nowLineWorldTransform_.position;
+				line_[i].worldTransform.rotation = nowLineWorldTransform_.rotation;
+				line_[i].worldTransform.scale = nowLineWorldTransform_.scale;
 
 				line_[i].sLineVec2 = { nowStartPos.x, nowStartPos.x };
 				line_[i].eLineVec2 = { nowEndPos.x, nowEndPos.x };
@@ -141,36 +145,24 @@ void Player::Update()
 
 #pragma region ワールドトランスフォーム更新
 	for (int i = 0; i < _countof(line_); i++) {
-		worldTransformUpdate(&line_[i].worldTransform);
+		line_[i].worldTransform.Update();
 	}
-	worldTransformUpdate(&worldTransform_);
-	worldTransformUpdate(&nowLineWorldTransform_);
+	worldTransform_.Update();
+	nowLineWorldTransform_.Update();
 #pragma endregion ワールドトランスフォーム更新
 
 
 }
 
-void Player::Draw(ViewProjection viewProjection)
+void Player::Draw()
 {
 
-	model_->Draw(worldTransform_, viewProjection, textureHandle_);
-	model_->Draw(nowLineWorldTransform_, viewProjection, textureHandle_);
+	worldTransform_.Draw();
+	nowLineWorldTransform_.Draw();
 	for (int i = 0; i < _countof(line_); i++) {
 		if (line_[i].isDraw == true) {
-			model_->Draw(line_[i].worldTransform, viewProjection, textureHandle_);
+			line_[i].worldTransform.Draw();
 		}
-
-		//トランスレーション
-		debugText_->SetPos(20, 20 + i * 15);
-		debugText_->Printf("%f,%f,%f", line_[i].worldTransform.translation_.x
-			, line_[i].worldTransform.translation_.y
-			, line_[i].worldTransform.translation_.z);
-
-		//スケール
-		debugText_->SetPos(300, 20 + i * 15);
-		debugText_->Printf("%f,%f,%f", line_[i].worldTransform.scale_.x
-			, line_[i].worldTransform.scale_.y
-			, line_[i].worldTransform.scale_.z);
 
 	}
 

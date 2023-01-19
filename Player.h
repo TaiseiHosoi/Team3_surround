@@ -19,7 +19,7 @@ typedef struct Line {
 class Player
 {
 public:
-	void Initialize(Model* model, uint32_t textureHandle);
+	void Initialize(Model* model);
 	void Update();
 	void Draw();
 
@@ -47,7 +47,7 @@ private:
 	Input* input_ = nullptr;
 
 	//‰ß‹Ž‚Ìƒ‰ƒCƒ“
-	Object3d lineWorldTransform_[10];
+	//Object3d lineWorldTransform_[10];
 	Line line_[100];
 
 	int nextLine_ = 0;

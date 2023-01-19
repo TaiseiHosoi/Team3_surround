@@ -187,6 +187,27 @@ Vector3 MathFunc::AddVector(const Vector3 v1, const Vector3 v2) {
 
 }
 
+Vector3 MathFunc::bVelocity(Vector3& velocity, Object3d& worldTransform)
+{
+	Vector3 result = { 0, 0, 0 };
+
+
+	result.x = velocity.x * worldTransform.matWorld.m[0][0] +
+		velocity.y * worldTransform.matWorld.m[1][0] +
+		velocity.z * worldTransform.matWorld.m[2][0];
+
+	result.y = velocity.x * worldTransform.matWorld.m[0][1] +
+		velocity.y * worldTransform.matWorld.m[1][1] +
+		velocity.z * worldTransform.matWorld.m[2][1];
+
+	result.z = velocity.x * worldTransform.matWorld.m[0][2] +
+		velocity.y * worldTransform.matWorld.m[1][2] +
+		velocity.z * worldTransform.matWorld.m[2][2];
+
+
+	return result;
+}
+
 Vector3 MathFunc::wDivision(const Vector3& vector3, const Matrix4& matrix4) {
 
 	Vector4 divVec = {};

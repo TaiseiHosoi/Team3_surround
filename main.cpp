@@ -52,8 +52,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	//DirectX初期化処理　ここから
 	dxCommon_->Initialize(winApp_);
 
-	Input* input_ = nullptr;
-	input_ = new Input;
+	Input* input_ = Input::GetInstance();
 	input_->Initialize(winApp_);
 	
 	// 3Dオブジェクト静的初期化
