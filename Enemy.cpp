@@ -14,7 +14,7 @@ void Enemy::Initialize(Model* model,Vector3 vector3, float kBulSpeed)
 	input_ = Input::GetInstance();
 
 	//初期座標をセット
-	worldTransform_.Initialize();
+	worldTransform_.Initialize(false);
 	worldTransform_.position = vector3;
 	worldTransform_.scale = { 1,1,1 };
 	worldTransform_.rotation = { 0,0,0 };

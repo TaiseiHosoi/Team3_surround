@@ -19,7 +19,7 @@ typedef struct Line {
 class Player
 {
 public:
-	void Initialize(Model* model);
+	void Initialize(Model* model,Model* playerModel);
 	void Update();
 	void Draw();
 
@@ -41,6 +41,7 @@ private:
 
 	//ƒ‚ƒfƒ‹
 	Model* model_ = nullptr;
+	Model* playerModel_ = nullptr;
 
 	//‚»‚Ì‘¼
 	uint32_t textureHandle_ = 0u;

@@ -4,25 +4,27 @@
 #include"MathFunc.h"
 #define PI 3.141592653589
 
-void Player::Initialize(Model* model)
+void Player::Initialize(Model* model,Model* playerModel)
 {
 	// NULLポインタチェック
 	assert(model);
+	assert(playerModel);
 	model_ = model;
+	playerModel_ = playerModel;
 	
 
 	//シングルトン
 	input_ = Input::GetInstance();
 
 	//初期座標をセット
-	worldTransform_.Initialize();
-	worldTransform_.SetModel(model_);
+	worldTransform_.Initialize(true);
+	worldTransform_.SetModel(playerModel);
 	worldTransform_.position = { -5,0,0 };
 	worldTransform_.scale = { 1,1,1 };
-	worldTransform_.rotation = { 0,0.5 * PI,0 };
+	//worldTransform_.rotation = { 0,0.5 * PI,0 };
 	pVelocity_ = { 0,0,0.4f };	//プレイヤーの移動量
 
-	nowLineWorldTransform_.Initialize();	//自機の位置
+	nowLineWorldTransform_.Initialize(false);	//自機の位置
 	nowLineWorldTransform_.SetModel(model_);
 
 	//自機旋回フレームカウント
@@ -30,7 +32,7 @@ void Player::Initialize(Model* model)
 	nowFlameCount_ = 0;
 
 	for (int i = 0; i < _countof(line_); i++) {
-		line_[i].worldTransform.Initialize();
+		line_[i].worldTransform.Initialize(false);
 		line_[i].worldTransform.SetModel(model_);
 		line_[i].sLineVec2 = {};
 		line_[i].eLineVec2 = {};

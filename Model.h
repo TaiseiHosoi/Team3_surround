@@ -82,6 +82,11 @@ public:
 	/// <param name="cmdlist">描画コマンドリスト</param>
 	/// <param name="rootParamIndexMaterial">マテリアル用ルートパラメータ番号</param>
 	void Draw(ID3D12GraphicsCommandList* cmdList, UINT rootParamIndexMaterial);
+	/// <summary>
+	/// リムライト描画
+	/// </summary>
+	/// <param name="cmdlist">描画コマンドリスト</param>
+	void RimDraw(ID3D12GraphicsCommandList* cmdList);
 
 private://非公開のメンバ関数
 	//OBJファイルから3Dモデルを読み込む(非公開)

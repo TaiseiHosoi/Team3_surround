@@ -86,6 +86,7 @@ private:
 	Sprite* sprite3 = nullptr;
 	Object3d* object3d = nullptr;
 	Model* model = nullptr;
+	Model* playerModel = nullptr;
 
 	Input* input_ = nullptr;
 

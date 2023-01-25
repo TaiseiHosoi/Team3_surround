@@ -42,8 +42,9 @@ void GameScene::Initialize(DirectXCommon* dxcomon)
 
 	//OBJからモデルデータを読み込む
 	model = Model::LoadFormOBJ("cube");
-
-	object3d = Object3d::Create();
+	playerModel = Model::LoadFormOBJ("playerbullet");
+	object3d = new Object3d;
+	object3d->Initialize(false);
 	object3d->SetModel(model);
 
 	
@@ -59,7 +60,7 @@ void GameScene::Initialize(DirectXCommon* dxcomon)
 
 	//ゲームシーンインスタンス
 	player_ = new Player;
-	player_->Initialize(model);
+	player_->Initialize(model,playerModel);
 
 
 	//敵初期化
@@ -83,7 +84,7 @@ void GameScene::Update()
 
 	}
 
-	player_->Update();
+	//player_->Update();
 
 	//デリート
 	enemys_.remove_if([](std::unique_ptr<Enemy>& enemy_) { return enemy_->IsDead(); });
@@ -118,7 +119,6 @@ void GameScene::Draw()
 	}
 
 	Object3d::PostDraw();
-
 }
 
 void GameScene::GenerEnemy(Vector3 EnemyPos, int ID, int lane)
@@ -304,7 +304,7 @@ void GameScene::CheckAllCollisions() {
 		float z = posB.z - posA.z;
 
 		float cd = sqrt(x * x + y * y + z * z);
-
+		
 		if (cd <= 4.0f) {
 			//敵キャラの衝突時コールバックを呼び出す
 			enemy_->OnCollision(true);
