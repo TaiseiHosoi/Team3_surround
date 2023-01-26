@@ -21,7 +21,7 @@ void Player::Initialize(Model* model,Model* playerModel)
 	worldTransform_.SetModel(playerModel);
 	worldTransform_.position = { -5,0,0 };
 	worldTransform_.scale = { 1,1,1 };
-	//worldTransform_.rotation = { 0,0.5 * PI,0 };
+	worldTransform_.rotation = { 0,0.5 * PI,0 };
 	pVelocity_ = { 0,0,0.4f };	//プレイヤーの移動量
 
 	nowLineWorldTransform_.Initialize(false);	//自機の位置

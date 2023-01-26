@@ -84,7 +84,7 @@ void GameScene::Update()
 
 	}
 
-	//player_->Update();
+	player_->Update();
 
 	//ƒfƒŠ[ƒg
 	enemys_.remove_if([](std::unique_ptr<Enemy>& enemy_) { return enemy_->IsDead(); });

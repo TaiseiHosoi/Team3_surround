@@ -534,7 +534,8 @@ void Object3d::Update()
 	constBuffB0->Unmap(0, nullptr);
 
 
-	XMVECTOR CameraVec = { eye.x - target.x ,eye.y - target.y ,eye.z - target.z };
+	XMVECTOR CameraVec = { eye.x - position.x ,eye.y - position.y ,eye.z - position.z };
+
 	CameraVec = XMVector3Normalize(CameraVec);
 	// 定数バッファB2へデータ転送
 	XMFLOAT3* constMap2 = nullptr;
