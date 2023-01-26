@@ -3,7 +3,7 @@
 //静的メンバ変数の実体
 ID3D12Device* Model::device = nullptr;
 
-Model* Model::LoadFormOBJ(const std::string& modelname)
+Model* Model::LoadFormOBJ(const std::string& modelname,bool smoothing)
 {
 	//新たなModel型のインスタンスをnewする
 	Model* model = new Model();
@@ -11,7 +11,7 @@ Model* Model::LoadFormOBJ(const std::string& modelname)
 	model->InitializeDescriptorHeap();
 
 	//読み込み
-	model->LoadFromOBJInternal(modelname);
+	model->LoadFromOBJInternal(modelname,smoothing);
 	
 	//バッファ生成
 	model->CreateBuffers();
@@ -315,7 +315,7 @@ void Model::RimDraw(ID3D12GraphicsCommandList* cmdList)
 	cmdList->DrawIndexedInstanced((UINT)indices.size(), 1, 0, 0, 0);
 }
 
-void Model::LoadFromOBJInternal(const std::string& modelname)
+void Model::LoadFromOBJInternal(const std::string& modelname, bool smoothing)
 {
 	//oBJファイルからデータを読み込む
 		//ファイルストリーム
@@ -408,6 +408,7 @@ void Model::LoadFromOBJInternal(const std::string& modelname)
 				vertex.normal = normals[indexNormal - 1];
 				vertex.uv = texcodes[indexTexcord - 1];
 				vertices.emplace_back(vertex);
+				smoothDate[indexPosition].emplace_back(vertices.size() - 1);
 				//インデックスデータの追加
 				indices.emplace_back((unsigned short)indices.size());
 
@@ -419,4 +420,22 @@ void Model::LoadFromOBJInternal(const std::string& modelname)
 	}
 	//ファイルを閉じる
 	file.close();
+	if (smoothing==true)
+	{
+		auto itr = smoothDate.begin();
+		for (; itr != smoothDate.end(); ++itr) {
+			//各面用の共通頂点コレクション
+			std::vector<unsigned short>& v = itr->second;
+			//全頂点の法線を平均する
+			XMVECTOR normal = {};
+			for (unsigned short index : v) {
+				normal += XMVectorSet(vertices[index].normal.x, vertices[index].normal.y, vertices[index].normal.z, 0);
+			}
+			normal = XMVector3Normalize(normal / (float)v.size());
+			//共通法線を使用する全ての頂点データに書き込む
+			for (unsigned short index : v) {
+				vertices[index].normal = { normal.m128_f32[0],normal.m128_f32[1],normal.m128_f32[2] };
+			}
+		}
+	}
 }

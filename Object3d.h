@@ -214,6 +214,24 @@ public:
 	/// <param name="position">座標</param>
 	void SetPosition(const Vector3& position) { this->position = position; }
 
+	/// <summary>
+	/// 座標の設定
+	/// </summary>
+	/// <param name="position">座標</param>
+	void SetRimColor(const XMFLOAT4& rimColor) { this->rim.color = rimColor; }
+
+	/// <summary>
+	/// 座標の設定
+	/// </summary>
+	/// <param name="position">座標</param>
+	void SetRimPow(const float& rimPow) { this->rim.pow = rimPow; }
+
+	/// <summary>
+	/// 座標の設定
+	/// </summary>
+	/// <param name="position">座標</param>
+	void SetRimEmission(const float& rimEmission) { this->rim.Emission = rimEmission; }
+
 
 	//アクセッサ
 	void SetModel(Model* model) { this->model = model; }
@@ -227,6 +245,7 @@ public:
 #pragma endregion
 	
 public: // メンバ変数
+	Rim rim;
 	// 色
 	XMFLOAT4 color = { 1,1,1,1 };
 	// ローカルスケール

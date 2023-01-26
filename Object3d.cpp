@@ -546,9 +546,9 @@ void Object3d::Update()
 
 	Rim* constMap3 = nullptr;
 	result = constBuffRim->Map(0, nullptr, (void**)&constMap3);
-	constMap3->color = { 1.0f,1.0f,1.0f,1.0f };
-	constMap3->pow = 1;
-	constMap3->Emission = 1;
+	constMap3->color =rim.color;
+	constMap3->pow = rim.pow;
+	constMap3->Emission = rim.Emission;
 	constBuffRim->Unmap(0, nullptr);
 }
 

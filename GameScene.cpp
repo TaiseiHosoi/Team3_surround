@@ -41,8 +41,8 @@ void GameScene::Initialize(DirectXCommon* dxcomon)
 	audio->Initialize();
 
 	//OBJからモデルデータを読み込む
-	model = Model::LoadFormOBJ("cube");
-	playerModel = Model::LoadFormOBJ("playerbullet");
+	model = Model::LoadFormOBJ("cube",false);
+	playerModel = Model::LoadFormOBJ("playerbullet",true);
 	object3d = new Object3d;
 	object3d->Initialize(false);
 	object3d->SetModel(model);
@@ -56,7 +56,7 @@ void GameScene::Initialize(DirectXCommon* dxcomon)
 	input_ = Input::GetInstance();
 
 	//リソース
-	whiteCube = Model::LoadFormOBJ("cube");
+	whiteCube = Model::LoadFormOBJ("cube", false);
 
 	//ゲームシーンインスタンス
 	player_ = new Player;
