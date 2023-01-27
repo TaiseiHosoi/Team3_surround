@@ -91,6 +91,7 @@ private:
 
 	//リソース
 	Model* whiteCube = nullptr;
+	Model* cylinder = nullptr;
 
 	//シーン
 	Player* player_ = nullptr;

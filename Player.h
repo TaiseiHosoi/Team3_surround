@@ -19,7 +19,7 @@ typedef struct Line {
 class Player
 {
 public:
-	void Initialize(Model* model);
+	void Initialize(Model* model,Model* cylinder);
 	void Update();
 	void Draw();
 
@@ -41,6 +41,7 @@ private:
 
 	//モデル
 	Model* model_ = nullptr;
+	Model* cylinder_ = nullptr;
 
 	//その他
 	uint32_t textureHandle_ = 0u;
@@ -69,5 +70,17 @@ private:
 	//攻撃
 	bool isAtk = false;
 
+	
+	// 自機の動作テーブル
+	static void (Player::* moveFuncTable[])();
+	void Turn();
+	void Straight();
+	void ATK1();
+	
+	int movePhase = 1;
+	bool isTurn = false;	//旋回中かどうか
+	bool oldIsTurn = false;
+	int turnFlameCount = 0;
+	int lineCount = 0;
 
 };

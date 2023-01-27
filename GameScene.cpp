@@ -42,6 +42,7 @@ void GameScene::Initialize(DirectXCommon* dxcomon)
 
 	//OBJからモデルデータを読み込む
 	model = Model::LoadFormOBJ("cube");
+	cylinder = Model::LoadFormOBJ("cylinder");
 
 	object3d = Object3d::Create();
 	object3d->SetModel(model);
@@ -59,7 +60,7 @@ void GameScene::Initialize(DirectXCommon* dxcomon)
 
 	//ゲームシーンインスタンス
 	player_ = new Player;
-	player_->Initialize(model);
+	player_->Initialize(model,cylinder);
 
 
 	//敵初期化

@@ -4,12 +4,24 @@
 #include"MathFunc.h"
 #define PI 3.141592653589
 
-void Player::Initialize(Model* model)
+void(Player::* Player::moveFuncTable[])() = {
+	&Player::Turn,
+	&Player::Straight,
+	&Player::ATK1
+};
+
+enum Class {
+	turn,//0
+	straight,//1
+	atk1//2
+};
+
+void Player::Initialize(Model* model, Model* cylinder)
 {
 	// NULLポインタチェック
 	assert(model);
 	model_ = model;
-	
+	cylinder_ = cylinder;
 
 	//シングルトン
 	input_ = Input::GetInstance();
@@ -21,9 +33,11 @@ void Player::Initialize(Model* model)
 	worldTransform_.scale = { 1,1,1 };
 	worldTransform_.rotation = { 0,0.5 * PI,0 };
 	pVelocity_ = { 0,0,0.4f };	//プレイヤーの移動量
+	movePhase = 1;//行動フェーズ初期化
+	turnFlameCount = 0;	//回転何フレーム目か
 
 	nowLineWorldTransform_.Initialize();	//自機の位置
-	nowLineWorldTransform_.SetModel(model_);
+	nowLineWorldTransform_.SetModel(cylinder_);	
 
 	//自機旋回フレームカウント
 	maxFlameCount_ = 70;
@@ -31,13 +45,12 @@ void Player::Initialize(Model* model)
 
 	for (int i = 0; i < _countof(line_); i++) {
 		line_[i].worldTransform.Initialize();
-		line_[i].worldTransform.SetModel(model_);
+		line_[i].worldTransform.SetModel(cylinder_);
 		line_[i].sLineVec2 = {};
 		line_[i].eLineVec2 = {};
 		line_[i].isDraw = false;
 		line_[i].worldTransform.position.x += i * 2;
 		line_[i].worldTransform.Update();
-
 	}
 
 	nextLine_ = 0;
@@ -60,22 +73,20 @@ void Player::Update()
 	}
 #pragma endregion
 
+	
+
 #pragma region 自機とライン保存
 	nowEndPos = worldTransform_.position;//ライン用の終点(毎フレーム更新)
 
 	//lineのトランスフォーム計算
-	nowLineWorldTransform_.position =	//始点終点の中心が座標
-	{ (nowStartPos.x + nowEndPos.x) / 2,
-		(nowStartPos.y + nowEndPos.y) / 2,
-		(nowStartPos.z + nowEndPos.z) / 2
-	};	//kmtEngineのオペレータがlib化されていていじれない
+	nowLineWorldTransform_.position = nowStartPos;//始点終点の中心が座標
 
 	float len = sqrtf(pow(nowEndPos.x - nowStartPos.x, 2) +
 		pow(nowEndPos.y - nowStartPos.y, 2) +
 		pow(nowEndPos.z - nowStartPos.z, 2));
 
 	nowLineWorldTransform_.scale = { 0.3,0.3,
-		len / 2
+		len /2
 	};
 
 	nowLineWorldTransform_.rotation = worldTransform_.rotation;
@@ -86,50 +97,18 @@ void Player::Update()
 	worldTransform_.position += vel;
 
 	nowFlameCount_++;
+
+	
+
 	if (nowFlameCount_ > maxFlameCount_) {	//時が来たら90度回転
 
-
-
 		nowFlameCount_ = 0;
-		worldTransform_.rotation.x += 0.5 * PI;
+		isTurn = true;
+		movePhase = turn;
 
-		int lineCount = 0;
-		for (int i = 0; i < _countof(line_); i++) {	// ライン保存
-			lineCount++;
-			if (line_[i].isDraw == false) {
-				line_[i].isDraw = true;
-				line_[i].worldTransform.position = nowLineWorldTransform_.position;
-				line_[i].worldTransform.rotation = nowLineWorldTransform_.rotation;
-				line_[i].worldTransform.scale = nowLineWorldTransform_.scale;
-
-				line_[i].sLineVec2 = { nowStartPos.x, nowStartPos.x };
-				line_[i].eLineVec2 = { nowEndPos.x, nowEndPos.x };
-
-				break;
-			}
-		}
-
-
-#pragma region ラインと自機衝突
-		if (lineCount >= 4) {
-			for (int i = 0; i < _countof(line_); i++) {
-				if (line_[i].isDraw == true) {
-					if (LineColide(Vector2(nowStartPos.x, nowStartPos.y),
-						Vector2(nowEndPos.x, nowEndPos.y),
-						Vector2(line_[i].sLineVec2.x, line_[i].sLineVec2.y),
-						Vector2(line_[i].eLineVec2.x, line_[i].eLineVec2.y))
-						== true) {
-						isAtk = true;
-					}
-				}
-
-
-			}
-		}
-#pragma endregion ラインと自機衝突
-		nowStartPos = nowEndPos;	// 終点が視点になる
-
+	
 	}
+	(this->*moveFuncTable[movePhase])();	//行動の関数テーブル
 #pragma endregion 自機とライン保存
 
 
@@ -211,4 +190,66 @@ bool Player::LineColide(Vector2 line_abStart, Vector2 line_abEnd, Vector2 line_c
 
 	}
 	return isColide;
+}
+
+void Player::Turn()
+{
+	if (isTurn == true) {
+		if (turnFlameCount == 0) {
+			lineCount = 0;
+			for (int i = 0; i < _countof(line_); i++) {	// ライン保存
+				lineCount++;
+				if (line_[i].isDraw == false) {
+					line_[i].isDraw = true;
+					line_[i].worldTransform.position = worldTransform_.position;
+					line_[i].worldTransform.rotation = nowLineWorldTransform_.rotation;
+					line_[i].worldTransform.scale = nowLineWorldTransform_.scale;
+
+					line_[i].sLineVec2 = { nowStartPos.x, nowStartPos.x };
+					line_[i].eLineVec2 = { nowEndPos.x, nowEndPos.x };
+
+					break;
+				}
+			}
+		}
+		worldTransform_.rotation.x += 0.05f * PI;
+		turnFlameCount++;
+		if (turnFlameCount >= 10) {
+			isTurn = false;
+			turnFlameCount = 0;
+		}
+	}
+	else {
+		
+
+
+#pragma region ラインと自機衝突
+		if (lineCount >= 4) {
+			for (int i = 0; i < _countof(line_); i++) {
+				if (line_[i].isDraw == true) {
+					if (LineColide(Vector2(nowStartPos.x, nowStartPos.y),
+						Vector2(nowEndPos.x, nowEndPos.y),
+						Vector2(line_[i].sLineVec2.x, line_[i].sLineVec2.y),
+						Vector2(line_[i].eLineVec2.x, line_[i].eLineVec2.y))
+						== true) {
+						isAtk = true;
+					}
+				}
+
+
+			}
+		}
+#pragma endregion ラインと自機衝突
+		nowStartPos = nowEndPos;	// 終点が視点になる
+		movePhase = straight;
+	}
+
+}
+
+void Player::Straight()
+{
+}
+
+void Player::ATK1()
+{
 }
