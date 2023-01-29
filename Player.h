@@ -19,7 +19,7 @@ typedef struct Line {
 class Player
 {
 public:
-	void Initialize(Model* model);
+	void Initialize(Model* model,Model* followModel);
 	void Update();
 	void Draw();
 
@@ -38,9 +38,11 @@ public://計算
 private:
 	//ワールド変換データ
 	Object3d worldTransform_;
+	Object3d followerWT_[2];	//周りにくっついてるやつのトランスフォーム
 
 	//モデル
 	Model* model_ = nullptr;
+	Model* followModel_ = nullptr;
 
 	//その他
 	uint32_t textureHandle_ = 0u;
@@ -56,6 +58,7 @@ private:
 	Vector3 nowStartPos = {};	//現在のライン保存用
 	Vector3 nowEndPos{};	//
 	Object3d nowLineWorldTransform_;
+	
 
 	Vector3 pVelocity_ = {};
 
@@ -68,6 +71,9 @@ private:
 
 	//攻撃
 	bool isAtk = false;
+
+	//フォロワー関連
+	float followerPrimeAngle_;
 
 
 };

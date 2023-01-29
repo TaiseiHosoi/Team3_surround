@@ -42,6 +42,7 @@ void GameScene::Initialize(DirectXCommon* dxcomon)
 
 	//OBJからモデルデータを読み込む
 	model = Model::LoadFormOBJ("cube");
+	circle_ = Model::LoadFormOBJ("ico");
 
 	object3d = Object3d::Create();
 	object3d->SetModel(model);
@@ -49,7 +50,7 @@ void GameScene::Initialize(DirectXCommon* dxcomon)
 	
 
 	audio->LoadWave("se_amd06.wav");
-	audio->PlayWave("se_amd06.wav");
+	//audio->PlayWave("se_amd06.wav");
 
 	//シングルトン
 	input_ = Input::GetInstance();
@@ -59,7 +60,7 @@ void GameScene::Initialize(DirectXCommon* dxcomon)
 
 	//ゲームシーンインスタンス
 	player_ = new Player;
-	player_->Initialize(model);
+	player_->Initialize(model,circle_);
 
 
 	//敵初期化
