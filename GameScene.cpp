@@ -3,6 +3,7 @@
 #include<fstream>
 #include<stdlib.h>
 
+using namespace Microsoft::WRL;
 
 GameScene::GameScene()
 {
@@ -25,11 +26,11 @@ void GameScene::Initialize(DirectXCommon* dxcomon)
 	spritecommon->LoadTexture(1, "mario.png");
 	spritecommon->LoadTexture(2, "reimu.png");
 
-	sprite = new Sprite();
+	sprite = std::make_unique <Sprite>();
 	sprite->Initialize(spritecommon, 0);
-	sprite2 = new Sprite();
+	sprite2 = std::make_unique <Sprite>();
 	sprite2->Initialize(spritecommon, 1);
-	sprite3 = new Sprite();
+	sprite3 = std::make_unique <Sprite>();
 	sprite3->Initialize(spritecommon, 2);
 
 	sprite->SetSize({ 200,200 });
@@ -41,11 +42,11 @@ void GameScene::Initialize(DirectXCommon* dxcomon)
 	audio->Initialize();
 
 	//OBJからモデルデータを読み込む
-	model = Model::LoadFormOBJ("cube");
-	circle_ = Model::LoadFormOBJ("ico");
+	model.reset(Model::LoadFormOBJ("cube"));
+	circle_.reset(Model::LoadFormOBJ("ico"));
 
 	object3d = Object3d::Create();
-	object3d->SetModel(model);
+	object3d->SetModel(model.get());
 
 	
 
@@ -56,15 +57,19 @@ void GameScene::Initialize(DirectXCommon* dxcomon)
 	input_ = Input::GetInstance();
 
 	//リソース
-	whiteCube = Model::LoadFormOBJ("cube");
+	whiteCube.reset(Model::LoadFormOBJ("cube"));
 
 	//ゲームシーンインスタンス
-	player_ = new Player;
-	player_->Initialize(model,circle_);
+	player_ = make_unique<Player>();
+	player_->Initialize(model.get(),circle_.get());
 
 
 	//敵初期化
 	EnemyReset();
+
+	//カウント初期化
+	gameTimer_ = 0;
+	gameLevel_ = 1;
 }
 
 void GameScene::Update()
@@ -73,7 +78,7 @@ void GameScene::Update()
 
 
 	gameTimer_++;
-	if (gameTimer_ > 200) {
+	if (gameTimer_ > 1000) {
 		if (gameLevel_ < levelMax_) {
 			gameTimer_ = 0;
 			gameLevel_++;
@@ -133,17 +138,17 @@ void GameScene::GenerEnemy(Vector3 EnemyPos, int ID, int lane)
 	}
 
 	if (lane == 0) {
-		newEnemy->Initialize(model, EnemyPos, kBulSpeed);
+		newEnemy->Initialize(model.get(), EnemyPos, kBulSpeed);
 	}
 	else if (lane == 1) {
-		newEnemy->Initialize(model, EnemyPos, kBulSpeed);
+		newEnemy->Initialize(model.get(), EnemyPos, kBulSpeed);
 	}
 	else if (lane == 2) {
-		newEnemy->Initialize(model, EnemyPos, kBulSpeed);
+		newEnemy->Initialize(model.get(), EnemyPos, kBulSpeed);
 	}
 
 	newEnemy->SetID(ID);
-	newEnemy->SetPlayer(player_);
+	newEnemy->SetPlayer(player_.get());
 	//newEnemy->SetFieldLane(lane);
 
 	//リストに登録する
@@ -256,13 +261,13 @@ void GameScene::UpdateEnemyPopCommands()
 
 			//待機開始
 			isStand_ = true;
-			int maxTimeDiv = 10;
+			int maxTimeDiv = 2;
 			if (gameLevel_ <= 0) {
-				standTime_ = waitTime * (maxTimeDiv - gameLevel_) / maxTimeDiv;
+				standTime_ = waitTime * (levelMax_ - gameLevel_) / maxTimeDiv;
 			}
 			else {
 
-				standTime_ = waitTime * (maxTimeDiv - gameLevel_) / maxTimeDiv;
+				standTime_ = waitTime * (levelMax_ - gameLevel_) / maxTimeDiv;
 			}
 
 			//抜ける

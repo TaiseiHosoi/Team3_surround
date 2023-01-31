@@ -30,7 +30,7 @@ template <class T> using ComPtr = Microsoft::WRL::ComPtr<T>;
 
 
 //Windowsアプリでのエントリーポイント（main関数）
-int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
+int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int)
 //コンソールへの文字出力
 {
 
@@ -103,7 +103,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	////3Dモデル開放
 	//delete model;
 	//入力開放
-	delete input_;
+	
 
 	winApp_->Finalize();
 	//WindowsAPI解放

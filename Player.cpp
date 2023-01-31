@@ -2,6 +2,7 @@
 #include <cmath>
 #include "math.h"
 #include"MathFunc.h"
+#include<vector>
 #define PI 3.141592653589
 
 void Player::Initialize(Model* model, Model* followModel)
@@ -56,6 +57,11 @@ void Player::Initialize(Model* model, Model* followModel)
 		followerWT_[i].Update();
 	}
 	followerPrimeAngle_ = 0.0f;
+
+	//回転したときの角位置保存
+	cornerPos_.resize(cornerPosCount_);
+	maxPos = {};	//0
+	minPos = {};
 
 }
 
@@ -143,6 +149,10 @@ void Player::Update()
 #pragma endregion ラインと自機衝突
 		nowStartPos = nowEndPos;	// 終点が視点になる
 
+		//配列を増やす
+		cornerPos_.push_back(worldTransform_);
+		cornerPosCount_ = cornerPos_.size();
+
 	}
 #pragma endregion 自機とライン保存
 
@@ -154,6 +164,24 @@ void Player::Update()
 		for (int i = 0; i < _countof(line_); i++) {
 			line_[i].isDraw = false;
 		}
+
+		for (int i = 0; i < std::end(cornerPos_) - std::begin(cornerPos_); ++i) {
+			if (cornerPos_[i].position.x > maxPos.x) {
+				maxPos.x = cornerPos_[i].position.x;
+			}
+			if (cornerPos_[i].position.x < minPos.x) {
+				minPos.x = cornerPos_[i].position.x;
+			}
+
+			if (cornerPos_[i].position.y> maxPos.y) {
+				maxPos.y = cornerPos_[i].position.y;
+			}
+			if (cornerPos_[i].position.y < minPos.y) {
+				minPos.y = cornerPos_[i].position.y;
+			}
+		}
+
+		cornerPos_.clear();
 	}
 #pragma endregion 攻撃
 
@@ -168,8 +196,6 @@ void Player::Update()
 	followerWT_[0].position = { sinf(followerPrimeAngle_ * PI) * followerLen,cosf(followerPrimeAngle_ * PI) * followerLen,-1 };
 	followerWT_[1].position = { sinf(followerPrimeAngle_ * PI) * -followerLen,cosf(followerPrimeAngle_ * PI) * -followerLen,-1 };
 	
-
-
 #pragma endregion フォロワー
 
 #pragma region ワールドトランスフォーム更新

@@ -17,6 +17,7 @@
 
 class GameScene {
 public:
+	
 	/// <summary>
 	/// コンストクラタ
 	/// </summary>
@@ -66,7 +67,7 @@ public:
 	void CheckAllCollisions();
 
 	int gameLevel_ = 0;
-	const int levelMax_ = 8;
+	const int levelMax_ = 10;
 
 	//シーン切り替え
 	enum class SceneNo {
@@ -81,19 +82,19 @@ private:
 	
 	Audio* audio = nullptr;
 	SpriteCommon* spritecommon = nullptr;
-	Sprite* sprite = nullptr;
-	Sprite* sprite2 = nullptr;
-	Sprite* sprite3 = nullptr;
+	std::unique_ptr<Sprite> sprite;
+	std::unique_ptr<Sprite> sprite2;
+	std::unique_ptr<Sprite> sprite3;
 	Object3d* object3d = nullptr;
-	Model* model = nullptr;
+	std::unique_ptr<Model> model;
 
 	Input* input_ = nullptr;
 
 	//リソース
-	Model* whiteCube = nullptr;
+	std::unique_ptr<Model> whiteCube;
 
 	//シーン
-	Player* player_ = nullptr;
+	std::unique_ptr <Player> player_;
 
 	//待機中フラグ
 	bool isStand_ = false;
@@ -102,9 +103,9 @@ private:
 	int gameTimer_ = 0;
 
 	//必殺技モデル用<-必殺技全般はゲームシーン直下です。ごめんなさい。
-	Object3d* deathblowTransform_ = nullptr;
+	std::unique_ptr <Object3d> deathblowTransform_ = nullptr;
 	bool isDeathblow_ = false;
-	Model* circle_ = nullptr;
+	std::unique_ptr <Model> circle_;
 	float deathblowRadius = 0.0f;
 
 	//csv

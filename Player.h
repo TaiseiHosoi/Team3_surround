@@ -58,6 +58,11 @@ private:
 	Vector3 nowStartPos = {};	//åªç›ÇÃÉâÉCÉìï€ë∂óp
 	Vector3 nowEndPos{};	//
 	Object3d nowLineWorldTransform_;
+	size_t cornerPosCount_ = 0;
+	std::vector<Object3d> cornerPos_;
+	Vector2 maxPos;
+	Vector2 minPos;
+	
 	
 
 	Vector3 pVelocity_ = {};
