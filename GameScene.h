@@ -92,6 +92,7 @@ private:
 
 	//リソース
 	std::unique_ptr<Model> whiteCube;
+	std::unique_ptr<Model> playerModel;
 
 	//シーン
 	std::unique_ptr <Player> player_;

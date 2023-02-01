@@ -5,7 +5,7 @@
 #include<vector>
 #define PI 3.141592653589
 
-void Player::Initialize(Model* model, Model* followModel)
+void Player::Initialize(Model* model, Model* followModel, Model* playerModel)
 {
 	// NULLポインタチェック
 	assert(model);
@@ -13,6 +13,9 @@ void Player::Initialize(Model* model, Model* followModel)
 
 	model_ = model;
 	followModel_ = followModel;
+	playerModel_ = playerModel;
+	
+	
 	
 
 	//シングルトン
@@ -20,7 +23,7 @@ void Player::Initialize(Model* model, Model* followModel)
 
 	//初期座標をセット
 	worldTransform_.Initialize();
-	worldTransform_.SetModel(model_);
+	worldTransform_.SetModel(playerModel_);
 	worldTransform_.position = { -5,0,0 };
 	worldTransform_.scale = { 1,1,1 };
 	worldTransform_.rotation = { 0,0.5 * PI,0 };
@@ -40,6 +43,7 @@ void Player::Initialize(Model* model, Model* followModel)
 		line_[i].sLineVec2 = {};
 		line_[i].eLineVec2 = {};
 		line_[i].isDraw = false;
+		line_[i].worldTransform.scale = { 0.2,0.2,1.0f };
 		line_[i].worldTransform.position.x += i * 2;
 		line_[i].worldTransform.Update();
 
@@ -58,10 +62,41 @@ void Player::Initialize(Model* model, Model* followModel)
 	}
 	followerPrimeAngle_ = 0.0f;
 
+	//疑似壁
+	for (int i = 0; i < _countof(perthLine); i++) {
+		perthLine[i].Initialize();
+		perthLine[i].SetModel(model_);
+		perthLine[i].scale = { 0.2,0.2,300 };
+		perthLine[i].rotation = { 0,0,0 };
+
+		if (i == 0) {
+			perthLine[0].position = { -15,-10,50 };
+		}
+		else if (i == 1) {
+			perthLine[1].position = { 15,-10,50 };
+		}
+		else if (i == 2) {
+			perthLine[2].position = { 15,10, 50 };
+		}
+		else if (i == 3) {
+			perthLine[3].position = { -15,10,50 };
+		}
+
+		perthLine[i].Update();
+	}
+
 	//回転したときの角位置保存
 	cornerPos_.resize(cornerPosCount_);
 	maxPos = {};	//0
 	minPos = {};
+
+	//攻撃
+	atkTransform_.Initialize();
+	atkTransform_.SetModel(model_);
+	isAtk = false;
+	isAtkDraw = false;
+
+	atkColide_.clear();
 
 }
 
@@ -161,6 +196,7 @@ void Player::Update()
 #pragma region 攻撃
 	if (isAtk == true) {
 		isAtk = false;
+		isAtkDraw = true;
 		for (int i = 0; i < _countof(line_); i++) {
 			line_[i].isDraw = false;
 		}
@@ -182,7 +218,43 @@ void Player::Update()
 		}
 
 		cornerPos_.clear();
+		atkTransform_.position = { minPos.x + (maxPos.x - minPos.x) / 2.0f,minPos.y + (maxPos.y - minPos.y) / 2.0f,10.0f };
+		atkTransform_.scale = { (maxPos.x - minPos.x) / 2.0f,(maxPos.y - minPos.y) / 2.0f,20.0f };
+
+		saveMinColide = minPos;
+		saveMaxColide = maxPos;
+
+		minPos = { worldTransform_.position.x,worldTransform_.position.y };
+		maxPos = { worldTransform_.position.x,worldTransform_.position.y };
+
+		atkColide nowAtkColide = { 120,true,atkTransform_ };
+
+		atkColide_.push_back(nowAtkColide);
+
+		for (int i = 0; i < std::end(atkColide_) - std::begin(atkColide_); ++i) {
+			atkColide_[i].atkTransform.SetModel(model_);
+		}
+		
 	}
+
+	for (int i = 0; i < std::end(atkColide_) - std::begin(atkColide_); ++i) {
+		if (atkColide_[i].isColide == true) {
+			atkColide_[i].aliveCount--;
+			if (atkColide_[i].aliveCount <= 0) {
+				atkColide_[i].isColide = false;
+			}
+		}
+
+	}
+
+	if (isAtkDraw == true) {
+		atkTransform_.position.z += 3.0f;	//velocity
+		if (atkTransform_.position.z > 120) {
+
+		}
+	}
+
+
 #pragma endregion 攻撃
 
 #pragma region フォロワー
@@ -209,6 +281,8 @@ void Player::Update()
 		followerWT_[i].Update();
 	}
 
+	atkTransform_.Update();
+
 #pragma endregion ワールドトランスフォーム更新
 
 
@@ -217,6 +291,10 @@ void Player::Update()
 void Player::Draw()
 {
 
+	//パース
+	for (int i = 0; i < _countof(perthLine); i++) {
+		perthLine[i].Draw();
+	}
 
 	worldTransform_.Draw();
 	nowLineWorldTransform_.Draw();
@@ -231,12 +309,49 @@ void Player::Draw()
 		followerWT_[i].Draw();
 	}
 
+	//atk
+	if (isAtkDraw == true) {
+		atkTransform_.Draw();
+	}
+
+	for (int i = 0; i < std::end(atkColide_) - std::begin(atkColide_); ++i) {
+		if (atkColide_[i].isColide == true) {
+			atkColide_[i].atkTransform.Draw();
+		}
+	}
+
 
 }
 
 Vector3 Player::GetWorldPosition()
 {
 	return Vector3();
+}
+
+Vector2 Player::GetAtkMinColidion()
+{
+	return saveMinColide;
+}
+
+Vector2 Player::GetAtkMaxColidion()
+{
+	return saveMaxColide;
+}
+
+std::vector<atkColide> Player::GetAtkColide()
+{
+	return atkColide_;
+}
+
+
+
+
+
+
+
+bool Player::GetIsAtkDraw()
+{
+	return isAtkDraw;
 }
 
 void Player::OnCollision(bool isBreak)

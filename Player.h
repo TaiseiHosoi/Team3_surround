@@ -16,10 +16,17 @@ typedef struct Line {
 
 };
 
+typedef struct atkColide {
+	int aliveCount;
+	bool isColide;
+	Object3d atkTransform;
+	
+};
+
 class Player
 {
 public:
-	void Initialize(Model* model,Model* followModel);
+	void Initialize(Model* model,Model* followModel,Model* playerModel);
 	void Update();
 	void Draw();
 
@@ -27,6 +34,12 @@ public:
 
 	////ワールド座標を取得
 	Vector3 GetWorldPosition();
+	Vector2 GetAtkMinColidion();
+	Vector2 GetAtkMaxColidion();
+	std::vector<atkColide> GetAtkColide();	//可変長配列
+
+
+	bool GetIsAtkDraw();
 
 	//衝突を検出したら呼び出されるコールバック関数
 	void OnCollision(bool isBreak);
@@ -43,6 +56,7 @@ private:
 	//モデル
 	Model* model_ = nullptr;
 	Model* followModel_ = nullptr;
+	Model* playerModel_ = nullptr;
 
 	//その他
 	uint32_t textureHandle_ = 0u;
@@ -62,8 +76,6 @@ private:
 	std::vector<Object3d> cornerPos_;
 	Vector2 maxPos;
 	Vector2 minPos;
-	
-	
 
 	Vector3 pVelocity_ = {};
 
@@ -75,10 +87,22 @@ private:
 	int nowFlameCount_;
 
 	//攻撃
+	bool isAtkDraw = false;
 	bool isAtk = false;
+	Object3d atkTransform_;
+	Vector2 saveMinColide;
+	Vector2 saveMaxColide;
+
+	
+
+	std::vector<atkColide> atkColide_;
 
 	//フォロワー関連
 	float followerPrimeAngle_;
 
+	//疑似壁(パースライン)
+	Object3d perthLine[4] = {};
 
+
+	
 };

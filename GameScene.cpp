@@ -22,7 +22,7 @@ void GameScene::Initialize(DirectXCommon* dxcomon)
 	//スプライト共通部分の初期化
 	spritecommon = new SpriteCommon;
 	spritecommon->Initialize(dxCommon_);
-	spritecommon->LoadTexture(0, "meemu.jpg");
+	spritecommon->LoadTexture(0, "haikei.png");
 	spritecommon->LoadTexture(1, "mario.png");
 	spritecommon->LoadTexture(2, "reimu.png");
 
@@ -33,7 +33,7 @@ void GameScene::Initialize(DirectXCommon* dxcomon)
 	sprite3 = std::make_unique <Sprite>();
 	sprite3->Initialize(spritecommon, 2);
 
-	sprite->SetSize({ 200,200 });
+	sprite->SetSize({ 1280,720 });
 	sprite2->SetSize({ 200,200 });
 	sprite3->SetSize({ 200,200 });
 	sprite2->SetPozition({ 100,100 });
@@ -58,10 +58,11 @@ void GameScene::Initialize(DirectXCommon* dxcomon)
 
 	//リソース
 	whiteCube.reset(Model::LoadFormOBJ("cube"));
+	playerModel.reset(Model::LoadFormOBJ("iceTier"));
 
 	//ゲームシーンインスタンス
 	player_ = make_unique<Player>();
-	player_->Initialize(model.get(),circle_.get());
+	player_->Initialize(model.get(), circle_.get(), playerModel.get());
 
 
 	//敵初期化
@@ -109,15 +110,15 @@ void GameScene::Update()
 void GameScene::Draw()
 {
 	spritecommon->SpritePreDraw();
-	sprite->Draw();
-	sprite2->Draw();
-	sprite3->Draw();
+	//sprite->Draw();
+	//sprite2->Draw();
+	//sprite3->Draw();
 
 	spritecommon->SpritePostDraw();
 
 	Object3d::PreDraw(dxCommon_->GetCommandList());
 
-	object3d->Draw();
+	//object3d->Draw();
 	player_->Draw();
 	for (std::unique_ptr<Enemy>& enemy_ : enemys_) {
 		enemy_->Draw();
@@ -292,7 +293,9 @@ void GameScene::EnemyReset()
 void GameScene::CheckAllCollisions() {
 
 	//判定対象AとBの座標
-	Vector3 posA, posB;
+	Vector3 posA; 
+	std::vector<atkColide> atkColideB_;
+	atkColideB_ = player_.get()->GetAtkColide();
 
 
 
@@ -300,36 +303,52 @@ void GameScene::CheckAllCollisions() {
 	//敵キャラの座標
 	for (std::unique_ptr<Enemy>& enemy_ : enemys_) {
 		posA = enemy_->GetWorldPosition();
+		
+		for (int i = 0; i < std::end(atkColideB_) - std::begin(atkColideB_); ++i) {
+			if (atkColideB_[i].isColide == true) {
+				if (atkColideB_[i].atkTransform.position.x + atkColideB_[i].atkTransform.scale.x / 2 >
+					posA.x &&
+					atkColideB_[i].atkTransform.position.x - atkColideB_[i].atkTransform.scale.x / 2 <
+					posA.x) {
+					if (atkColideB_[i].atkTransform.position.y + atkColideB_[i].atkTransform.scale.y / 2 >
+						posA.y &&
+						atkColideB_[i].atkTransform.position.y - atkColideB_[i].atkTransform.scale.y / 2 <
+						posA.y) {
+						enemy_->OnCollision(false);
+					}
 
-
-		//自弾の座標
-		posB = { 0,0,-20 };
-
-		float x = posB.x - posA.x;
-		float y = posB.y - posA.y;
-		float z = posB.z - posA.z;
-
-		float cd = sqrt(x * x + y * y + z * z);
-
-		if (cd <= 4.0f) {
-			//敵キャラの衝突時コールバックを呼び出す
-			enemy_->OnCollision(true);
-			//GenerEffect(enemy_->GetWorldPosition(), enemy_->GetFieldLane());
-
-			//衝突時コールバックを呼び出す
-			//goal_->OnCollision();
-			hit_++;
+				}
+			}
 		}
+		
+		////自弾の座標
+		//posB = { 0,0,-20 };
+
+		//float x = posB.x - posA.x;
+		//float y = posB.y - posA.y;
+		//float z = posB.z - posA.z;
+
+		//float cd = sqrt(x * x + y * y + z * z);
+
+		//if (cd <= 4.0f) {
+		//	//敵キャラの衝突時コールバックを呼び出す
+		//	enemy_->OnCollision(true);
+		//	//GenerEffect(enemy_->GetWorldPosition(), enemy_->GetFieldLane());
+
+		//	//衝突時コールバックを呼び出す
+		//	//goal_->OnCollision();
+		//	hit_++;
+		//}
 
 
-		if (cd <= deathblowRadius) {
-			//敵キャラの衝突時コールバックを呼び出す
-			enemy_->OnCollision(true);
-			//GenerEffect(enemy_->GetWorldPosition(), enemy_->GetFieldLane());
-			hit_++;
-			//衝突時コールバックを呼び出す
-			//goal_->OnCollision();
-		}
+		//if (cd <= deathblowRadius) {
+		//	//敵キャラの衝突時コールバックを呼び出す
+		//	enemy_->OnCollision(true);
+		//	//GenerEffect(enemy_->GetWorldPosition(), enemy_->GetFieldLane());
+		//	hit_++;
+		//	//衝突時コールバックを呼び出す
+		//	//goal_->OnCollision();
+		//}
 
 		if (posA.z < -50/*画面外*/) {
 			enemy_->OnCollision(false);

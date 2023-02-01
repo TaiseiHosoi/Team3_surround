@@ -26,7 +26,7 @@ ComPtr<ID3D12Resource> Object3d::indexBuff;
 XMMATRIX Object3d::matView{};
 XMMATRIX Object3d::matProjection{};
 
-XMFLOAT3 Object3d::eye = { 0, 7.0f, -35.0f };
+XMFLOAT3 Object3d::eye = { -5.0f, 0.0f, -55.0f };
 XMFLOAT3 Object3d::up = { 0, 1, 0 };
 XMFLOAT3 Object3d::target = { 0, 0, -22.0f };
 D3D12_VERTEX_BUFFER_VIEW Object3d::vbView{};
@@ -144,7 +144,7 @@ void Object3d::InitializeCamera(int window_width, int window_height)
 	matProjection = XMMatrixPerspectiveFovLH(
 		XMConvertToRadians(60.0f),
 		(float)window_width / window_height,
-		0.1f, 1000.0f
+		0.1f, 2000.0f
 	);
 }
 
