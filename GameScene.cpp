@@ -68,9 +68,11 @@ void GameScene::Initialize(DirectXCommon* dxcomon)
 
 	skyBoxModel = Model::LoadFormOBJ("sky",false);
 
+	railModel = Model::LoadFormOBJ("rail",false);
+
 	skyBox = std::make_unique<SkyBox>();
 
-	skyBox->Initialize(skyBoxModel, model);
+	skyBox->Initialize(skyBoxModel, railModel);
 }
 
 void GameScene::Update()
@@ -119,11 +121,11 @@ void GameScene::Draw()
 
 	Object3d::PreDraw(dxCommon_->GetCommandList());
 
-	object3d->Draw();
+	/*object3d->Draw();
 	player_->Draw();
 	for (std::unique_ptr<Enemy>& enemy_ : enemys_) {
 		enemy_->Draw();
-	}
+	}*/
 	skyBox->Draw();
 
 	Object3d::PostDraw();

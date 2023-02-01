@@ -1,7 +1,11 @@
 #include "skyBox.h"
+#include<random>
+#include<time.h>
 
 void SkyBox::Initialize(Model* boxModel, Model* railModel)
 {
+	std::srand(time(NULL));
+
 	boxModel_ = boxModel;
 	railModel_ = railModel;
 
@@ -27,25 +31,25 @@ void SkyBox::Initialize(Model* boxModel, Model* railModel)
 
 	Object3d::SetEye({ 0.0f,0.0f,-15.0f });
 
-	heightRail[0] = std::make_unique<Object3d>();
+	Rail[0] = std::make_unique<Object3d>();
 
-	heightRail[1] = std::make_unique<Object3d>();
+	Rail[1] = std::make_unique<Object3d>();
 
-	heightRail[0]->Initialize(false);
+	Rail[0]->Initialize(false);
 
-	heightRail[1]->Initialize(false);
+	Rail[1]->Initialize(false);
 
-	heightRail[0]->SetModel(railModel);
+	Rail[0]->SetModel(railModel);
 
-	heightRail[1]->SetModel(railModel);
+	Rail[1]->SetModel(railModel);
 
-	heightRail[0]->SetScale({ 0.1,0.1,200 });
+	Rail[0]->SetScale({ 0.1,0.1,200 });
 
-	heightRail[1]->SetScale({ 0.1,0.1,200 });
+	Rail[1]->SetScale({ 0.1,0.1,200 });
 
-	heightRail[0]->SetPosition({ -10,-10,190 });
+	Rail[0]->SetPosition({ -10,-10,190 });
 
-	heightRail[1]->SetPosition({ 10,-10,190 });
+	Rail[1]->SetPosition({ 10,-10,190 });
 
 	for (int i = 0; i < 20; i++)
 	{
@@ -58,6 +62,24 @@ void SkyBox::Initialize(Model* boxModel, Model* railModel)
 		widthRail[i]->SetScale({ 10,0.1,0.1 });
 
 		widthRail[i]->SetPosition({ 0,-10,static_cast<float>(i * 20) });
+	}
+
+	for (int i = 0; i < 10; i++)
+	{
+		height[i][0] = std::make_unique<Object3d>();
+		height[i][1] = std::make_unique<Object3d>();
+
+		height[i][0]->Initialize(false);
+		height[i][1]->Initialize(false);
+
+		height[i][0]->SetModel(railModel);
+		height[i][1]->SetModel(railModel);
+
+		height[i][0]->SetScale({0.1,10.0f,0.1});
+		height[i][1]->SetScale({0.1,10.0f,0.1});
+
+		height[i][0]->SetPosition({-10,0,static_cast<float>(i * 20)});
+		height[i][1]->SetPosition({ 10,0,static_cast<float>(i * 20)});
 	}
 }
 
@@ -98,17 +120,41 @@ void SkyBox::Update()
 		}
 	}
 
+	for (int i = 0; i < 10; i++)
+	{
+			Vector3 Move = height[i][0]->GetPosition();
+			Vector3 Move2 = height[i][1]->GetPosition();
+
+			Move.z--;
+			Move2.z--;
+
+			height[i][0]->SetPosition(Move);
+			height[i][1]->SetPosition(Move2);
+
+			if (Move.z <= -15)
+			{
+				height[i][0]->SetPosition({-10, 0,200});
+				height[i][1]->SetPosition({ 10, 0,200 });
+			}
+	}
+
 	obj2->Update();
 
 	obj->Update();
 
-	heightRail[0]->Update();
+	Rail[0]->Update();
 
-	heightRail[1]->Update();
+	Rail[1]->Update();
 
 	for (int i = 0; i < 20; i++)
 	{
 		widthRail[i]->Update();
+	}
+
+	for (int i = 0; i < 10; i++)
+	{
+		height[i][0]->Update();
+		height[i][1]->Update();
 	}
 }
 
@@ -118,12 +164,18 @@ void SkyBox::Draw()
 
 	obj2->Draw();
 
-	heightRail[0]->Draw();
+	Rail[0]->Draw();
 
-	heightRail[1]->Draw();
+	Rail[1]->Draw();
 
 	for (int i = 0; i < 20; i++)
 	{
 		widthRail[i]->Draw();
+	}
+
+	for (int i = 0; i < 10; i++)
+	{
+		height[i][0]->Draw();
+		height[i][1]->Draw();
 	}
 }

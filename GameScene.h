@@ -126,6 +126,8 @@ private:
 	//スカイボックス
 	Model* skyBoxModel=nullptr;
 
+	Model* railModel = nullptr;
+
 	std::unique_ptr<SkyBox> skyBox;
 	
 };

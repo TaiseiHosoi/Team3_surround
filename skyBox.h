@@ -12,9 +12,12 @@ private:
 
 	std::unique_ptr<Object3d> obj2;
 
-	std::unique_ptr<Object3d> heightRail[2];
+	std::unique_ptr<Object3d> Rail[2];
 
 	std::unique_ptr<Object3d> widthRail[20];
+
+	std::unique_ptr<Object3d> height[10][2];
+
 
 	Model* boxModel_;
 	Model* railModel_;
