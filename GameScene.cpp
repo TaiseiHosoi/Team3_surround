@@ -42,8 +42,8 @@ void GameScene::Initialize(DirectXCommon* dxcomon)
 	audio->Initialize();
 
 	//OBJからモデルデータを読み込む
-	model.reset(Model::LoadFormOBJ("cube"));
-	circle_.reset(Model::LoadFormOBJ("ico"));
+	model.reset(Model::LoadFormOBJ("cube",true));
+	circle_.reset(Model::LoadFormOBJ("ico", true));
 
 	object3d = Object3d::Create();
 	object3d->SetModel(model.get());
@@ -57,8 +57,8 @@ void GameScene::Initialize(DirectXCommon* dxcomon)
 	input_ = Input::GetInstance();
 
 	//リソース
-	whiteCube.reset(Model::LoadFormOBJ("cube"));
-	playerModel.reset(Model::LoadFormOBJ("iceTier"));
+	whiteCube.reset(Model::LoadFormOBJ("cube", true));
+	playerModel.reset(Model::LoadFormOBJ("iceTier", true));
 
 	//ゲームシーンインスタンス
 	player_ = make_unique<Player>();
@@ -71,6 +71,12 @@ void GameScene::Initialize(DirectXCommon* dxcomon)
 	//カウント初期化
 	gameTimer_ = 0;
 	gameLevel_ = 1;
+
+	skyBoxModel.reset(Model::LoadFormOBJ("sky", true));
+	railModel.reset(Model::LoadFormOBJ("rail",true));
+
+	skyBox = std::make_unique<SkyBox>();
+	skyBox->Initialize(skyBoxModel.get(),railModel.get());
 }
 
 void GameScene::Update()
@@ -123,7 +129,7 @@ void GameScene::Draw()
 	player_->Draw();
 	for (std::unique_ptr<Enemy>& enemy_ : enemys_) {
 		enemy_->Draw();
-	}*/
+	}
 	skyBox->Draw();
 
 	Object3d::PostDraw();

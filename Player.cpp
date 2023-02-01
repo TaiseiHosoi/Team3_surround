@@ -22,7 +22,7 @@ void Player::Initialize(Model* model, Model* followModel, Model* playerModel)
 	input_ = Input::GetInstance();
 
 	//初期座標をセット
-	worldTransform_.Initialize();
+	worldTransform_.Initialize(true);
 	worldTransform_.SetModel(playerModel_);
 	worldTransform_.position = { -5,0,0 };
 	worldTransform_.scale = { 1,1,1 };
@@ -54,7 +54,7 @@ void Player::Initialize(Model* model, Model* followModel, Model* playerModel)
 
 	// フォロワー初期化
 	for (int i = 0; i < _countof(followerWT_); i++) {
-		followerWT_[i].Initialize();
+		followerWT_[i].Initialize(false);
 		followerWT_[i].parent = &worldTransform_;
 		followerWT_[i].scale = { 0.3f,0.3f,0.3f };
 		followerWT_[i].SetModel(followModel_);
@@ -64,7 +64,7 @@ void Player::Initialize(Model* model, Model* followModel, Model* playerModel)
 
 	//疑似壁
 	for (int i = 0; i < _countof(perthLine); i++) {
-		perthLine[i].Initialize();
+		perthLine[i].Initialize(false);
 		perthLine[i].SetModel(model_);
 		perthLine[i].scale = { 0.2,0.2,300 };
 		perthLine[i].rotation = { 0,0,0 };
@@ -91,7 +91,7 @@ void Player::Initialize(Model* model, Model* followModel, Model* playerModel)
 	minPos = {};
 
 	//攻撃
-	atkTransform_.Initialize();
+	atkTransform_.Initialize(false);
 	atkTransform_.SetModel(model_);
 	isAtk = false;
 	isAtkDraw = false;

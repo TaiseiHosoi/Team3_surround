@@ -125,9 +125,9 @@ private:
 	int popLane_ = 0;
 
 	//スカイボックス
-	Model* skyBoxModel=nullptr;
+	std::unique_ptr <Model> skyBoxModel;
 
-	Model* railModel = nullptr;
+	std::unique_ptr <Model> railModel;
 
 	std::unique_ptr<SkyBox> skyBox;
 	
