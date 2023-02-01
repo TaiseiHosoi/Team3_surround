@@ -5,7 +5,6 @@
 #include<vector>
 #define PI 3.141592653589
 
-<<<<<<< HEAD
 void Player::Initialize(Model* model, Model* followModel, Model* playerModel)
 {
 	// NULLポインタチェック
@@ -17,28 +16,14 @@ void Player::Initialize(Model* model, Model* followModel, Model* playerModel)
 	playerModel_ = playerModel;
 	
 	
-=======
-void Player::Initialize(Model* model,Model* playerModel)
-{
-	// NULLポインタチェック
-	assert(model);
-	assert(playerModel);
-	model_ = model;
-	playerModel_ = playerModel;
->>>>>>> rim
 	
 
 	//シングルトン
 	input_ = Input::GetInstance();
 
 	//初期座標をセット
-<<<<<<< HEAD
 	worldTransform_.Initialize();
 	worldTransform_.SetModel(playerModel_);
-=======
-	worldTransform_.Initialize(true);
-	worldTransform_.SetModel(playerModel);
->>>>>>> rim
 	worldTransform_.position = { -5,0,0 };
 	worldTransform_.scale = { 1,1,1 };
 	worldTransform_.rotation = { 0,0.5 * PI,0 };

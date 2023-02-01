@@ -6,11 +6,8 @@ SamplerState smp:register(s0); //0番スロットに設定されたサンプラー
 
 float4 main(VertexShaderOutput input) : SV_TARGET
 {
-<<<<<<< HEAD
-=======
 
 
->>>>>>> rim
 float rim = 1 - (saturate(dot(CameraPosition, input.Normal)) / m_emission);
 
 float4 texcolor = float4(tex.Sample(smp, input.uv));

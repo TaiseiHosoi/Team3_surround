@@ -88,12 +88,7 @@ private:
 	std::unique_ptr<Sprite> sprite2;
 	std::unique_ptr<Sprite> sprite3;
 	Object3d* object3d = nullptr;
-<<<<<<< HEAD
 	std::unique_ptr<Model> model;
-=======
-	Model* model = nullptr;
-	Model* playerModel = nullptr;
->>>>>>> rim
 
 	Input* input_ = nullptr;
 

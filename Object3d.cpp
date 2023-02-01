@@ -26,11 +26,7 @@ ComPtr<ID3D12PipelineState> Object3d::rimPipelinestate;
 XMMATRIX Object3d::matView{};
 XMMATRIX Object3d::matProjection{};
 
-<<<<<<< HEAD
 XMFLOAT3 Object3d::eye = { -5.0f, 0.0f, -55.0f };
-=======
-XMFLOAT3 Object3d::eye = { 0, 15.0f, -35.0f };
->>>>>>> rim
 XMFLOAT3 Object3d::up = { 0, 1, 0 };
 XMFLOAT3 Object3d::target = { 0, 0, 0.0f };
 

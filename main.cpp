@@ -103,11 +103,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int)
 	////3Dモデル開放
 	//delete model;
 	//入力開放
-<<<<<<< HEAD
 	
-=======
-	//delete input_;
->>>>>>> rim
 
 	winApp_->Finalize();
 	//WindowsAPI解放
