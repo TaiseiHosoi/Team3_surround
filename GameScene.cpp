@@ -42,11 +42,19 @@ void GameScene::Initialize(DirectXCommon* dxcomon)
 	audio->Initialize();
 
 	//OBJからモデルデータを読み込む
+<<<<<<< HEAD
 	model.reset(Model::LoadFormOBJ("cube"));
 	circle_.reset(Model::LoadFormOBJ("ico"));
 
 	object3d = Object3d::Create();
 	object3d->SetModel(model.get());
+=======
+	model = Model::LoadFormOBJ("cube",false);
+	playerModel = Model::LoadFormOBJ("playerbullet",true);
+	object3d = new Object3d;
+	object3d->Initialize(false);
+	object3d->SetModel(model);
+>>>>>>> rim
 
 	
 
@@ -57,20 +65,38 @@ void GameScene::Initialize(DirectXCommon* dxcomon)
 	input_ = Input::GetInstance();
 
 	//リソース
+<<<<<<< HEAD
 	whiteCube.reset(Model::LoadFormOBJ("cube"));
 	playerModel.reset(Model::LoadFormOBJ("iceTier"));
 
 	//ゲームシーンインスタンス
 	player_ = make_unique<Player>();
 	player_->Initialize(model.get(), circle_.get(), playerModel.get());
+=======
+	whiteCube = Model::LoadFormOBJ("cube", false);
+
+	//ゲームシーンインスタンス
+	player_ = new Player;
+	player_->Initialize(model,playerModel);
+>>>>>>> rim
 
 
 	//敵初期化
 	EnemyReset();
 
+<<<<<<< HEAD
 	//カウント初期化
 	gameTimer_ = 0;
 	gameLevel_ = 1;
+=======
+	skyBoxModel = Model::LoadFormOBJ("sky",false);
+
+	railModel = Model::LoadFormOBJ("rail",false);
+
+	skyBox = std::make_unique<SkyBox>();
+
+	skyBox->Initialize(skyBoxModel, railModel);
+>>>>>>> rim
 }
 
 void GameScene::Update()
@@ -103,6 +129,7 @@ void GameScene::Update()
 		enemy_->Update();
 	}
 
+	skyBox->Update();
 
 	CheckAllCollisions();
 }
@@ -118,14 +145,18 @@ void GameScene::Draw()
 
 	Object3d::PreDraw(dxCommon_->GetCommandList());
 
+<<<<<<< HEAD
 	//object3d->Draw();
+=======
+	/*object3d->Draw();
+>>>>>>> rim
 	player_->Draw();
 	for (std::unique_ptr<Enemy>& enemy_ : enemys_) {
 		enemy_->Draw();
-	}
+	}*/
+	skyBox->Draw();
 
 	Object3d::PostDraw();
-
 }
 
 void GameScene::GenerEnemy(Vector3 EnemyPos, int ID, int lane)
@@ -317,8 +348,29 @@ void GameScene::CheckAllCollisions() {
 						enemy_->OnCollision(false);
 					}
 
+<<<<<<< HEAD
 				}
 			}
+=======
+
+		//自弾の座標
+		posB = { 0,0,-20 };
+
+		float x = posB.x - posA.x;
+		float y = posB.y - posA.y;
+		float z = posB.z - posA.z;
+
+		float cd = sqrt(x * x + y * y + z * z);
+		
+		if (cd <= 4.0f) {
+			//敵キャラの衝突時コールバックを呼び出す
+			enemy_->OnCollision(true);
+			//GenerEffect(enemy_->GetWorldPosition(), enemy_->GetFieldLane());
+
+			//衝突時コールバックを呼び出す
+			//goal_->OnCollision();
+			hit_++;
+>>>>>>> rim
 		}
 		
 		////自弾の座標

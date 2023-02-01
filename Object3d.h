@@ -58,6 +58,20 @@ public: // サブクラス
 		}
 	};
 
+	struct Rim
+	{
+		XMFLOAT4 color;
+		float pow;
+		float Emission;
+
+		Rim()
+		{
+			pow = 3;
+			color = { 1.0f,1.0f,1.0f,1.0f };
+			Emission = 1.0f;
+		}
+	};
+
 
 private: // 定数
 	static const int division = 50;					// 分割数
@@ -76,7 +90,7 @@ public: // 静的メンバ関数
 	static void StaticInitialize(ID3D12Device* device, int window_width, int window_height);
 
 	/// <summary>
-	/// 描画前処理
+	/// 通常描画前処理
 	/// </summary>
 	/// <param name="cmdList">描画コマンドリスト</param>
 	static void PreDraw(ID3D12GraphicsCommandList* cmdList);
@@ -125,26 +139,21 @@ public: // 静的メンバ関数
 private: // 静的メンバ変数
 	// デバイス
 	static ID3D12Device* device;
-	//// デスクリプタサイズ
-	//static UINT descriptorHandleIncrementSize;
 	// コマンドリスト
 	static ID3D12GraphicsCommandList* cmdList;
+#pragma region 通常モデル（ライト無し）
 	// ルートシグネチャ
 	static ComPtr<ID3D12RootSignature> rootsignature;
 	// パイプラインステートオブジェクト
 	static ComPtr<ID3D12PipelineState> pipelinestate;
-	//// デスクリプタヒープ
-	//static ComPtr<ID3D12DescriptorHeap> descHeap;
-	//// 頂点バッファ
-	static ComPtr<ID3D12Resource> vertBuff;
-	// インデックスバッファ
-	static ComPtr<ID3D12Resource> indexBuff;
-	//// テクスチャバッファ
-	//static ComPtr<ID3D12Resource> texbuff;
-	//// シェーダリソースビューのハンドル(CPU)
-	//static CD3DX12_CPU_DESCRIPTOR_HANDLE cpuDescHandleSRV;
-	//// シェーダリソースビューのハンドル(CPU)
-	//static CD3DX12_GPU_DESCRIPTOR_HANDLE gpuDescHandleSRV;
+
+#pragma endregion
+#pragma region リムライト
+	// ルートシグネチャ
+	static ComPtr<ID3D12RootSignature> rimRootsignature;
+	// パイプラインステートオブジェクト
+	static ComPtr<ID3D12PipelineState> rimPipelinestate;
+#pragma endregion
 	// ビュー行列
 	static XMMATRIX matView;
 	// 射影行列
@@ -155,16 +164,6 @@ private: // 静的メンバ変数
 	static XMFLOAT3 target;
 	// 上方向ベクトル
 	static XMFLOAT3 up;
-	// 頂点バッファビュー
-	static D3D12_VERTEX_BUFFER_VIEW vbView;
-	// インデックスバッファビュー
-	static D3D12_INDEX_BUFFER_VIEW ibView;
-	//// 頂点データ配列
-	///*static VertexPosNormalUv vertices[vertexCount];*/
-	static std::vector<VertexPosNormalUv> vertices;
-	// 頂点インデックス配列
-	/*static unsigned short indices[planeCount * 3];*/
-	static std::vector<unsigned short>indices;
 
 private:// 静的メンバ関数
 	/// <summary>
@@ -191,7 +190,7 @@ private:// 静的メンバ関数
 	static void UpdateViewMatrix();
 
 public: // メンバ関数
-	bool Initialize();
+	bool Initialize(bool Isrim);
 	/// <summary>
 	/// 毎フレーム処理
 	/// </summary>
@@ -215,15 +214,50 @@ public:
 	/// <param name="position">座標</param>
 	void SetPosition(const Vector3& position) { this->position = position; }
 
+	/// <summary>
+	/// 倍率の取得
+	/// </summary>
+	/// <returns>座標</returns>
+	const Vector3& GetScale() const { return scale; }
+
+	/// <summary>
+	/// 倍率の設定
+	/// </summary>
+	/// <param name="position">座標</param>
+	void SetScale(const Vector3& scale) { this->scale = scale; }
+
+	/// <summary>
+	/// 座標の設定
+	/// </summary>
+	/// <param name="position">座標</param>
+	void SetRimColor(const XMFLOAT4& rimColor) { this->rim.color = rimColor; }
+
+	/// <summary>
+	/// 座標の設定
+	/// </summary>
+	/// <param name="position">座標</param>
+	void SetRimPow(const float& rimPow) { this->rim.pow = rimPow; }
+
+	/// <summary>
+	/// 座標の設定
+	/// </summary>
+	/// <param name="position">座標</param>
+	void SetRimEmission(const float& rimEmission) { this->rim.Emission = rimEmission; }
+
 
 	//アクセッサ
 	void SetModel(Model* model) { this->model = model; }
 
-
-
+#pragma region 共通の定数バッファ
 	ComPtr<ID3D12Resource> constBuffB0; // 定数バッファ
-	ComPtr<ID3D12Resource> constBuffB1; // 定数バッファ
+#pragma endregion
+#pragma region リムライトの定数バッファ
+	ComPtr<ID3D12Resource> constBuffCameraPosition; // 定数バッファ
+	ComPtr<ID3D12Resource> constBuffRim; // 定数バッファ
+#pragma endregion
+	
 public: // メンバ変数
+	Rim rim;
 	// 色
 	XMFLOAT4 color = { 1,1,1,1 };
 	// ローカルスケール
@@ -239,4 +273,6 @@ public: // メンバ変数
 
 	//モデル
 	Model* model = nullptr;
+
+	bool isRim=false;
 };

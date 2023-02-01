@@ -9,6 +9,7 @@
 #include <d3d12.h>
 #include <d3dx12.h>
 #include <DirectXTex.h>
+#include<unordered_map>
 
 using namespace std;
 
@@ -56,7 +57,7 @@ public:
 	};
 public:
 	//OBJファイルから3Dモデルを読み込む
-	static Model* LoadFormOBJ(const std::string& modelname);
+	static Model* LoadFormOBJ(const std::string& modelname,bool smoothing);
 	/// <summary>
 	/// マテリアルの読み込み
 	/// </summary>
@@ -82,10 +83,15 @@ public:
 	/// <param name="cmdlist">描画コマンドリスト</param>
 	/// <param name="rootParamIndexMaterial">マテリアル用ルートパラメータ番号</param>
 	void Draw(ID3D12GraphicsCommandList* cmdList, UINT rootParamIndexMaterial);
+	/// <summary>
+	/// リムライト描画
+	/// </summary>
+	/// <param name="cmdlist">描画コマンドリスト</param>
+	void RimDraw(ID3D12GraphicsCommandList* cmdList);
 
 private://非公開のメンバ関数
 	//OBJファイルから3Dモデルを読み込む(非公開)
-	void LoadFromOBJInternal(const std::string& modelname);
+	void LoadFromOBJInternal(const std::string& modelname, bool smoothing);
 	
 
 
@@ -118,4 +124,7 @@ private:
 	ComPtr<ID3D12Resource> texbuff;
 	// 定数バッファ(マテリアル)
 	ComPtr<ID3D12Resource> constBuffB1;
+
+	//頂点法線スムージング用データ
+	std::unordered_map<unsigned short, std::vector<unsigned short>> smoothDate;
 };

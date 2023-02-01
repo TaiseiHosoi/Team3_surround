@@ -5,6 +5,7 @@
 #include<vector>
 #define PI 3.141592653589
 
+<<<<<<< HEAD
 void Player::Initialize(Model* model, Model* followModel, Model* playerModel)
 {
 	// NULLポインタチェック
@@ -16,20 +17,34 @@ void Player::Initialize(Model* model, Model* followModel, Model* playerModel)
 	playerModel_ = playerModel;
 	
 	
+=======
+void Player::Initialize(Model* model,Model* playerModel)
+{
+	// NULLポインタチェック
+	assert(model);
+	assert(playerModel);
+	model_ = model;
+	playerModel_ = playerModel;
+>>>>>>> rim
 	
 
 	//シングルトン
 	input_ = Input::GetInstance();
 
 	//初期座標をセット
+<<<<<<< HEAD
 	worldTransform_.Initialize();
 	worldTransform_.SetModel(playerModel_);
+=======
+	worldTransform_.Initialize(true);
+	worldTransform_.SetModel(playerModel);
+>>>>>>> rim
 	worldTransform_.position = { -5,0,0 };
 	worldTransform_.scale = { 1,1,1 };
 	worldTransform_.rotation = { 0,0.5 * PI,0 };
 	pVelocity_ = { 0,0,0.4f };	//プレイヤーの移動量
 
-	nowLineWorldTransform_.Initialize();	//自機の位置
+	nowLineWorldTransform_.Initialize(false);	//自機の位置
 	nowLineWorldTransform_.SetModel(model_);
 	nowLineWorldTransform_.Update();
 
@@ -38,7 +53,7 @@ void Player::Initialize(Model* model, Model* followModel, Model* playerModel)
 	nowFlameCount_ = 0;
 
 	for (int i = 0; i < _countof(line_); i++) {
-		line_[i].worldTransform.Initialize();
+		line_[i].worldTransform.Initialize(false);
 		line_[i].worldTransform.SetModel(model_);
 		line_[i].sLineVec2 = {};
 		line_[i].eLineVec2 = {};

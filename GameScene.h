@@ -13,6 +13,8 @@
 #include "Player.h"
 #include "Enemy.h"
 
+#include"skyBox.h"
+
 
 
 class GameScene {
@@ -86,7 +88,12 @@ private:
 	std::unique_ptr<Sprite> sprite2;
 	std::unique_ptr<Sprite> sprite3;
 	Object3d* object3d = nullptr;
+<<<<<<< HEAD
 	std::unique_ptr<Model> model;
+=======
+	Model* model = nullptr;
+	Model* playerModel = nullptr;
+>>>>>>> rim
 
 	Input* input_ = nullptr;
 
@@ -121,5 +128,12 @@ private:
 	int hit_ = 0;
 	//レーン
 	int popLane_ = 0;
+
+	//スカイボックス
+	Model* skyBoxModel=nullptr;
+
+	Model* railModel = nullptr;
+
+	std::unique_ptr<SkyBox> skyBox;
 	
 };

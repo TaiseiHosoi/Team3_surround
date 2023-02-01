@@ -26,7 +26,11 @@ typedef struct atkColide {
 class Player
 {
 public:
+<<<<<<< HEAD
 	void Initialize(Model* model,Model* followModel,Model* playerModel);
+=======
+	void Initialize(Model* model,Model* playerModel);
+>>>>>>> rim
 	void Update();
 	void Draw();
 
@@ -55,7 +59,10 @@ private:
 
 	//ƒ‚ƒfƒ‹
 	Model* model_ = nullptr;
+<<<<<<< HEAD
 	Model* followModel_ = nullptr;
+=======
+>>>>>>> rim
 	Model* playerModel_ = nullptr;
 
 	//‚»‚Ì‘¼
