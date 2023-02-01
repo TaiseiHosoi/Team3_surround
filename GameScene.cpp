@@ -65,6 +65,12 @@ void GameScene::Initialize(DirectXCommon* dxcomon)
 
 	//ìGèâä˙âª
 	EnemyReset();
+
+	skyBoxModel = Model::LoadFormOBJ("sky",false);
+
+	skyBox = std::make_unique<SkyBox>();
+
+	skyBox->Initialize(skyBoxModel, model);
 }
 
 void GameScene::Update()
@@ -97,6 +103,7 @@ void GameScene::Update()
 		enemy_->Update();
 	}
 
+	skyBox->Update();
 
 	CheckAllCollisions();
 }
@@ -117,6 +124,7 @@ void GameScene::Draw()
 	for (std::unique_ptr<Enemy>& enemy_ : enemys_) {
 		enemy_->Draw();
 	}
+	skyBox->Draw();
 
 	Object3d::PostDraw();
 }

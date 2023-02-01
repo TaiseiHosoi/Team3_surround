@@ -13,6 +13,8 @@
 #include "Player.h"
 #include "Enemy.h"
 
+#include"skyBox.h"
+
 
 
 class GameScene {
@@ -120,5 +122,10 @@ private:
 	int hit_ = 0;
 	//レーン
 	int popLane_ = 0;
+
+	//スカイボックス
+	Model* skyBoxModel=nullptr;
+
+	std::unique_ptr<SkyBox> skyBox;
 	
 };

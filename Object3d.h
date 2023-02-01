@@ -215,6 +215,18 @@ public:
 	void SetPosition(const Vector3& position) { this->position = position; }
 
 	/// <summary>
+	/// 倍率の取得
+	/// </summary>
+	/// <returns>座標</returns>
+	const Vector3& GetScale() const { return scale; }
+
+	/// <summary>
+	/// 倍率の設定
+	/// </summary>
+	/// <param name="position">座標</param>
+	void SetScale(const Vector3& scale) { this->scale = scale; }
+
+	/// <summary>
 	/// 座標の設定
 	/// </summary>
 	/// <param name="position">座標</param>

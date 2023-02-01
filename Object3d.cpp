@@ -26,9 +26,9 @@ ComPtr<ID3D12PipelineState> Object3d::rimPipelinestate;
 XMMATRIX Object3d::matView{};
 XMMATRIX Object3d::matProjection{};
 
-XMFLOAT3 Object3d::eye = { 0, 7.0f, -35.0f };
+XMFLOAT3 Object3d::eye = { 0, 15.0f, -35.0f };
 XMFLOAT3 Object3d::up = { 0, 1, 0 };
-XMFLOAT3 Object3d::target = { 0, 0, -22.0f };
+XMFLOAT3 Object3d::target = { 0, 0, 0.0f };
 
 void Object3d::StaticInitialize(ID3D12Device* device, int window_width, int window_height)
 {
