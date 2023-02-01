@@ -27,6 +27,9 @@ void GameScene::Initialize(DirectXCommon* dxcomon)
 	spritecommon->LoadTexture(2, "reimu.png");
 	spritecommon->LoadTexture(3, "UI01.png");
 	spritecommon->LoadTexture(4, "speedMemorie.png");
+	spritecommon->LoadTexture(5, "noneKey.png");
+	spritecommon->LoadTexture(6, "rightKey.png");
+	spritecommon->LoadTexture(7, "leftKey.png");
 
 
 	sprite = std::make_unique <Sprite>();
@@ -35,12 +38,29 @@ void GameScene::Initialize(DirectXCommon* dxcomon)
 	sprite2->Initialize(spritecommon, 1);
 	sprite3 = std::make_unique <Sprite>();
 	sprite3->Initialize(spritecommon, 2);
+
+
 	UI01 = std::make_unique <Sprite>();
 	UI01->Initialize(spritecommon, 3);
 	maxSpeedMem = std::make_unique<Sprite>();
 	maxSpeedMem->Initialize(spritecommon, 4);
 	nowSpeedMem = std::make_unique<Sprite>();
 	nowSpeedMem->Initialize(spritecommon, 4);
+
+	noneKeySP = std::make_unique<Sprite>();
+	noneKeySP->Initialize(spritecommon, 5);
+	XMFLOAT2 picSize = { 150,90 };
+	XMFLOAT2 picPos = { 60,550 };
+	noneKeySP->SetSize(picSize);
+	noneKeySP->SetPozition(picPos);
+	rightKeySP = std::make_unique<Sprite>();
+	rightKeySP->Initialize(spritecommon, 6);
+	rightKeySP->SetSize(picSize );
+	rightKeySP->SetPozition(picPos);
+	leftKeySP = std::make_unique<Sprite>();
+	leftKeySP->Initialize(spritecommon, 7);
+	leftKeySP->SetSize( picSize );
+	leftKeySP->SetPozition(picPos);
 
 	sprite->SetSize({ 1280,720 });
 	sprite2->SetSize({ 200,200 });
@@ -169,6 +189,16 @@ void GameScene::Draw()
 	UI01->Draw();
 	maxSpeedMem->Draw();
 	nowSpeedMem->Draw();
+
+	if (input_->PushKey(DIK_RIGHT)) {
+		rightKeySP->Draw();
+	}
+	else if (input_->PushKey(DIK_LEFT)) {
+		leftKeySP->Draw();
+	}
+	else {
+		noneKeySP->Draw();
+	}
 
 	spritecommon->SpritePostDraw();
 }

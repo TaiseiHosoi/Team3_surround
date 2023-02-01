@@ -90,6 +90,9 @@ private:
 	std::unique_ptr<Sprite> UI01;
 	std::unique_ptr<Sprite> maxSpeedMem;
 	std::unique_ptr<Sprite> nowSpeedMem;
+	std::unique_ptr<Sprite> noneKeySP;
+	std::unique_ptr<Sprite> rightKeySP;
+	std::unique_ptr<Sprite> leftKeySP;
 
 	Object3d* object3d = nullptr;
 	std::unique_ptr<Model> model;
