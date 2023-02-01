@@ -25,6 +25,9 @@ void GameScene::Initialize(DirectXCommon* dxcomon)
 	spritecommon->LoadTexture(0, "haikei.png");
 	spritecommon->LoadTexture(1, "mario.png");
 	spritecommon->LoadTexture(2, "reimu.png");
+	spritecommon->LoadTexture(3, "UI01.png");
+	spritecommon->LoadTexture(4, "speedMemorie.png");
+
 
 	sprite = std::make_unique <Sprite>();
 	sprite->Initialize(spritecommon, 0);
@@ -32,18 +35,33 @@ void GameScene::Initialize(DirectXCommon* dxcomon)
 	sprite2->Initialize(spritecommon, 1);
 	sprite3 = std::make_unique <Sprite>();
 	sprite3->Initialize(spritecommon, 2);
+	UI01 = std::make_unique <Sprite>();
+	UI01->Initialize(spritecommon, 3);
+	maxSpeedMem = std::make_unique<Sprite>();
+	maxSpeedMem->Initialize(spritecommon, 4);
+	nowSpeedMem = std::make_unique<Sprite>();
+	nowSpeedMem->Initialize(spritecommon, 4);
 
 	sprite->SetSize({ 1280,720 });
 	sprite2->SetSize({ 200,200 });
 	sprite3->SetSize({ 200,200 });
+	UI01->SetSize({ 1280,720 });
+
 	sprite2->SetPozition({ 100,100 });
 	sprite3->SetPozition({ 100,200 });
+
+	maxSpeedMem->SetAnchorPoint({ 0,0 });
+	maxSpeedMem->SetPozition({ 80,100 });
+	nowSpeedMem->SetAnchorPoint({ 0,0 });
+	nowSpeedMem->SetPozition({80,140});
+	
 	audio = new Audio();
 	audio->Initialize();
 
 	//OBJからモデルデータを読み込む
 	model.reset(Model::LoadFormOBJ("cube",true));
 	circle_.reset(Model::LoadFormOBJ("ico", true));
+	redCube.reset(Model::LoadFormOBJ("redCube", true));
 
 	object3d = Object3d::Create();
 	object3d->SetModel(model.get());
@@ -112,6 +130,14 @@ void GameScene::Update()
 	skyBox->Update();
 
 	CheckAllCollisions();
+
+	//スピードゲージ用
+	
+	
+	maxSpeedMem->SetSize({ (float)player_.get()->GetMaxTimeCount() * 3.0f , 30 });
+	nowSpeedMem->SetSize({ (float)player_.get()->GetNowTimeCount() * 3.0f , 30 });
+	
+
 }
 
 void GameScene::Draw()
@@ -120,6 +146,7 @@ void GameScene::Draw()
 	//sprite->Draw();
 	//sprite2->Draw();
 	//sprite3->Draw();
+	
 
 	spritecommon->SpritePostDraw();
 
@@ -133,6 +160,17 @@ void GameScene::Draw()
 	skyBox->Draw();
 
 	Object3d::PostDraw();
+
+	//後景スプライト
+	spritecommon->SpritePreDraw();
+	//sprite->Draw();
+	//sprite2->Draw();
+	//sprite3->Draw();
+	UI01->Draw();
+	maxSpeedMem->Draw();
+	nowSpeedMem->Draw();
+
+	spritecommon->SpritePostDraw();
 }
 
 void GameScene::GenerEnemy(Vector3 EnemyPos, int ID, int lane)
@@ -146,13 +184,13 @@ void GameScene::GenerEnemy(Vector3 EnemyPos, int ID, int lane)
 	}
 
 	if (lane == 0) {
-		newEnemy->Initialize(model.get(), EnemyPos, kBulSpeed);
+		newEnemy->Initialize(redCube.get(),model.get(), EnemyPos, kBulSpeed);
 	}
 	else if (lane == 1) {
-		newEnemy->Initialize(model.get(), EnemyPos, kBulSpeed);
+		newEnemy->Initialize(redCube.get(),model.get(), EnemyPos, kBulSpeed);
 	}
 	else if (lane == 2) {
-		newEnemy->Initialize(model.get(), EnemyPos, kBulSpeed);
+		newEnemy->Initialize(redCube.get(),model.get(), EnemyPos, kBulSpeed);
 	}
 
 	newEnemy->SetID(ID);
@@ -313,14 +351,15 @@ void GameScene::CheckAllCollisions() {
 		
 		for (int i = 0; i < std::end(atkColideB_) - std::begin(atkColideB_); ++i) {
 			if (atkColideB_[i].isColide == true) {
-				if (atkColideB_[i].atkTransform.position.x + atkColideB_[i].atkTransform.scale.x / 2 >
+				if (atkColideB_[i].atkTransform.position.x + atkColideB_[i].atkTransform.scale.x  >
 					posA.x &&
-					atkColideB_[i].atkTransform.position.x - atkColideB_[i].atkTransform.scale.x / 2 <
+					atkColideB_[i].atkTransform.position.x - atkColideB_[i].atkTransform.scale.x  <
 					posA.x) {
-					if (atkColideB_[i].atkTransform.position.y + atkColideB_[i].atkTransform.scale.y / 2 >
+					if (atkColideB_[i].atkTransform.position.y + atkColideB_[i].atkTransform.scale.y  >
 						posA.y &&
-						atkColideB_[i].atkTransform.position.y - atkColideB_[i].atkTransform.scale.y / 2 <
+						atkColideB_[i].atkTransform.position.y - atkColideB_[i].atkTransform.scale.y  <
 						posA.y) {
+
 						enemy_->OnCollision(false);
 					}
 

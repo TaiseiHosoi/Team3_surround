@@ -87,8 +87,13 @@ private:
 	std::unique_ptr<Sprite> sprite;
 	std::unique_ptr<Sprite> sprite2;
 	std::unique_ptr<Sprite> sprite3;
+	std::unique_ptr<Sprite> UI01;
+	std::unique_ptr<Sprite> maxSpeedMem;
+	std::unique_ptr<Sprite> nowSpeedMem;
+
 	Object3d* object3d = nullptr;
 	std::unique_ptr<Model> model;
+	std::unique_ptr<Model> redCube;
 
 	Input* input_ = nullptr;
 

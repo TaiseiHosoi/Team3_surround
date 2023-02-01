@@ -14,7 +14,7 @@ class GameScene;
 class Enemy
 {
 public:
-	void Initialize(Model* model, Vector3 vector3, float kBulSpeed);
+	void Initialize(Model* redCube,Model* model, Vector3 vector3, float kBulSpeed);
 	void Update();
 	void Draw();
 
@@ -37,9 +37,12 @@ public:
 private:
 	//ワールド変換データ
 	Object3d worldTransform_;
+	Object3d predictionLine_;
+	Object3d predictionPoint_;
 
 	//モデル
 	Model* model_ = nullptr;
+	Model* redCube_ = nullptr;
 
 	//その他
 	uint32_t textureHandle_ = 0u;
@@ -66,6 +69,7 @@ private:
 	int fieldLane_ = 0;
 
 	Player* player_ = nullptr;
+	
 
 };
 

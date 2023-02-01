@@ -37,6 +37,9 @@ public:
 	Vector2 GetAtkMinColidion();
 	Vector2 GetAtkMaxColidion();
 	std::vector<atkColide> GetAtkColide();	//‰Â•Ï’·”z—ñ
+	int GetMaxTimeCount();
+	int GetNowTimeCount();
+	
 
 
 	bool GetIsAtkDraw();

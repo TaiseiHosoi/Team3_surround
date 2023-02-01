@@ -56,7 +56,7 @@ void Player::Initialize(Model* model, Model* followModel, Model* playerModel)
 	for (int i = 0; i < _countof(followerWT_); i++) {
 		followerWT_[i].Initialize(false);
 		followerWT_[i].parent = &worldTransform_;
-		followerWT_[i].scale = { 0.3f,0.3f,0.3f };
+		followerWT_[i].scale = { 0.3f,0.3f,1.0f };
 		followerWT_[i].SetModel(followModel_);
 		followerWT_[i].Update();
 	}
@@ -292,9 +292,9 @@ void Player::Draw()
 {
 
 	//ƒp[ƒX
-	for (int i = 0; i < _countof(perthLine); i++) {
-		perthLine[i].Draw();
-	}
+	//for (int i = 0; i < _countof(perthLine); i++) {
+	//	perthLine[i].Draw();
+	//}
 
 	worldTransform_.Draw();
 	nowLineWorldTransform_.Draw();
@@ -347,7 +347,13 @@ std::vector<atkColide> Player::GetAtkColide()
 
 
 
+int Player::GetMaxTimeCount() {
+	return maxFlameCount_;
+}
 
+int Player::GetNowTimeCount() {
+	return nowFlameCount_;
+}
 
 bool Player::GetIsAtkDraw()
 {
