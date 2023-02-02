@@ -53,24 +53,28 @@ Vector3 Vector3::operator-()const {
 Vector3& Vector3::operator+=(const Vector3& v) {
 	this->x += v.x;
 	this->y += v.y;
+	this->z += v.z;
 	return *this;
 }
 
 Vector3& Vector3::operator-=(const Vector3& v) {
 	this->x -= v.x;
 	this->y -= v.y;
+	this->z -= v.z;
 	return *this;
 }
 
 Vector3& Vector3::operator*=(float s) {
 	this->x *= s;
 	this->y *= s;
+	this->z *= s;
 	return *this;
 }
 
 Vector3& Vector3::operator/=(float s) {
 	this->x /= s;
 	this->y /= s;
+	this->z /= s;
 	return *this;
 }
 

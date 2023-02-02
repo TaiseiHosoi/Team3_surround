@@ -270,7 +270,7 @@ void DirectXCommon::PreDraw() {
 
 
 	// 3.画面クリア			R	G		B	A
-	FLOAT clearColor[] = { 0.1f,0.25f, 0.5f,0.0f }; // 青っぽい色
+	FLOAT clearColor[] = { 0.0f,0.0f, 0.0f,0.5f }; // 青っぽい色
 	commandList_->ClearRenderTargetView(rtvHandle, clearColor, 0, nullptr);
 	commandList_->ClearDepthStencilView(dsvHandle, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
 
@@ -354,9 +354,9 @@ void DirectXCommon::InitializeFixFPS()
 void DirectXCommon::UpdateFixFPS()
 {
 	//1/60ぴったりの時間
-	const std::chrono::microseconds kMinTime(uint64_t(1000000.0f / 60.0f));
+	const std::chrono::microseconds kMinTime(uint64_t(1000000.0f / 120.0f));
 	//1/60よりわずかに短い時間
-	const std::chrono::microseconds kMinCheckTime(uint64_t(1000000.0f / 65.0f));
+	const std::chrono::microseconds kMinCheckTime(uint64_t(1000000.0f / 130.0f));
 
 	//現在時間を取得
 	std::chrono::steady_clock::time_point now = std::chrono::steady_clock::now();

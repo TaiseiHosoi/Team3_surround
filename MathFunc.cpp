@@ -187,6 +187,27 @@ Vector3 MathFunc::AddVector(const Vector3 v1, const Vector3 v2) {
 
 }
 
+Vector3 MathFunc::bVelocity(Vector3& velocity, Object3d& worldTransform)
+{
+	Vector3 result = { 0, 0, 0 };
+
+
+	result.x = velocity.x * worldTransform.matWorld.m[0][0] +
+		velocity.y * worldTransform.matWorld.m[1][0] +
+		velocity.z * worldTransform.matWorld.m[2][0];
+
+	result.y = velocity.x * worldTransform.matWorld.m[0][1] +
+		velocity.y * worldTransform.matWorld.m[1][1] +
+		velocity.z * worldTransform.matWorld.m[2][1];
+
+	result.z = velocity.x * worldTransform.matWorld.m[0][2] +
+		velocity.y * worldTransform.matWorld.m[1][2] +
+		velocity.z * worldTransform.matWorld.m[2][2];
+
+
+	return result;
+}
+
 Vector3 MathFunc::wDivision(const Vector3& vector3, const Matrix4& matrix4) {
 
 	Vector4 divVec = {};
@@ -212,4 +233,174 @@ float MathFunc::FieldOfViewY(float focalLengs, float sensor) {
 
 	return 2 * atan(sensor / (2 * focalLengs));
 
+}
+
+Matrix4 MathFunc::ConvertXMMATtoMat4(XMMATRIX XMMatrix) {
+	Matrix4 result;
+	for (int i = 0; i < 4; i++) {
+
+		result.m[i][0] = XMVectorGetX(XMMatrix.r[i]);
+		result.m[i][1] = XMVectorGetY(XMMatrix.r[i]);
+		result.m[i][2] = XMVectorGetZ(XMMatrix.r[i]);
+		result.m[i][3] = XMVectorGetW(XMMatrix.r[i]);
+	}
+
+
+	return result;
+}
+
+XMMATRIX MathFunc::ConvertMat4toXMMat(Matrix4 m) {
+	XMMATRIX result;
+	result = XMMatrixSet(
+		m.m[0][0], m.m[0][1], m.m[0][2], m.m[0][3],
+		m.m[1][0], m.m[1][1], m.m[1][2], m.m[1][3],
+		m.m[2][0], m.m[2][1], m.m[2][2], m.m[2][3],
+		m.m[3][0], m.m[3][1], m.m[3][2], m.m[3][3]);
+
+	return result;
+}
+
+double MathFunc::Ease::In(double start, double end, double time, double max_time)
+{
+	time /= max_time;
+	double move = end - start;
+	return start + (move * time * time);
+}
+
+double MathFunc::Ease::Out(double start, double end, double time, double max_time)
+{
+	time /= max_time;
+	double move = end - start;
+	return start + (move * (1 - (1 - time) * (1 - time)));
+}
+
+double MathFunc::Ease::InOut(double start, double end, double time, double max_time)
+{
+	time /= max_time;
+	double move = end - start;
+	if (time < 0.5)
+	{
+		return start + (move * (2 * time * time));
+	}
+	else
+	{
+		return start + move * (1 - (((-2 * time + 2) * (-2 * time + 2)) / 2));
+	}
+}
+
+double MathFunc::Ease::In_Back(double start, double end, double time, double max_time)
+{
+	time /= max_time;
+	double move = end - start;
+	double c1 = 1.70158;
+	double c3 = (c1 + 1);
+	return start + (move * (c3 * time * time * time - c1 * time * time));
+}
+
+double MathFunc::Ease::Out_Back(double start, double end, double time, double max_time)
+{
+	time /= max_time;
+	double move = end - start;
+	double c1 = 1.70158;
+	double c3 = (c1 + 1);
+	return start + (move * (1 + c3 * ((time - 1) * (time - 1) * (time - 1)) + c1 * ((time - 1) * (time - 1))));
+}
+
+double MathFunc::Ease::InOut_Back(double start, double end, double time, double max_time)
+{
+	time /= max_time;
+	double move = end - start;
+	double c1 = 1.70158;
+	double c2 = c1 * 1.525;
+
+	if (time < 0.5)
+	{
+		return start + move * ((((2 * time) * (2 * time)) * ((c2 + 1) * 2 * time - c2)) / 2);
+	}
+	else
+	{
+		return start + move * ((((2 * time - 2) * (2 * time - 2)) * ((c2 + 1) * (time * 2 - 2) + c2) + 2) / 2);
+	}
+}
+
+double MathFunc::Ease::Out_Bounce(double start, double end, double time, double max_time)
+{
+	time /= max_time;
+	double move = end - start;
+	double n1 = 7.5625;
+	double d1 = 2.75;
+	if (time < 1 / d1) {
+		return start + move * (n1 * time * time);
+	}
+	else if (time < 2 / d1) {
+		return start + move * (n1 * (time -= 1.5 / d1) * time + 0.75);
+	}
+	else if (time < 2.5 / d1) {
+		return start + move * (n1 * (time -= 2.25 / d1) * time + 0.9375);
+	}
+	else {
+		return start + move * (n1 * (time -= 2.625 / d1) * time + 0.984375);
+	}
+}
+
+double MathFunc::Ease::In_Bounce(double start, double end, double time, double max_time)
+{
+	time /= max_time;
+	double move = end - start;
+	double n1 = 7.5625;
+	double d1 = 2.75;
+	time = 1 - time;
+	if (time < 1 / d1) {
+		return start + move * (1 - (n1 * time * time));
+	}
+	else if (time < 2 / d1) {
+		return start + move * (1 - (n1 * (time -= 1.5 / d1) * time + 0.75));
+	}
+	else if (time < 2.5 / d1) {
+		return start + move * (1 - (n1 * (time -= 2.25 / d1) * time + 0.9375));
+	}
+	else {
+		return start + move * (1 - (n1 * (time -= 2.625 / d1) * time + 0.984375));
+	}
+
+}
+
+double MathFunc::Ease::InOut_Bounce(double start, double end, double time, double max_time)
+{
+	time /= max_time;
+	double move = end - start;
+	double n1 = 7.5625;
+	double d1 = 2.75;
+	if (time < 0.5)
+	{
+		time = 1 - time * 2;
+		if (time < 1 / d1) {
+			return start + move * ((1 - (n1 * time * time)) / 2);
+		}
+		else if (time < 2 / d1) {
+			return start + move * ((1 - (n1 * (time -= 1.5 / d1) * time + 0.75)) / 2);
+		}
+		else if (time < 2.5 / d1) {
+			return start + move * ((1 - (n1 * (time -= 2.25 / d1) * time + 0.9375)) / 2);
+		}
+		else {
+			return start + move * ((1 - (n1 * (time -= 2.625 / d1) * time + 0.984375)) / 2);
+		}
+	}
+	else
+	{
+		time = time * 2 - 1;
+		if (time < 1 / d1) {
+			return start + move * ((n1 * time * time) / 2 + 0.5);
+		}
+		else if (time < 2 / d1) {
+			return start + move * ((n1 * (time -= 1.5 / d1) * time + 0.75) / 2 + 0.5);
+		}
+		else if (time < 2.5 / d1) {
+			return start + move * ((n1 * (time -= 2.25 / d1) * time + 0.9375) / 2 + 0.5);
+		}
+		else {
+			return start + move * ((n1 * (time -= 2.625 / d1) * time + 0.984375) / 2 + 0.5);
+		}
+	}
 }
