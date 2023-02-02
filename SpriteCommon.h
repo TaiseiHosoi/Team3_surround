@@ -29,13 +29,13 @@ public:
 
 	DirectXCommon* GetDxCommon() { return dxcommon_; }
 
-	ID3D12RootSignature* GetRootSignature() { return rootSignature; }
+	Microsoft::WRL::ComPtr<ID3D12RootSignature> GetRootSignature() { return rootSignature; }
 
-	ID3D12PipelineState* GetPipelineState() { return pipelineState; }
+	Microsoft::WRL::ComPtr<ID3D12PipelineState> GetPipelineState() { return pipelineState; }
 
 	//ID3D12Resource* GetConstBuffMaterial() { return constBuffMaterial; }
 
-	ID3D12DescriptorHeap* GetSrvHeap() { return srvHeap; }
+	ID3D12DescriptorHeap* GetSrvHeap() { return srvHeap.Get(); }
 
 	D3D12_CPU_DESCRIPTOR_HANDLE GetSrvHandle() { return srvHandle; }
 
@@ -60,7 +60,7 @@ public:
 	//ConstBufferDataTransform* GetConstMapTransform() { return constMapTransform; }
 
 	//SRV用デスクリプタヒープ
-	ID3D12DescriptorHeap* srvHeap = nullptr;
+	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> srvHeap = nullptr;
 private:
 	// 頂点データ
 	Vertex vertices[4] = {
@@ -74,18 +74,18 @@ private:
 	static const size_t kMaxSRVCount = 2056;
 
 	DirectXCommon* dxcommon_ = nullptr;
-	ID3DBlob* vsBlob = nullptr; // 頂点シェーダオブジェクト
-	ID3DBlob* psBlob = nullptr; // ピクセルシェーダオブジェクト
-	ID3DBlob* errorBlob = nullptr; // エラーオブジェクト
+	Microsoft::WRL::ComPtr<ID3DBlob> vsBlob = nullptr; // 頂点シェーダオブジェクト
+	Microsoft::WRL::ComPtr<ID3DBlob> psBlob = nullptr; // ピクセルシェーダオブジェクト
+	Microsoft::WRL::ComPtr<ID3DBlob> errorBlob = nullptr; // エラーオブジェクト
 	HRESULT result;
 
 
 	// ルートシグネチャ
-	ID3D12RootSignature* rootSignature;
+	Microsoft::WRL::ComPtr<ID3D12RootSignature> rootSignature;
 
 
 	// パイプランステートの生成
-	ID3D12PipelineState* pipelineState = nullptr;
+	Microsoft::WRL::ComPtr<ID3D12PipelineState> pipelineState = nullptr;
 
 
 	//// テクスチャバッファ

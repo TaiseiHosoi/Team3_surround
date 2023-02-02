@@ -162,7 +162,7 @@ void Sprite::Draw()
 
 void Sprite::Update()
 {
-	ID3D12Resource* textureBuffer = spritecomon->GetTextureBuffer(textureIndex_);
+	Microsoft::WRL::ComPtr<ID3D12Resource> textureBuffer = spritecomon->GetTextureBuffer(textureIndex_);
 
 	float left = (0.0f - anchorpoint.x) * size_.x;
 	float right = (1.0f - anchorpoint.x) * size_.x;
@@ -257,7 +257,7 @@ void Sprite::SetIsFlipX(bool isFlipX)
 
 void Sprite::AdjustTextureSize()
 {
-	ID3D12Resource* textureBuffer = spritecomon->GetTextureBuffer(textureIndex_);
+	Microsoft::WRL::ComPtr<ID3D12Resource> textureBuffer = spritecomon->GetTextureBuffer(textureIndex_);
 	assert(textureBuffer);
 
 	//テクスチャ情報取得

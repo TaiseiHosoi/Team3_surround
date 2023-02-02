@@ -194,7 +194,7 @@ void SpriteCommon::Initialize(DirectXCommon* dxcommon)
 	rootSigBlob->Release();
 
 	// パイプラインにルートシグネチャをセット
-	pipelineDesc.pRootSignature = rootSignature;
+	pipelineDesc.pRootSignature = rootSignature.Get();
 
 
 	result = dxcommon_->GetDevice()->CreateGraphicsPipelineState(&pipelineDesc, IID_PPV_ARGS(&pipelineState));
@@ -249,7 +249,7 @@ void SpriteCommon::Initialize(DirectXCommon* dxcommon)
 	// 設定を元にSRV用デスクリプタヒープを生成
 
 
-	result = dxcommon_->GetDevice()->CreateDescriptorHeap(&srvHeapDesc, IID_PPV_ARGS(&srvHeap));
+	result = dxcommon_->GetDevice()->CreateDescriptorHeap(&srvHeapDesc, IID_PPV_ARGS(srvHeap.GetAddressOf()));
 	assert(SUCCEEDED(result));
 
 
@@ -342,12 +342,12 @@ void SpriteCommon::SetTextureCommands(uint32_t index)
 void SpriteCommon::SpritePreDraw()
 {
 	// パイプラインステートとルートシグネチャの設定コマンド
-	dxcommon_->GetCommandList()->SetPipelineState(pipelineState);
-	dxcommon_->GetCommandList()->SetGraphicsRootSignature(rootSignature);
+	dxcommon_->GetCommandList()->SetPipelineState(pipelineState.Get());
+	dxcommon_->GetCommandList()->SetGraphicsRootSignature(rootSignature.Get());
 	//プリミティブ形状の設定コマンド
 	dxcommon_->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);//三角リスト
 	// SRVヒープの設定コマンド
-	dxcommon_->GetCommandList()->SetDescriptorHeaps(1, &srvHeap);
+	dxcommon_->GetCommandList()->SetDescriptorHeaps(1, srvHeap.GetAddressOf());
 
 }
 

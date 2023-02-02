@@ -120,12 +120,12 @@ private:
 
 	XMFLOAT2 anchorPoint = { 0.0f,0.0f };
 
-	ID3D12Resource* constBuffTransform = nullptr;
+	Microsoft::WRL::ComPtr<ID3D12Resource> constBuffTransform = nullptr;
 	ConstBufferDataTransform* constMapTransform = nullptr;
 
 	ConstBufferDataMaterial* constMapMaterial = nullptr;
 
-	ID3D12Resource* constBuffMaterial = nullptr;
+	Microsoft::WRL::ComPtr<ID3D12Resource> constBuffMaterial = nullptr;
 
 	Vertex vertices_[4];
 
@@ -145,7 +145,7 @@ private:
 	XMFLOAT2 anchorpoint = { 0, 0 };
 
 	// 頂点バッファの生成
-	ID3D12Resource* vertBuff = nullptr;
+	Microsoft::WRL::ComPtr<ID3D12Resource> vertBuff = nullptr;
 
 	// 左右反転
 	bool isFlipX = false;

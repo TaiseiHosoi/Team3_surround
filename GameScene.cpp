@@ -11,6 +11,9 @@ GameScene::GameScene()
 
 GameScene::~GameScene()
 {
+	delete spritecommon;
+	delete audio;
+	delete object3d;
 }
 
 void GameScene::Initialize(DirectXCommon* dxcomon)
@@ -118,7 +121,6 @@ void GameScene::Initialize(DirectXCommon* dxcomon)
 
 	skyBoxModel.reset(Model::LoadFormOBJ("sky", true));
 	railModel.reset(Model::LoadFormOBJ("rail",true));
-
 	skyBox = std::make_unique<SkyBox>();
 	skyBox->Initialize(skyBoxModel.get(),railModel.get());
 }
@@ -171,9 +173,9 @@ void GameScene::Update()
 void GameScene::Draw()
 {
 	spritecommon->SpritePreDraw();
-	//sprite->Draw();
-	//sprite2->Draw();
-	//sprite3->Draw();
+	sprite->Draw();
+	sprite2->Draw();
+	sprite3->Draw();
 	
 
 	spritecommon->SpritePostDraw();
