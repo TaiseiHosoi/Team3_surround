@@ -30,6 +30,7 @@ void GameScene::Initialize(DirectXCommon* dxcomon)
 	spritecommon->LoadTexture(5, "noneKey.png");
 	spritecommon->LoadTexture(6, "rightKey.png");
 	spritecommon->LoadTexture(7, "leftKey.png");
+	spritecommon->LoadTexture(8, "setumei.png");
 
 
 	sprite = std::make_unique <Sprite>();
@@ -61,6 +62,11 @@ void GameScene::Initialize(DirectXCommon* dxcomon)
 	leftKeySP->Initialize(spritecommon, 7);
 	leftKeySP->SetSize( picSize );
 	leftKeySP->SetPozition(picPos);
+
+	tutorial = std::make_unique<Sprite>();
+	tutorial->Initialize(spritecommon, 8);
+	tutorial->SetSize({128.0f,32.0f});
+	tutorial->SetPozition({500,100});
 
 	sprite->SetSize({ 1280,720 });
 	sprite2->SetSize({ 200,200 });
@@ -201,6 +207,7 @@ void GameScene::Draw()
 	else {
 		noneKeySP->Draw();
 	}
+	tutorial->Draw();
 
 	spritecommon->SpritePostDraw();
 }

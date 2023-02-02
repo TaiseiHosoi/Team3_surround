@@ -166,8 +166,8 @@ void Sprite::Update()
 
 	float left = (0.0f - anchorpoint.x) * size_.x;
 	float right = (1.0f - anchorpoint.x) * size_.x;
-	float top = (0.0f - anchorpoint.x) * size_.y;
-	float bottom = (1.0f - anchorpoint.x) * size_.y;
+	float top = (0.0f - anchorpoint.y) * size_.y;
+	float bottom = (1.0f - anchorpoint.y) * size_.y;
 
 	if (isFlipX)
 	{// ç∂âEì¸ÇÍë÷Ç¶

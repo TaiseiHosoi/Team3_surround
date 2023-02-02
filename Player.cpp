@@ -54,7 +54,7 @@ void Player::Initialize(Model* model, Model* followModel, Model* playerModel)
 
 	// ƒtƒHƒƒ[‰Šú‰»
 	for (int i = 0; i < _countof(followerWT_); i++) {
-		followerWT_[i].Initialize(false);
+		followerWT_[i].Initialize(true);
 		followerWT_[i].parent = &worldTransform_;
 		followerWT_[i].scale = { 0.3f,0.3f,1.0f };
 		followerWT_[i].SetModel(followModel_);
