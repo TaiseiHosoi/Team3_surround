@@ -109,7 +109,7 @@ void Player::Update()
 		}
 	}
 	else if (input_->PushKey(DIK_RIGHT)) {
-		if (maxFlameCount_ < 100) {
+		if (maxFlameCount_ < 70) {
 			maxFlameCount_++;
 		}
 	}
@@ -233,6 +233,7 @@ void Player::Update()
 
 		for (int i = 0; i < std::end(atkColide_) - std::begin(atkColide_); ++i) {
 			atkColide_[i].atkTransform.SetModel(model_);
+			
 		}
 		
 	}
@@ -249,7 +250,7 @@ void Player::Update()
 
 	if (isAtkDraw == true) {
 		atkTransform_.position.z += 30.0f;	//velocity
-		if (atkTransform_.position.z > 400) {
+		if (atkTransform_.position.z > 200) {
 			isAtkDraw == false;
 		}
 	}

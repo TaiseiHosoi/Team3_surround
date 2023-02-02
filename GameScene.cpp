@@ -123,7 +123,7 @@ void GameScene::Update()
 
 
 	gameTimer_++;
-	if (gameTimer_ > 1000) {
+	if (gameTimer_ > 300) {
 		if (gameLevel_ < levelMax_) {
 			gameTimer_ = 0;
 			gameLevel_++;
@@ -149,7 +149,9 @@ void GameScene::Update()
 
 	skyBox->Update();
 
-	CheckAllCollisions();
+	if (player_->GetIsAtkDraw() == true) {
+		CheckAllCollisions();
+	}
 
 	//スピードゲージ用
 	
@@ -339,11 +341,11 @@ void GameScene::UpdateEnemyPopCommands()
 			isStand_ = true;
 			int maxTimeDiv = 2;
 			if (gameLevel_ <= 0) {
-				standTime_ = waitTime * (levelMax_ - gameLevel_) / maxTimeDiv;
+				standTime_ = waitTime * (10 - gameLevel_) / maxTimeDiv;
 			}
 			else {
 
-				standTime_ = waitTime * (levelMax_ - gameLevel_) / maxTimeDiv;
+				standTime_ = waitTime * (10 - gameLevel_) / maxTimeDiv;
 			}
 
 			//抜ける

@@ -69,7 +69,7 @@ public:
 	void CheckAllCollisions();
 
 	int gameLevel_ = 0;
-	const int levelMax_ = 10;
+	const int levelMax_ = 8;
 
 	//ƒV[ƒ“Ø‚è‘Ö‚¦
 	enum class SceneNo {
