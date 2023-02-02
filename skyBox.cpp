@@ -18,7 +18,7 @@ void SkyBox::Initialize(Model* boxModel, Model* railModel)
 
 	obj->Initialize(false);
 
-	obj->SetScale({ 50,50,70 });
+	obj->SetScale({ 100,100,70 });
 
 	obj->SetPosition({ 0,0,450 });
 
@@ -28,7 +28,7 @@ void SkyBox::Initialize(Model* boxModel, Model* railModel)
 
 	obj2->Initialize(false);
 
-	obj2->SetScale({ 50,50,70 });
+	obj2->SetScale({ 100,100,70 });
 
 	obj2->SetPosition({ 0,0,1350 });
 
@@ -48,9 +48,9 @@ void SkyBox::Initialize(Model* boxModel, Model* railModel)
 
 	Rail[1]->SetScale({ 0.1,0.1,200 });
 
-	Rail[0]->SetPosition({ -45,-45,150 });
+	Rail[0]->SetPosition({ -100,-100,150 });
 
-	Rail[1]->SetPosition({ 45,-45,150 });
+	Rail[1]->SetPosition({ 100,-100,150 });
 
 	for (int i = 0; i < 30; i++)
 	{
@@ -60,9 +60,9 @@ void SkyBox::Initialize(Model* boxModel, Model* railModel)
 
 		widthRail[i]->SetModel(railModel);
 
-		widthRail[i]->SetScale({ 45,0.1,0.1 });
+		widthRail[i]->SetScale({ 100,0.1,0.1 });
 
-		widthRail[i]->SetPosition({ 0,-45,static_cast<float>(i * 20) });
+		widthRail[i]->SetPosition({ 0,-100,static_cast<float>(i * 20) });
 	}
 
 	for (int i = 0; i < 30; i++)
@@ -76,11 +76,11 @@ void SkyBox::Initialize(Model* boxModel, Model* railModel)
 		height[i][0]->SetModel(railModel);
 		height[i][1]->SetModel(railModel);
 
-		height[i][0]->SetScale({0.1,45.0f,0.1});
-		height[i][1]->SetScale({0.1,45.0f,0.1});
+		height[i][0]->SetScale({0.1,100.0f,0.1});
+		height[i][1]->SetScale({0.1,100.0f,0.1});
 
-		height[i][0]->SetPosition({-45,0,static_cast<float>(i * 20)});
-		height[i][1]->SetPosition({ 45,0,static_cast<float>(i * 20)});
+		height[i][0]->SetPosition({-100,0,static_cast<float>(i * 20)});
+		height[i][1]->SetPosition({ 100,0,static_cast<float>(i * 20)});
 	}
 }
 
@@ -117,7 +117,7 @@ void SkyBox::Update()
 
 		if (moveRail.z <= -15)
 		{
-			widthRail[i]->SetPosition({ 0, -45,600 });
+			widthRail[i]->SetPosition({ 0, -100,600 });
 		}
 	}
 
@@ -134,8 +134,8 @@ void SkyBox::Update()
 
 			if (Move.z <= -15)
 			{
-				height[i][0]->SetPosition({-45, 0,600});
-				height[i][1]->SetPosition({ 45, 0,600 });
+				height[i][0]->SetPosition({-100, 0,600});
+				height[i][1]->SetPosition({ 100, 0,600 });
 			}
 	}
 
