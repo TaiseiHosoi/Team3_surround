@@ -139,5 +139,10 @@ private:
 	std::unique_ptr <Model> railModel;
 
 	std::unique_ptr<SkyBox> skyBox;
+
+	//ÉJÉÅÉâ
+	XMFLOAT3 normalEyePos;
+	XMFLOAT3 extendEyePos;
+	int cameraMode;
 	
 };

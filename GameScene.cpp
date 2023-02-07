@@ -1,4 +1,5 @@
 #include "GameScene.h"
+#include"MathFunc.h"
 #include <cassert>
 #include<fstream>
 #include<stdlib.h>
@@ -25,7 +26,7 @@ void GameScene::Initialize(DirectXCommon* dxcomon)
 	//スプライト共通部分の初期化
 	spritecommon = new SpriteCommon;
 	spritecommon->Initialize(dxCommon_);
-	spritecommon->LoadTexture(0, "haikei.png");
+	spritecommon->LoadTexture(0, "title1.png");
 	spritecommon->LoadTexture(1, "mario.png");
 	spritecommon->LoadTexture(2, "reimu.png");
 	spritecommon->LoadTexture(3, "UI01.png");
@@ -103,6 +104,12 @@ void GameScene::Initialize(DirectXCommon* dxcomon)
 	//シングルトン
 	input_ = Input::GetInstance();
 
+	//カメラ
+	normalEyePos = { -10.0f, 0.0f, -55.0f };
+	extendEyePos = { 0,0,-55.0f };
+	cameraMode = 0;
+	Object3d::SetEye(extendEyePos);
+
 	//リソース
 	whiteCube.reset(Model::LoadFormOBJ("cube", true));
 	playerModel.reset(Model::LoadFormOBJ("iceTier", true));
@@ -123,10 +130,37 @@ void GameScene::Initialize(DirectXCommon* dxcomon)
 	railModel.reset(Model::LoadFormOBJ("rail",true));
 	skyBox = std::make_unique<SkyBox>();
 	skyBox->Initialize(skyBoxModel.get(),railModel.get());
+
+	
 }
 
 void GameScene::Update()
 {
+#pragma region
+	if (input_->TriggerKey(DIK_C)) {
+		if (cameraMode <= 2) {
+
+			cameraMode++;
+
+		}
+		else {
+			cameraMode = 0;
+		}
+	}
+
+	if (cameraMode == 0) {
+		Object3d::SetEye(normalEyePos);
+	}
+	else if (cameraMode == 1) {
+		Object3d::SetEye(extendEyePos);
+	}
+	else if (cameraMode == 2) {
+		Vector3 P = player_.get()->GetWorldPosition();
+		Object3d::SetEye({ P.x,P.y,-50.0f });
+		Object3d::SetTarget({ P.x,P.y,P.z });
+	}
+#pragma endregion
+
 	object3d->Update();
 
 
@@ -173,9 +207,9 @@ void GameScene::Update()
 void GameScene::Draw()
 {
 	spritecommon->SpritePreDraw();
-	sprite->Draw();
-	sprite2->Draw();
-	sprite3->Draw();
+	
+	/*sprite2->Draw();
+	sprite3->Draw();*/
 	
 
 	spritecommon->SpritePostDraw();
@@ -210,6 +244,7 @@ void GameScene::Draw()
 		noneKeySP->Draw();
 	}
 	tutorial->Draw();
+	//sprite->Draw();
 
 	spritecommon->SpritePostDraw();
 }
@@ -300,7 +335,7 @@ void GameScene::UpdateEnemyPopCommands()
 			float depth = 400.0f;	//奥行
 			float xDifference = 10.0f;	//左右差
 
-			Vector2 respawnPos = { float(rand() % 30) - 15,float(rand() % 20) - 10 };//x:15~-15,y:10~-10
+			Vector2 respawnPos = { float(rand() % 50) - 25,float(rand() % 50) - 25 };//x:15~-15,y:10~-10
 
 
 			GenerEnemy(Vector3(respawnPos.x, respawnPos.y, depth), ID, popLane_);

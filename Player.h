@@ -39,10 +39,11 @@ public:
 	std::vector<atkColide> GetAtkColide();	//可変長配列
 	int GetMaxTimeCount();
 	int GetNowTimeCount();
-	
-
 
 	bool GetIsAtkDraw();
+
+	void ColideEdgeWall();
+
 
 	//衝突を検出したら呼び出されるコールバック関数
 	void OnCollision(bool isBreak);
@@ -81,6 +82,8 @@ private:
 	Vector2 minPos;
 
 	Vector3 pVelocity_ = {};
+	float attenVel_;
+	float rotateVel;
 
 
 	//デスフラグ
@@ -106,6 +109,9 @@ private:
 	//疑似壁(パースライン)
 	Object3d perthLine[4] = {};
 
-
+	//上下左右の壁
+	Object3d edgeLine[4] = {};
+	bool isReversal = false;
+	
 	
 };

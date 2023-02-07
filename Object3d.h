@@ -136,6 +136,8 @@ public: // 静的メンバ関数
 	/// <param name="move">移動量</param>
 	static void CameraMoveVector(XMFLOAT3 move);
 
+	
+
 private: // 静的メンバ変数
 	// デバイス
 	static ID3D12Device* device;
@@ -255,7 +257,7 @@ public:
 	ComPtr<ID3D12Resource> constBuffCameraPosition; // 定数バッファ
 	ComPtr<ID3D12Resource> constBuffRim; // 定数バッファ
 #pragma endregion
-	
+
 public: // メンバ変数
 	Rim rim;
 	// 色
@@ -274,5 +276,5 @@ public: // メンバ変数
 	//モデル
 	Model* model = nullptr;
 
-	bool isRim=false;
+	bool isRim = false;
 };

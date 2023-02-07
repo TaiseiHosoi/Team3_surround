@@ -28,17 +28,21 @@ void Player::Initialize(Model* model, Model* followModel, Model* playerModel)
 	worldTransform_.scale = { 1,1,1 };
 	worldTransform_.rotation = { 0,0.5 * PI,0 };
 	pVelocity_ = { 0,0,0.4f };	//プレイヤーの移動量
+	attenVel_ = 0.0f;
+	rotateVel = 0.5f;
 
-	nowLineWorldTransform_.Initialize(false);	//自機の位置
+	nowLineWorldTransform_.Initialize(true);	//自機の位置
+	nowLineWorldTransform_.SetRimColor({ 1.0f,1.0f,1.0f,0.4f });
 	nowLineWorldTransform_.SetModel(model_);
 	nowLineWorldTransform_.Update();
 
 	//自機旋回フレームカウント
-	maxFlameCount_ = 70;
+	maxFlameCount_ = 50;
 	nowFlameCount_ = 0;
 
 	for (int i = 0; i < _countof(line_); i++) {
-		line_[i].worldTransform.Initialize(false);
+		line_[i].worldTransform.Initialize(true);
+		line_[i].worldTransform.SetRimColor({1.0f,1.0f,1.0f,0.4f});
 		line_[i].worldTransform.SetModel(model_);
 		line_[i].sLineVec2 = {};
 		line_[i].eLineVec2 = {};
@@ -48,6 +52,8 @@ void Player::Initialize(Model* model, Model* followModel, Model* playerModel)
 		line_[i].worldTransform.Update();
 
 	}
+
+
 
 	nextLine_ = 0;
 	worldTransform_.Update();
@@ -68,7 +74,7 @@ void Player::Initialize(Model* model, Model* followModel, Model* playerModel)
 		perthLine[i].SetModel(model_);
 		perthLine[i].scale = { 0.2,0.2,300 };
 		perthLine[i].rotation = { 0,0,0 };
-
+		
 		if (i == 0) {
 			perthLine[0].position = { -15,-10,50 };
 		}
@@ -91,12 +97,42 @@ void Player::Initialize(Model* model, Model* followModel, Model* playerModel)
 	minPos = {};
 
 	//攻撃
-	atkTransform_.Initialize(false);
+	atkTransform_.Initialize(true);
+	atkTransform_.SetRimColor({ 1.0f,1.0f,1.0f,0.1f });
+	
 	atkTransform_.SetModel(model_);
 	isAtk = false;
 	isAtkDraw = false;
 
 	atkColide_.clear();
+
+	isReversal = false;	//プレイヤー反転
+	for (int i = 0; i < _countof(edgeLine); i++) {	//端っこのライン初期化
+		edgeLine[i].Initialize(true);
+		edgeLine[i].SetModel(model_);
+		edgeLine[i].scale = { 0.5f,0.5f,30 };
+		edgeLine[i].SetRimColor({ 0.1f,0.6f,0.5f,0.7f });
+		
+		if (i == 0) {	//↑
+			edgeLine[i].rotation = { 0,0.5 * PI,0 };
+			edgeLine[i].position = { 0,30,0 };
+			ColideEdgeWall();
+		}else if (i == 1) {	//↓
+			edgeLine[i].rotation = { 0,0.5 * PI,0 };
+			edgeLine[i].position = { 0,-30,0 };
+			ColideEdgeWall();
+		}else if (i == 2) {	//←
+			edgeLine[i].rotation = { 0,0.5 * PI,0.5 * PI };
+			edgeLine[i].position = { -30,0,0 };
+			ColideEdgeWall();
+		}else if (i == 3) {	//→
+			edgeLine[i].rotation = { 0,0.5 * PI,0.5 * PI };
+			edgeLine[i].position = { 30,0,0 };
+			ColideEdgeWall();
+		}
+		edgeLine[i].Update();
+	}
+
 
 }
 
@@ -109,10 +145,15 @@ void Player::Update()
 		}
 	}
 	else if (input_->PushKey(DIK_RIGHT)) {
-		if (maxFlameCount_ < 70) {
+		if (maxFlameCount_ < 100) {
 			maxFlameCount_++;
 		}
+	}else if (maxFlameCount_ > 60) {
+		maxFlameCount_--;
+
 	}
+
+	
 #pragma endregion
 
 #pragma region 自機とライン保存
@@ -135,6 +176,12 @@ void Player::Update()
 
 	nowLineWorldTransform_.rotation = worldTransform_.rotation;
 
+	//げんそく
+	pVelocity_.z = MathFunc::Ease::In(0.7f,0.4f,nowFlameCount_, maxFlameCount_);
+	if (attenVel_ < 0.2f) {
+		attenVel_ += 0.02f;
+	}
+	//pVelocity_.z -= attenVel_;
 
 	Vector3 vel = MathFunc::bVelocity(pVelocity_, worldTransform_);
 
@@ -143,10 +190,10 @@ void Player::Update()
 	nowFlameCount_++;
 	if (nowFlameCount_ > maxFlameCount_) {	//時が来たら90度回転
 
-
+		attenVel_ = 0.0f;
 
 		nowFlameCount_ = 0;
-		worldTransform_.rotation.x += 0.5 * PI;
+		worldTransform_.rotation.x += rotateVel * PI;
 
 		int lineCount = 0;
 		for (int i = 0; i < _countof(line_); i++) {	// ライン保存
@@ -271,6 +318,43 @@ void Player::Update()
 	
 #pragma endregion フォロワー
 
+#pragma region 四つの壁
+	if (worldTransform_.position.x > edgeLine[2].position.x && worldTransform_.position.x < edgeLine[3].position.x) {
+		if (worldTransform_.position.y > edgeLine[0].position.y) {
+			worldTransform_.rotation.x = 0.5*PI;
+			rotateVel = -rotateVel;
+			nowFlameCount_ = 0;
+			worldTransform_.position.y = edgeLine[0].position.y + 0.1f;
+		}
+		else if (worldTransform_.position.y < edgeLine[1].position.y) {
+			worldTransform_.rotation.x = 1.5 * PI;
+			rotateVel = -rotateVel;
+			nowFlameCount_ = 0;
+			worldTransform_.position.y = edgeLine[1].position.y - 0.1f;
+		}
+	}
+	else if(worldTransform_.position.y > edgeLine[1].position.y && worldTransform_.position.y < edgeLine[0].position.y) {
+
+		if (worldTransform_.position.x < edgeLine[2].position.x) {
+			worldTransform_.rotation.x = 0;
+			rotateVel = -rotateVel;
+			nowFlameCount_ = 0;
+			worldTransform_.position.x = edgeLine[2].position.x + 0.1f;
+		}
+		else if (worldTransform_.position.x > edgeLine[3].position.x) {
+			worldTransform_.rotation.x = PI;
+			rotateVel = -rotateVel;
+			nowFlameCount_ = 0;
+			worldTransform_.position.x = edgeLine[3].position.x - 0.1f;
+		}
+
+	}
+	
+	for (int i = 0; i < _countof(edgeLine); i++) {
+
+	}
+#pragma endregion 四つの壁
+
 #pragma region ワールドトランスフォーム更新
 	for (int i = 0; i < _countof(line_); i++) {
 		line_[i].worldTransform.Update();
@@ -283,6 +367,10 @@ void Player::Update()
 	}
 
 	atkTransform_.Update();
+
+	for (int i = 0; i < _countof(edgeLine); i++) {	//端っこのライン初期化
+		edgeLine[i].Update();
+	}
 
 #pragma endregion ワールドトランスフォーム更新
 
@@ -321,12 +409,16 @@ void Player::Draw()
 		}
 	}
 
+	for (int i = 0; i < _countof(edgeLine); i++) {
+		edgeLine[i].Draw();
+	}
+
 
 }
 
 Vector3 Player::GetWorldPosition()
 {
-	return Vector3();
+	return worldTransform_.position;
 }
 
 Vector2 Player::GetAtkMinColidion()
@@ -359,6 +451,55 @@ int Player::GetNowTimeCount() {
 bool Player::GetIsAtkDraw()
 {
 	return isAtkDraw;
+}
+
+void Player::ColideEdgeWall() {
+	nowFlameCount_ = 0;
+	worldTransform_.rotation.x += rotateVel * PI;
+	attenVel_ = 0.0f;
+
+	nowLineWorldTransform_.position = nowStartPos;
+	int lineCount = 0;
+
+	for (int i = 0; i < _countof(line_); i++) {	// ライン保存
+		lineCount++;
+		if (line_[i].isDraw == false) {
+
+			line_[i].isDraw = true;
+			line_[i].worldTransform.position = nowLineWorldTransform_.position;
+			line_[i].worldTransform.rotation = nowLineWorldTransform_.rotation;
+			line_[i].worldTransform.scale = nowLineWorldTransform_.scale;
+
+			line_[i].sLineVec2 = { nowStartPos.x, nowStartPos.x };
+			line_[i].eLineVec2 = { nowEndPos.x, nowEndPos.x };
+
+			break;
+		}
+	}
+
+
+#pragma region ラインと自機衝突
+	if (lineCount >= 4) {
+		for (int i = 0; i < _countof(line_); i++) {
+			if (line_[i].isDraw == true) {
+				if (LineColide(Vector2(nowStartPos.x, nowStartPos.y),
+					Vector2(nowEndPos.x, nowEndPos.y),
+					Vector2(line_[i].sLineVec2.x, line_[i].sLineVec2.y),
+					Vector2(line_[i].eLineVec2.x, line_[i].eLineVec2.y))
+					== true) {
+					isAtk = true;
+				}
+			}
+
+
+		}
+	}
+#pragma endregion ラインと自機衝突
+	nowStartPos = nowLineWorldTransform_.position;	// 終点が視点になる
+
+	//配列を増やす
+	cornerPos_.push_back(worldTransform_);
+	cornerPosCount_ = cornerPos_.size();
 }
 
 void Player::OnCollision(bool isBreak)

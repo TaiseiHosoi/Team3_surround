@@ -307,6 +307,7 @@ void Model::RimDraw(ID3D12GraphicsCommandList* cmdList)
 	cmdList->SetDescriptorHeaps(_countof(ppHeaps), ppHeaps);
 
 	// 定数バッファビューをセット
+
 	if (material.textureFilename.size() > 0) {
 		// シェーダリソースビューをセット
 		cmdList->SetGraphicsRootDescriptorTable(3, gpuDescHandleSRV);
