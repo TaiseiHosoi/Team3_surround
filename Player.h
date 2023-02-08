@@ -111,6 +111,11 @@ private:
 
 	//è„â∫ç∂âEÇÃï«
 	Object3d edgeLine[4] = {};
+
+	//color
+	XMFLOAT4 blueColor;
+	XMFLOAT4 pinkColor;
+
 	bool isReversal = false;
 	
 	
