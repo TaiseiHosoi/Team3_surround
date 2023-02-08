@@ -385,6 +385,9 @@ void Player::Update()
 		for (int i = 0; i < _countof(edgeLine); i++) {
 			edgeLine[i].SetRimColor(blueColor);
 		}
+		for (int i = 0; i < _countof(followerWT_); i++) {
+			followerWT_[i].SetRimColor(blueColor);
+		}
 
 	}
 	else {
@@ -392,6 +395,9 @@ void Player::Update()
 		worldTransform_.SetRimColor(pinkColor);
 		for (int i = 0; i < _countof(edgeLine); i++) {
 			edgeLine[i].SetRimColor(pinkColor);
+		}
+		for (int i = 0; i < _countof(followerWT_); i++) {
+			followerWT_[i].SetRimColor(pinkColor);
 		}
 	}
 #pragma endregion color
