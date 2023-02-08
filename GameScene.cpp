@@ -285,18 +285,19 @@ void GameScene::Draw()
 		break;
 	case GameScene::SceneNo::Game:
 		//object3d->Draw();
-		for (std::unique_ptr<Enemy>& enemy_ : enemys_) {
-			enemy_->Draw();
-		}
+		//for (std::unique_ptr<Enemy>& enemy_ : enemys_) {
+		//	enemy_->Draw();
+		//}
 		break;
 	case GameScene::SceneNo::Over:
 		break;
 	default:
 		break;
 	}
-	player_->Draw();
+	
+	//player_->Draw();
 
-	skyBox->Draw();
+	//skyBox->Draw();
 
 	Object3d::PostDraw();
 
@@ -349,6 +350,44 @@ void GameScene::Draw()
 	}
 
 	spritecommon->SpritePostDraw();
+}
+
+void GameScene::PlayerDraw()
+{
+	Object3d::PreDraw(dxCommon_->GetCommandList());
+	player_->Draw();
+	Object3d::PostDraw();
+}
+
+void GameScene::EnemyDraw()
+{
+	Object3d::PreDraw(dxCommon_->GetCommandList());
+
+	switch (sceneNo_)
+	{
+	case GameScene::SceneNo::Title:
+		break;
+	case GameScene::SceneNo::Operate:
+		break;
+	case GameScene::SceneNo::Game:
+		//object3d->Draw();
+		for (std::unique_ptr<Enemy>& enemy_ : enemys_) {
+			enemy_->Draw();
+		}
+		break;
+	case GameScene::SceneNo::Over:
+		break;
+	default:
+		break;
+	}
+	Object3d::PostDraw();
+}
+
+void GameScene::SkyDraw()
+{
+	Object3d::PreDraw(dxCommon_->GetCommandList());
+	skyBox->Draw();
+	Object3d::PostDraw();
 }
 
 void GameScene::GenerEnemy(Vector3 EnemyPos, int ID, int lane)

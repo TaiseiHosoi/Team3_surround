@@ -7,6 +7,9 @@
 #include"Object3d.h"
 #include"Sprite.h"
 #include"GameScene.h"
+#include"SkyPostEffect.h"
+#include"EnmayPostEffect.h"
+#include"PostEffect.h"
 
 
 const float PI = 3.14f;
@@ -58,6 +61,13 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int)
 	// 3Dオブジェクト静的初期化
 	Object3d::StaticInitialize(dxCommon_->GetDevice(), WinApp::window_width, WinApp::window_height);
 
+	PostEffect* playerPostEffect = new PostEffect();
+	playerPostEffect->Initialize(dxCommon_->GetDevice());
+	EnemyPostEffect* enemyPostEffect = new EnemyPostEffect();
+	enemyPostEffect->Initialize(dxCommon_->GetDevice());
+	SkyPostEffect* skyPostEffect = new SkyPostEffect();
+	skyPostEffect->Initialize(dxCommon_->GetDevice());
+
 	////OBJからモデルデータを読み込む
 	//Model* model = Model::LoadFormOBJ("cube");
 
@@ -81,6 +91,26 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int)
 		
 		//mesh_->Update(dxCommon_->GetDevice(), input_);
 		
+		//Skyのポストエフェクト
+		skyPostEffect->PreDrawScene(dxCommon_->GetCommandList());
+
+		gamescne->SkyDraw();
+		
+		skyPostEffect->PostDrawScene(dxCommon_->GetCommandList());
+
+		//Enemyのポストエフェクト
+		enemyPostEffect->PreDrawScene(dxCommon_->GetCommandList());
+
+		gamescne->EnemyDraw();
+
+		enemyPostEffect->PostDrawScene(dxCommon_->GetCommandList());
+
+		//Playerのポストエフェクト
+		playerPostEffect->PreDrawScene(dxCommon_->GetCommandList());
+
+		gamescne->PlayerDraw();
+
+		playerPostEffect->PostDrawScene(dxCommon_->GetCommandList());
 		//描画
 		dxCommon_->PreDraw();
 		
@@ -88,6 +118,10 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int)
 
 		//Object3d::PreDraw(dxCommon_->GetCommandList());
 
+		
+		skyPostEffect->Draw(dxCommon_->GetCommandList());
+		enemyPostEffect->Draw(dxCommon_->GetCommandList());
+		playerPostEffect->Draw(dxCommon_->GetCommandList());
 		gamescne->Draw();
 		//object3d->Draw();
 
@@ -103,6 +137,9 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int)
 	////3Dモデル開放
 	//delete model;
 	//入力開放
+	delete skyPostEffect;
+	delete enemyPostEffect;
+	delete playerPostEffect;
 
 	delete gamescne;
 	

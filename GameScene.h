@@ -45,6 +45,12 @@ public:
 	/// </summary>
 	void Draw();
 
+	void PlayerDraw();
+
+	void EnemyDraw();
+
+	void SkyDraw();
+
 public:
 	//“GƒŠƒXƒg‚ğæ“¾
 	std::list<std::unique_ptr<Enemy>> enemys_;
