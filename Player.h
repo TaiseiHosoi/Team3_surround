@@ -48,6 +48,8 @@ public:
 	//衝突を検出したら呼び出されるコールバック関数
 	void OnCollision(bool isBreak);
 
+	void Reset();
+
 public://計算
 	bool LineColide(Vector2 line_abStart, Vector2 line_abEnd, Vector2 line_cdStart, Vector2 line_cdEnd);
 

@@ -74,6 +74,8 @@ public:
 	//当たり判定
 	void CheckAllCollisions();
 
+	void ReSet();
+
 	int gameLevel_ = 1;
 	const int levelMax_ = 8;
 
@@ -159,8 +161,6 @@ private:
 
 	Select select = Select::Easy;
 
-	//スコア
-	int hit_ = 0;
 	//レーン
 	int popLane_ = 0;
 

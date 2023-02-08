@@ -28,7 +28,7 @@ void Player::Initialize(Model* model, Model* followModel, Model* playerModel)
 	//初期座標をセット
 	worldTransform_.Initialize(true);
 	worldTransform_.SetModel(playerModel_);
-	worldTransform_.position = { -5,0,0 };
+	worldTransform_.position = { -20,+20,0 };
 	worldTransform_.scale = { 1,1,1 };
 	worldTransform_.rotation = { 0,0.5 * PI,0 };
 	pVelocity_ = { 0,0,0.4f };	//プレイヤーの移動量
@@ -38,6 +38,16 @@ void Player::Initialize(Model* model, Model* followModel, Model* playerModel)
 	nowLineWorldTransform_.Initialize(true);	//自機の位置
 	nowLineWorldTransform_.SetRimColor({ 1.0f,1.0f,1.0f,0.4f });
 	nowLineWorldTransform_.SetModel(model_);
+
+	nowStartPos = worldTransform_.position;	//現在のライン保存用
+	nowEndPos = worldTransform_.position;	//
+
+	//lineのトランスフォーム計算
+	nowLineWorldTransform_.position =	//始点終点の中心が座標
+	{ (nowStartPos.x + nowEndPos.x) / 2,
+		(nowStartPos.y + nowEndPos.y) / 2,
+		(nowStartPos.z + nowEndPos.z) / 2
+	};	//kmtEngineのオペレータがlib化されていていじれない
 	nowLineWorldTransform_.Update();
 
 	//自機旋回フレームカウント
@@ -48,11 +58,12 @@ void Player::Initialize(Model* model, Model* followModel, Model* playerModel)
 		line_[i].worldTransform.Initialize(true);
 		line_[i].worldTransform.SetRimColor({1.0f,1.0f,1.0f,0.4f});
 		line_[i].worldTransform.SetModel(model_);
-		line_[i].sLineVec2 = {};
-		line_[i].eLineVec2 = {};
+		line_[i].sLineVec2 = {worldTransform_.position.x,worldTransform_.position.y};
+		line_[i].eLineVec2 = { worldTransform_.position.x,worldTransform_.position.y};
 		line_[i].isDraw = false;
 		line_[i].worldTransform.scale = { 0.2,0.2,1.0f };
 		line_[i].worldTransform.position.x += i * 2;
+		line_[i].worldTransform.position = worldTransform_.position;
 		line_[i].worldTransform.Update();
 
 	}
@@ -433,12 +444,6 @@ void Player::Draw()
 		atkTransform_.Draw();
 	}
 
-	for (int i = 0; i < std::end(atkColide_) - std::begin(atkColide_); ++i) {
-		if (atkColide_[i].isColide == true) {
-			atkColide_[i].atkTransform.Draw();
-		}
-	}
-
 	for (int i = 0; i < _countof(edgeLine); i++) {
 		edgeLine[i].Draw();
 	}
@@ -531,4 +536,85 @@ bool Player::LineColide(Vector2 line_abStart, Vector2 line_abEnd, Vector2 line_c
 
 	}
 	return isColide;
+}
+void Player::Reset()
+{
+
+	//初期座標をセット
+	worldTransform_.position = { -20,+20,0 };
+	worldTransform_.rotation = { 0,0.5 * PI,0 };
+	pVelocity_ = { 0,0,0.4f };	//プレイヤーの移動量
+	attenVel_ = 0.0f;
+	rotateVel = 0.5f;
+
+	nowStartPos = worldTransform_.position;	//現在のライン保存用
+	nowEndPos = worldTransform_.position;	//
+
+	//lineのトランスフォーム計算
+	nowLineWorldTransform_.position =	//始点終点の中心が座標
+	{ (nowStartPos.x + nowEndPos.x) / 2,
+		(nowStartPos.y + nowEndPos.y) / 2,
+		(nowStartPos.z + nowEndPos.z) / 2
+	};	//kmtEngineのオペレータがlib化されていていじれない
+	nowLineWorldTransform_.SetRimColor({ 1.0f,1.0f,1.0f,0.4f });
+
+	//自機旋回フレームカウント
+	maxFlameCount_ = 50;
+	nowFlameCount_ = 0;
+
+	for (int i = 0; i < _countof(line_); i++) {
+		line_[i].isDraw = false;
+		line_[i].worldTransform.scale = { 0.2,0.2,1.0f };
+		line_[i].worldTransform.position.x += i * 2;
+		line_[i].worldTransform.Update();
+
+	}
+
+
+
+	nextLine_ = 0;
+	worldTransform_.Update();
+
+	followerPrimeAngle_ = 0.0f;
+
+	//回転したときの角位置保存
+	cornerPos_.resize(cornerPosCount_);
+	maxPos = {};	//0
+	minPos = {};
+
+	//攻撃
+	atkTransform_.SetRimColor({ 0.2f,1.0f,0.8f,1.0f });
+
+	isAtk = false;
+	isAtkDraw = false;
+
+	atkColide_.clear();
+
+	isReversal = false;	//プレイヤー反転
+	for (int i = 0; i < _countof(edgeLine); i++) {	//端っこのライン初期化
+		edgeLine[i].scale = { 0.5f,0.5f,30 };
+		edgeLine[i].SetRimColor(blueColor);
+
+		if (i == 0) {	//↑
+			edgeLine[i].rotation = { 0,0.5 * PI,0 };
+			edgeLine[i].position = { 0,30,0 };
+
+		}
+		else if (i == 1) {	//↓
+			edgeLine[i].rotation = { 0,0.5 * PI,0 };
+			edgeLine[i].position = { 0,-30,0 };
+
+		}
+		else if (i == 2) {	//←
+			edgeLine[i].rotation = { 0,0.5 * PI,0.5 * PI };
+			edgeLine[i].position = { -30,0,0 };
+
+		}
+		else if (i == 3) {	//→
+			edgeLine[i].rotation = { 0,0.5 * PI,0.5 * PI };
+			edgeLine[i].position = { 30,0,0 };
+
+		}
+		edgeLine[i].Update();
+	}
 }

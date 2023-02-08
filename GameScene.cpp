@@ -324,6 +324,8 @@ void GameScene::Update()
 		if (input_->TriggerKey(DIK_SPACE))
 		{
 			sceneNo_ = SceneNo::Game;
+			killEnemyCount = 0;
+			player_->Reset();
 		}
 		break;
 	case GameScene::SceneNo::Game:
@@ -392,9 +394,10 @@ void GameScene::Update()
 		if (input_->TriggerKey(DIK_SPACE))
 		{
 			sceneNo_ = SceneNo::Title;
+			killEnemyCount = 0;
+			player_->Reset();
+			ReSet();
 		}
-		break;
-	default:
 		break;
 	}
 	player_->Update();
@@ -459,7 +462,7 @@ void GameScene::Draw()
 
 		gameMaxEnemy->Draw();
 
-		gameNumberTens->SetTextureIndex(killEnemyCount / 10 + 12);
+		gameNumberTens->SetTextureIndex(player_->GetIsAtkDraw() + 12);
 		gameNumberOnes->SetTextureIndex(killEnemyCount % 10 + 12);
 		gameNumberTens->Draw();
 		gameNumberOnes->Draw();
@@ -791,4 +794,17 @@ void GameScene::CheckAllCollisions() {
 
 
 	}
+}
+
+void GameScene::ReSet()
+{
+	EnemyReset();
+	//待機中フラグ
+	isStand_ = false;
+	//待機タイマー
+	standTime_ = 0;
+	gameTimer_ = 0;
+
+	popEnemyCount = 0;
+	killEnemyCount = 0;
 }
