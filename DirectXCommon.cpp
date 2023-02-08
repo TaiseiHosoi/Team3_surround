@@ -354,9 +354,9 @@ void DirectXCommon::InitializeFixFPS()
 void DirectXCommon::UpdateFixFPS()
 {
 	//1/60‚Ò‚Á‚½‚è‚ÌŠÔ
-	const std::chrono::microseconds kMinTime(uint64_t(1000000.0f / 60.0f));
+	const std::chrono::microseconds kMinTime(uint64_t(1000000.0f / 120.0f));
 	//1/60‚æ‚è‚í‚¸‚©‚É’Z‚¢ŠÔ
-	const std::chrono::microseconds kMinCheckTime(uint64_t(1000000.0f / 65.0f));
+	const std::chrono::microseconds kMinCheckTime(uint64_t(1000000.0f / 130.0f));
 
 	//Œ»İŠÔ‚ğæ“¾
 	std::chrono::steady_clock::time_point now = std::chrono::steady_clock::now();
