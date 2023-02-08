@@ -68,7 +68,7 @@ public:
 	//当たり判定
 	void CheckAllCollisions();
 
-	int gameLevel_ = 0;
+	int gameLevel_ = 1;
 	const int levelMax_ = 8;
 
 	//シーン切り替え
@@ -94,6 +94,16 @@ private:
 	std::unique_ptr<Sprite> rightKeySP;
 	std::unique_ptr<Sprite> leftKeySP;
 	std::unique_ptr<Sprite> tutorial;
+	std::unique_ptr<Sprite> space;
+	std::unique_ptr<Sprite> result;
+	std::unique_ptr<Sprite> resultMaxEnemy;
+	std::unique_ptr<Sprite> resultNumberTens;
+	std::unique_ptr<Sprite> resultNumberOnes;
+	std::unique_ptr<Sprite> gameMaxEnemy;
+	std::unique_ptr<Sprite> gameNumberTens;
+	std::unique_ptr<Sprite> gameNumberOnes;
+
+	
 
 	Object3d* object3d = nullptr;
 	std::unique_ptr<Model> model;
@@ -126,7 +136,7 @@ private:
 	/// <summary>
 	/// ゲームシーン用
 	/// </summary>
-	SceneNo sceneNo_ = SceneNo::Title;
+	SceneNo sceneNo_ = SceneNo::Over;
 
 	//スコア
 	int hit_ = 0;
@@ -145,4 +155,6 @@ private:
 	XMFLOAT3 extendEyePos;
 	int cameraMode;
 	
+	int popEnemyCount=0;
+	int killEnemyCount=0;
 };
