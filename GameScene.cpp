@@ -214,6 +214,7 @@ void GameScene::Update()
 		if (input_->TriggerKey(DIK_SPACE))
 		{
 			sceneNo_ = SceneNo::Operate;
+			cameraMode = 2;
 		}
 		break;
 	case GameScene::SceneNo::Operate:
@@ -328,6 +329,7 @@ void GameScene::Update()
 			sceneNo_ = SceneNo::Game;
 			killEnemyCount = 0;
 			player_->Reset();
+			
 		}
 		break;
 	case GameScene::SceneNo::Game:
