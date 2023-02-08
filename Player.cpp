@@ -151,7 +151,8 @@ void Player::Initialize(Model* model, Model* followModel, Model* playerModel)
 		edgeLine[i].Update();
 	}
 
-
+	bulletSound.SoundLoadWave("Resources/sound/bullet.wav");
+	puSound.SoundLoadWave("Resources/sound/pu.wav");
 
 }
 
@@ -208,7 +209,7 @@ void Player::Update()
 
 	nowFlameCount_++;
 	if (nowFlameCount_ > maxFlameCount_) {	//Žž‚ª—ˆ‚½‚ç90“x‰ñ“]
-
+		puSound.SoundPlayWave(false);
 		attenVel_ = 0.0f;
 
 		nowFlameCount_ = 0;
@@ -241,6 +242,7 @@ void Player::Update()
 						Vector2(line_[i].eLineVec2.x, line_[i].eLineVec2.y))
 						== true) {
 						isAtk = true;
+						bulletSound.SoundPlayWave(false);
 					}
 				}
 

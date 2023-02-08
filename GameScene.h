@@ -106,7 +106,12 @@ public:
 private:
 	DirectXCommon* dxCommon_ = nullptr;
 	
-	Audio* audio = nullptr;
+	//‰¹
+	Sound gameSound;
+	Sound titleSound;
+	Sound enterSound;
+	Sound stateAndEndSound;
+
 	SpriteCommon* spriteCommon = nullptr;
 	std::unique_ptr<Sprite> sprite;
 	std::unique_ptr<Sprite> sprite2;

@@ -1,86 +1,75 @@
 #pragma once
+
 #include <xaudio2.h>
+#pragma comment(lib,"xaudio2.lib")
 #include <fstream>
-#include <wrl.h>
-#include <map>
+#include <array>
+#include <cstdint>
+#include <set>
 #include <string>
+#include <map>
+#include <combaseapi.h>
+#include <Windows.h>
 #include <cassert>
-#include <vector>
-
-#include <mfapi.h>
-#include <mfidl.h>
-#include <mfreadwrite.h>
-#include <propvarutil.h>
+#include <iterator>
+#include <wrl.h>
 
 
-class Audio
+//チャンクヘッダ
+struct ChunkHeader {
+	char id[4];		//チャンク毎のID
+	int32_t size;	//チャンクサイズ
+};
+
+//RIFFヘッダチャンク
+struct RiffHeader {
+	ChunkHeader chunk;	//"RIFF"
+	char type[4];		//"WAVE"
+};
+
+//FMTチャンク
+struct FormatChunk {
+	ChunkHeader chunk;	//"fmt"
+	WAVEFORMATEX fmt;	//波形フォーマット
+};
+
+class Sound
 {
-private:
-	// Microsoft::WRL::を省略
-	template <class T> using ComPtr = Microsoft::WRL::ComPtr<T>;
 public:
-	//チャンクヘッダ
-	struct ChunkHeader
-	{
-		char id[4];		//チャンクごとのid
-		int32_t size;	//チャンクサイズ
-	};
+	static Microsoft::WRL::ComPtr<IXAudio2> xAudio2_;
+	static IXAudio2MasteringVoice* masterVoice_;
+	~Sound();
 
-	//RIFFヘッダチャンク
-	struct RiffHeader
-	{
-		ChunkHeader chunk;	//"RIFF"
-		char type[4];		//"WAVE"
-	};
-	//FMTチャンク
-	struct FormatChunk
-	{
-		ChunkHeader chunk;	//"fmt"
-		WAVEFORMATEX fmt;	//波形フォーマット
-	};
+	// 初期化
+	static void StaticInitialize();
+	//音声読み込み
+	void SoundLoadWave(const char* filename);
+	//音声再生
+	void SoundPlayWave(bool loop = false, float volume = 1.0f);
+	// 音声停止
+	void StopWave();
+
+	//音声データ解放
+	void SoundUnload();
+
+
+private:
 	//音声データ
-	struct SoundData
-	{
+	struct SoundData {
 		//波形フォーマット
 		WAVEFORMATEX wfex;
 		//バッファの先頭アドレス
 		BYTE* pBuffer;
-		//バッファのサイズ
+		//バッファサイズ
 		unsigned int bufferSize;
 	};
-public:
-	//初期化
-	void Initialize(const std::string directoryPath = "Resources/");
 
-	//終了処理
-	void Finalize();
+	SoundData soundData_;
 
-	/// <summary>
-	/// WAV音声読み込み
-	/// </summary>
-	/// <param name="filename">WAVファイル名</param>
-	void LoadWave(const std::string filename);
+	IXAudio2SourceVoice* pSourceVoice = nullptr;
 
+	//再生する波形データの設定
+	XAUDIO2_BUFFER buf{};
 
-	/// <summary>
-	///	サウンドデータの開放
-	/// </summary>
-	void Unload(SoundData* soundData);
-
-	/// <summary>
-	/// サウンドデータ名
-	/// </summary>
-	/// <param name="filename">WAVファイル名</param>
-	void PlayWave(const std::string filename, bool LoopFlag = false, float sourceRate=1.0f, float targetRate=1.0f);
-
-	void SetPitch(const std::string filename,float sourceRate,float targetRate);
-
-private:
-	//xAudioのインスタンス
-	ComPtr<IXAudio2>xAudio2_;
-	//サウンドデータの配列
-	std::map<std::string, SoundData> soundDatas_;
-
-	//サウンド格納ディレクトリ
-	std::string directoryPath_;
+	
 };

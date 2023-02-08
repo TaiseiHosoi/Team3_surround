@@ -7,6 +7,7 @@
 #include"Vector2.h"
 #include"Vector3.h"
 #include"Object3d.h"
+#include"Audio.h"
 
 typedef struct Line {
 	Vector2 sLineVec2;	//Žn“_
@@ -123,5 +124,6 @@ private:
 
 	bool isReversal = false;
 
-
+	Sound bulletSound;
+	Sound puSound;
 };

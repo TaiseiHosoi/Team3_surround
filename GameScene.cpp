@@ -3,6 +3,7 @@
 #include <cassert>
 #include<fstream>
 #include<stdlib.h>
+#include"Audio.h"
 
 using namespace Microsoft::WRL;
 
@@ -13,12 +14,13 @@ GameScene::GameScene()
 GameScene::~GameScene()
 {
 	delete spriteCommon;
-	delete audio;
 	delete object3d;
 }
 
 void GameScene::Initialize(DirectXCommon* dxcomon)
 {
+
+	Sound::StaticInitialize();
 	assert(dxcomon);
 	dxCommon_ = dxcomon;
 	////DirectX初期化処理　ここから
@@ -169,9 +171,6 @@ void GameScene::Initialize(DirectXCommon* dxcomon)
 	nowSpeedMem->SetAnchorPoint({ 0,0 });
 	nowSpeedMem->SetPozition({ 80,140 });
 
-	audio = new Audio();
-	audio->Initialize();
-
 	//OBJからモデルデータを読み込む
 	model.reset(Model::LoadFormOBJ("cube2", true));
 	circle_.reset(Model::LoadFormOBJ("ico", true));
@@ -181,9 +180,11 @@ void GameScene::Initialize(DirectXCommon* dxcomon)
 	object3d->SetModel(model.get());
 
 
-
-	audio->LoadWave("se_amd06.wav");
-	//audio->PlayWave("se_amd06.wav");
+	titleSound.SoundLoadWave("Resources/sound/titleBGM.wav");
+	titleSound.SoundPlayWave(true);
+	gameSound.SoundLoadWave("Resources/sound/gameBGM.wav");
+	enterSound.SoundLoadWave("Resources/sound/enter.wav");
+	stateAndEndSound.SoundLoadWave("Resources/sound/StartAndEnd.wav");
 
 	//シングルトン
 	input_ = Input::GetInstance();
@@ -227,6 +228,7 @@ void GameScene::Update()
 		{
 			sceneNo_ = SceneNo::Operate;
 			cameraMode = 2;
+			enterSound.SoundPlayWave(false);
 		}
 		break;
 	case GameScene::SceneNo::Operate:
@@ -341,7 +343,10 @@ void GameScene::Update()
 			sceneNo_ = SceneNo::Game;
 			killEnemyCount = 0;
 			player_->Reset();
-			
+			gameSound.SoundPlayWave(true, 0.5);
+			stateAndEndSound.SoundPlayWave(false);
+			titleSound.StopWave();
+			enterSound.SoundPlayWave(false);
 		}
 		break;
 	case GameScene::SceneNo::Game:
@@ -455,12 +460,16 @@ void GameScene::Update()
 				killEnemyCount = 0;
 				player_->Reset();
 				EnemyReset();
+				enterSound.SoundPlayWave();
 			}
 
 		}
 		break;
 	}
-	player_->Update();
+	if (sceneNo_!=SceneNo::Select)
+	{
+		player_->Update();
+	}
 
 	skyBox->Update();
 
@@ -797,6 +806,9 @@ void GameScene::UpdateEnemyPopCommands()
 		}
 		else if (word.find("OVER") == 0) {
 			sceneNo_ = SceneNo::Over;
+			gameSound.StopWave();
+			stateAndEndSound.SoundPlayWave(false);
+			titleSound.SoundPlayWave(true);
 			break;
 
 		}
