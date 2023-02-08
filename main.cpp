@@ -7,6 +7,9 @@
 #include"Object3d.h"
 #include"Sprite.h"
 #include"GameScene.h"
+#include"PostEffect.h"
+#include"EnmayPostEffect.h"
+#include "SkyPostEffect.h"
 
 
 const float PI = 3.14f;
@@ -58,6 +61,16 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int)
 	// 3Dオブジェクト静的初期化
 	Object3d::StaticInitialize(dxCommon_->GetDevice(), WinApp::window_width, WinApp::window_height);
 
+	PostEffect* posteffect = nullptr;
+	posteffect = new PostEffect();
+	posteffect->Initialize(dxCommon_->GetDevice());
+	EnemyPostEffect* enemyPostErffect = nullptr;
+	enemyPostErffect = new EnemyPostEffect();
+	enemyPostErffect->Initialize(dxCommon_->GetDevice());
+	SkyPostEffect* skyPos = nullptr;
+	skyPos = new SkyPostEffect();
+	skyPos->Initialize(dxCommon_->GetDevice());
+
 	////OBJからモデルデータを読み込む
 	//Model* model = Model::LoadFormOBJ("cube");
 
@@ -81,14 +94,36 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int)
 		
 		//mesh_->Update(dxCommon_->GetDevice(), input_);
 		
+		posteffect->PreDrawScene(dxCommon_->GetCommandList());
+
+		gamescne->Draw2();
+		
+
+		posteffect->PostDrawScene(dxCommon_->GetCommandList());
+
+		enemyPostErffect->PreDrawScene(dxCommon_->GetCommandList());
+
+		gamescne->EnemyDraw();
+
+		enemyPostErffect->PostDrawScene(dxCommon_->GetCommandList());
+
+		skyPos->PreDrawScene(dxCommon_->GetCommandList());
+
+		gamescne->skyDraw();
+
+		skyPos->PostDrawScene(dxCommon_->GetCommandList());
+
 		//描画
 		dxCommon_->PreDraw();
 		
-
+	
 
 		//Object3d::PreDraw(dxCommon_->GetCommandList());
-
+		skyPos->Draw(dxCommon_->GetCommandList());
+		enemyPostErffect->Draw(dxCommon_->GetCommandList());
+		posteffect->Draw(dxCommon_->GetCommandList());
 		gamescne->Draw();
+		
 		//object3d->Draw();
 
 		//Object3d::PostDraw();

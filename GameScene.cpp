@@ -175,11 +175,11 @@ void GameScene::Draw()
 	Object3d::PreDraw(dxCommon_->GetCommandList());
 
 	//object3d->Draw();
-	player_->Draw();
-	for (std::unique_ptr<Enemy>& enemy_ : enemys_) {
-		enemy_->Draw();
-	}
-	skyBox->Draw();
+	//player_->Draw();
+	//for (std::unique_ptr<Enemy>& enemy_ : enemys_) {
+	//	enemy_->Draw();
+	//}
+	//skyBox->Draw();
 
 	Object3d::PostDraw();
 
@@ -203,6 +203,42 @@ void GameScene::Draw()
 	}
 
 	spritecommon->SpritePostDraw();
+}
+
+void GameScene::Draw2()
+{
+	Object3d::PreDraw(dxCommon_->GetCommandList());
+
+	//object3d->Draw();
+	player_->Draw();
+	
+	
+	
+	Object3d::PostDraw();
+}
+
+void GameScene::EnemyDraw()
+{
+	Object3d::PreDraw(dxCommon_->GetCommandList());
+
+
+	for (std::unique_ptr<Enemy>& enemy_ : enemys_) {
+		enemy_->Draw();
+	}
+	
+	
+	Object3d::PostDraw();
+
+}
+
+void GameScene::skyDraw()
+{
+	Object3d::PreDraw(dxCommon_->GetCommandList());
+
+	skyBox->Draw();
+
+
+	Object3d::PostDraw();
 }
 
 void GameScene::GenerEnemy(Vector3 EnemyPos, int ID, int lane)

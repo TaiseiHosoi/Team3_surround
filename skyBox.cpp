@@ -63,6 +63,8 @@ void SkyBox::Initialize(Model* boxModel, Model* railModel)
 		widthRail[i]->SetScale({ 100,0.1,0.1 });
 
 		widthRail[i]->SetPosition({ 0,-100,static_cast<float>(i * 20) });
+
+		widthRail[i]->color = { 0.5,0.5,0.5,1.0 };
 	}
 
 	for (int i = 0; i < 30; i++)
@@ -174,9 +176,9 @@ void SkyBox::Draw()
 		widthRail[i]->Draw();
 	}
 
-	for (int i = 0; i < 30; i++)
-	{
-		height[i][0]->Draw();
-		height[i][1]->Draw();
-	}
+	//for (int i = 0; i < 30; i++)
+	//{
+	//	height[i][0]->Draw();
+	//	height[i][1]->Draw();
+	//}
 }

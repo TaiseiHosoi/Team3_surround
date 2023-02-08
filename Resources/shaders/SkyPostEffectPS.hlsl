@@ -1,11 +1,11 @@
 #include "PostEffectTest.hlsli"
 
-Texture2D<float4> tex : register(t0);  // 0番スロットに設定されたテクスチャ
-SamplerState smp : register(s0);      // 0番スロットに設定されたサンプラー
+Texture2D<float4> tex : register(t0);  	// 0�ԃX���b�g�ɐݒ肳�ꂽ�e�N�X�`��
+SamplerState smp : register(s0);      	// 0�ԃX���b�g�ɐݒ肳�ꂽ�T���v���[
 
 float4 main(VSOutput input) : SV_TARGET
 {
-float uPixel = 1.0f / 1280.0f;
+	float uPixel = 1.0f / 1280.0f;
 	float vPixel = 1.0f / 720.0f;
 
 	int blarX = 4;
@@ -39,5 +39,5 @@ float uPixel = 1.0f / 1280.0f;
 		}
 	}
 
-	return float4(texcolor.rgb / (blerBlend), texcolor.a);
+	return float4(texcolor.rgb / (blerBlend * 2), texcolor.a);
 }

@@ -1,4 +1,4 @@
-#include "PostEffect.h"
+#include "EnmayPostEffect.h"
 #include <d3dx12.h>
 #include "WinApp.h"
 #include<cmath>
@@ -11,15 +11,14 @@ using namespace DirectX;
 using namespace Microsoft::WRL;
 
 //静的メンバ変数の実体
-const float PostEffect::clearColor[4] = { 0.0f,0.0f,0.0f,0.0f };//RGBA
+const float EnemyPostEffect::clearColor[4] = { 0.0f,0.0f,0.0f,0.0f };//RGBA
 
-PostEffect::PostEffect()
+EnemyPostEffect::EnemyPostEffect()
 {
-
 }
 
-void PostEffect::Initialize(ID3D12Device* device){
-
+void EnemyPostEffect::Initialize(ID3D12Device* device)
+{
 	HRESULT result;
 
 	CD3DX12_HEAP_PROPERTIES heapPro(D3D12_HEAP_TYPE_UPLOAD);
@@ -144,6 +143,7 @@ void PostEffect::Initialize(ID3D12Device* device){
 	// シェーダーの計算結果をSRGBに変換して書き込む
 	rtvDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
 	rtvDesc.ViewDimension = D3D12_RTV_DIMENSION_TEXTURE2D;
+
 	//デスクリプタヒープにRTV作成
 	device->CreateRenderTargetView(texBuff.Get(),
 		nullptr,
@@ -155,13 +155,13 @@ void PostEffect::Initialize(ID3D12Device* device){
 	//深度バッファリソース設定
 	CD3DX12_RESOURCE_DESC depthResDesc =
 		CD3DX12_RESOURCE_DESC::Tex2D(
-		DXGI_FORMAT_D32_FLOAT,
-		WinApp::window_width,
-		WinApp::window_height,
-		1, 0,
-		1, 0,
-		D3D12_RESOURCE_FLAG_ALLOW_DEPTH_STENCIL
-	);
+			DXGI_FORMAT_D32_FLOAT,
+			WinApp::window_width,
+			WinApp::window_height,
+			1, 0,
+			1, 0,
+			D3D12_RESOURCE_FLAG_ALLOW_DEPTH_STENCIL
+		);
 
 	CD3DX12_HEAP_PROPERTIES heapProper(D3D12_HEAP_TYPE_DEFAULT);
 
@@ -195,11 +195,10 @@ void PostEffect::Initialize(ID3D12Device* device){
 
 	//パイプライン生成
 	CreateGraphicsPipelineState(device);
-
 }
 
-void PostEffect::Draw(ID3D12GraphicsCommandList* cmdList){
-
+void EnemyPostEffect::Draw(ID3D12GraphicsCommandList* cmdList)
+{
 	// ワールド行列の更新
 	this->matWorld = XMMatrixIdentity();
 	this->matWorld *= XMMatrixRotationZ(XMConvertToRadians(rotation));
@@ -234,12 +233,11 @@ void PostEffect::Draw(ID3D12GraphicsCommandList* cmdList){
 	cmdList->SetGraphicsRootDescriptorTable(1, descHeap->GetGPUDescriptorHandleForHeapStart());
 	// 描画コマンド
 	cmdList->DrawInstanced(4, 1, 0, 0);
-
 }
 
-void PostEffect::PreDrawScene(ID3D12GraphicsCommandList* cmdList){
-
-	CD3DX12_RESOURCE_BARRIER resouceBar= CD3DX12_RESOURCE_BARRIER::Transition(texBuff.Get(),
+void EnemyPostEffect::PreDrawScene(ID3D12GraphicsCommandList* cmdList)
+{
+	CD3DX12_RESOURCE_BARRIER resouceBar = CD3DX12_RESOURCE_BARRIER::Transition(texBuff.Get(),
 		D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE,
 		D3D12_RESOURCE_STATE_RENDER_TARGET);
 
@@ -268,21 +266,18 @@ void PostEffect::PreDrawScene(ID3D12GraphicsCommandList* cmdList){
 	cmdList->ClearRenderTargetView(rtvH, clearColor, 0, nullptr);
 	//深度バッファのクリア
 	cmdList->ClearDepthStencilView(dsvH, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
-
-
 }
 
-void PostEffect::PostDrawScene(ID3D12GraphicsCommandList* cmdList){
-
-	CD3DX12_RESOURCE_BARRIER resorceBarr= CD3DX12_RESOURCE_BARRIER::Transition(texBuff.Get(),
+void EnemyPostEffect::PostDrawScene(ID3D12GraphicsCommandList* cmdList)
+{
+	CD3DX12_RESOURCE_BARRIER resorceBarr = CD3DX12_RESOURCE_BARRIER::Transition(texBuff.Get(),
 		D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE);
 
 	//リソースバリアを変更(描画可能→シェーダーリソース)
 	cmdList->ResourceBarrier(1, &resorceBarr);
-
 }
 
-void PostEffect::CreateGraphicsPipelineState(ID3D12Device* device)
+void EnemyPostEffect::CreateGraphicsPipelineState(ID3D12Device* device)
 {
 	HRESULT result = S_FALSE;
 	ComPtr<ID3DBlob> vsBlob; // 頂点シェーダオブジェクト
@@ -291,7 +286,7 @@ void PostEffect::CreateGraphicsPipelineState(ID3D12Device* device)
 
 	// 頂点シェーダの読み込みとコンパイル
 	result = D3DCompileFromFile(
-		L"Resources/shaders/PostEffectTestVS.hlsl",	// シェーダファイル名
+		L"Resources/shaders/EnemyPostEffectVSTest.hlsl",	// シェーダファイル名
 		nullptr,
 		D3D_COMPILE_STANDARD_FILE_INCLUDE, // インクルード可能にする
 		"main", "vs_5_0",	// エントリーポイント名、シェーダーモデル指定
@@ -316,7 +311,7 @@ void PostEffect::CreateGraphicsPipelineState(ID3D12Device* device)
 
 	// ピクセルシェーダの読み込みとコンパイル
 	result = D3DCompileFromFile(
-		L"Resources/shaders/PostEffectTestPS.hlsl",	// シェーダファイル名
+		L"Resources/shaders/EnemyPostEffectPSTest.hlsl",	// シェーダファイル名
 		nullptr,
 		D3D_COMPILE_STANDARD_FILE_INCLUDE, // インクルード可能にする
 		"main", "ps_5_0",	// エントリーポイント名、シェーダーモデル指定
@@ -434,6 +429,4 @@ void PostEffect::CreateGraphicsPipelineState(ID3D12Device* device)
 	result = device->CreateDescriptorHeap(&descHeapDesc, IID_PPV_ARGS(&descHeap));//生成
 
 	assert(SUCCEEDED(result));
-
-
 }
