@@ -98,8 +98,8 @@ void GameScene::Initialize(DirectXCommon* dxcomon)
 	resultMaxEnemy->SetPozition({ 500,296 });
 
 	resultNumberTens = std::make_unique<Sprite>();
-	resultNumberTens->Initialize(spritecommon,12);
-	resultNumberTens->SetPozition({375,296});
+	resultNumberTens->Initialize(spritecommon, 12);
+	resultNumberTens->SetPozition({ 375,296 });
 
 	resultNumberOnes = std::make_unique<Sprite>();
 	resultNumberOnes->Initialize(spritecommon, 12);
@@ -107,7 +107,7 @@ void GameScene::Initialize(DirectXCommon* dxcomon)
 
 	gameMaxEnemy = std::make_unique<Sprite>();
 	gameMaxEnemy->Initialize(spritecommon, 11);
-	gameMaxEnemy->SetSize({ 140, 40});
+	gameMaxEnemy->SetSize({ 140, 40 });
 	gameMaxEnemy->SetPozition({ 1140,10 });
 
 	gameNumberTens = std::make_unique<Sprite>();
@@ -138,7 +138,7 @@ void GameScene::Initialize(DirectXCommon* dxcomon)
 	audio->Initialize();
 
 	//OBJからモデルデータを読み込む
-	model.reset(Model::LoadFormOBJ("cube2",true));
+	model.reset(Model::LoadFormOBJ("cube2", true));
 	circle_.reset(Model::LoadFormOBJ("ico", true));
 	redCube.reset(Model::LoadFormOBJ("redCube", true));
 
@@ -190,10 +190,73 @@ void GameScene::Update()
 	case GameScene::SceneNo::Title:
 		if (input_->TriggerKey(DIK_SPACE))
 		{
-			sceneNo_ = SceneNo::Game;
+			sceneNo_ = SceneNo::Operate;
 		}
 		break;
 	case GameScene::SceneNo::Operate:
+
+#pragma region
+		if (input_->TriggerKey(DIK_C)) {
+			if (cameraMode <= 2) {
+
+				cameraMode++;
+
+			}
+			else {
+				cameraMode = 0;
+			}
+		}
+
+		if (cameraMode == 0) {
+			Object3d::SetEye(normalEyePos);
+		}
+		else if (cameraMode == 1) {
+			Object3d::SetEye(extendEyePos);
+		}
+		else if (cameraMode == 2) {
+			Vector3 P = player_.get()->GetWorldPosition();
+			Object3d::SetEye({ P.x,P.y,-50.0f });
+			Object3d::SetTarget({ P.x,P.y,P.z });
+		}
+#pragma endregion
+
+		if (enemys_.size() <= 0&& player_->GetIsAtkDraw() == false)
+		{
+			std::unique_ptr<Enemy> newEnemy = std::make_unique<Enemy>();
+
+			float kBulSpeed = 0.4f;
+			kBulSpeed += gameLevel_ * 0.1f + 1.0f;	//レベルが上がると弾が加速
+
+			newEnemy->Initialize(redCube.get(), model.get(), { 0.0f,0.0f,400.0f }, kBulSpeed);
+
+			enemys_.push_back(std::move(newEnemy));
+
+		}
+		//デリート
+		enemys_.remove_if([](std::unique_ptr<Enemy>& enemy_) { return enemy_->IsDead(); });
+
+		for (std::unique_ptr<Enemy>& enemy_ : enemys_) {
+			enemy_->Update();
+		}
+
+		if (player_->GetIsAtkDraw() == true) {
+			CheckAllCollisions();
+		}
+
+		//スピードゲージ用
+
+
+		maxSpeedMem->SetSize({ (float)player_.get()->GetMaxTimeCount() * 3.0f , 30 });
+		nowSpeedMem->SetSize({ (float)player_.get()->GetNowTimeCount() * 3.0f , 30 });
+		break;
+
+		if (killEnemyCount >= 3)
+		{
+			sceneNo_ = SceneNo::Select;
+		}
+		break;
+	case GameScene::SceneNo::Select:
+
 		break;
 	case GameScene::SceneNo::Game:
 #pragma region
@@ -294,7 +357,7 @@ void GameScene::Draw()
 	default:
 		break;
 	}
-	
+
 	//player_->Draw();
 
 	//skyBox->Draw();
@@ -311,6 +374,27 @@ void GameScene::Draw()
 		space->Draw();
 		break;
 	case GameScene::SceneNo::Operate:
+		UI01->Draw();
+		maxSpeedMem->Draw();
+		nowSpeedMem->Draw();
+
+		if (input_->PushKey(DIK_RIGHT)) {
+			rightKeySP->Draw();
+		}
+		else if (input_->PushKey(DIK_LEFT)) {
+			leftKeySP->Draw();
+		}
+		else {
+			noneKeySP->Draw();
+		}
+		tutorial->Draw();
+
+		gameMaxEnemy->Draw();
+
+		gameNumberTens->SetTextureIndex(enemys_.size() / 10 + 12);
+		gameNumberOnes->SetTextureIndex(player_->GetIsAtkDraw() + 12);
+		gameNumberTens->Draw();
+		gameNumberOnes->Draw();
 		break;
 	case GameScene::SceneNo::Game:
 		UI01->Draw();
@@ -330,8 +414,8 @@ void GameScene::Draw()
 
 		gameMaxEnemy->Draw();
 
-		gameNumberTens->SetTextureIndex(popEnemyCount / 10 + 12);
-		gameNumberOnes->SetTextureIndex(popEnemyCount % 10 + 12);
+		gameNumberTens->SetTextureIndex(killEnemyCount / 10 + 12);
+		gameNumberOnes->SetTextureIndex(killEnemyCount % 10 + 12);
 		gameNumberTens->Draw();
 		gameNumberOnes->Draw();
 		break;
@@ -340,8 +424,8 @@ void GameScene::Draw()
 		space->Draw();
 		resultMaxEnemy->Draw();
 
-		resultNumberTens->SetTextureIndex(killEnemyCount / 10 +12);	
-		resultNumberOnes->SetTextureIndex(killEnemyCount%10+12);
+		resultNumberTens->SetTextureIndex(killEnemyCount / 10 + 12);
+		resultNumberOnes->SetTextureIndex(killEnemyCount % 10 + 12);
 		resultNumberTens->Draw();
 		resultNumberOnes->Draw();
 		break;
@@ -368,6 +452,9 @@ void GameScene::EnemyDraw()
 	case GameScene::SceneNo::Title:
 		break;
 	case GameScene::SceneNo::Operate:
+		for (std::unique_ptr<Enemy>& enemy_ : enemys_) {
+			enemy_->Draw();
+		}
 		break;
 	case GameScene::SceneNo::Game:
 		//object3d->Draw();

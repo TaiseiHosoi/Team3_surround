@@ -81,6 +81,7 @@ public:
 	enum class SceneNo {
 		Title, //タイトル
 		Operate, //操作説明(チュートリアル)
+		Select,
 		Game,  //射撃
 		Over   //ゲメオーバー
 	};
