@@ -14,7 +14,7 @@ class GameScene;
 class Enemy
 {
 public:
-	void Initialize(Model* redCube,Model* model, Vector3 vector3, float kBulSpeed);
+	void Initialize(Model* redCube,Model* model, Vector3 vector3, float kBulSpeed,int howColor);
 	void Update();
 	void Draw();
 
@@ -33,6 +33,7 @@ public:
 
 public:
 	void SetPlayer(Player* player);
+	int GetColorNum();
 
 private:
 	//ワールド変換データ
@@ -69,6 +70,9 @@ private:
 	int fieldLane_ = 0;
 
 	Player* player_ = nullptr;
+
+	//自機の色
+	int howColor_;
 	
 
 };

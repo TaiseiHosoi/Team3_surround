@@ -102,6 +102,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int)
 		enemyPostEffect->PreDrawScene(dxCommon_->GetCommandList());
 
 		gamescne->EnemyDraw();
+		gamescne->PlayerNormalDraw();
 
 		enemyPostEffect->PostDrawScene(dxCommon_->GetCommandList());
 
@@ -111,10 +112,9 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int)
 		gamescne->PlayerDraw();
 
 		playerPostEffect->PostDrawScene(dxCommon_->GetCommandList());
-		//描画
 		dxCommon_->PreDraw();
 		
-
+		
 
 		//Object3d::PreDraw(dxCommon_->GetCommandList());
 
@@ -123,6 +123,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int)
 		enemyPostEffect->Draw(dxCommon_->GetCommandList());
 		playerPostEffect->Draw(dxCommon_->GetCommandList());
 		gamescne->Draw();
+		
 		//object3d->Draw();
 
 		//Object3d::PostDraw();

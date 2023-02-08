@@ -3,7 +3,7 @@
 #include "math.h"
 #define PI 3.141592653589
 
-void Enemy::Initialize(Model* redCube, Model* model,Vector3 vector3, float kBulSpeed)
+void Enemy::Initialize(Model* redCube, Model* model,Vector3 vector3, float kBulSpeed, int howColor)
 {
 	// NULLポインタチェック
 	assert(model);
@@ -17,7 +17,24 @@ void Enemy::Initialize(Model* redCube, Model* model,Vector3 vector3, float kBulS
 	input_ = Input::GetInstance();
 
 	//初期座標をセット
-	worldTransform_.Initialize(false);
+	//color
+	XMFLOAT4 blueColor = { 0.2f,1.0f,0.8f,1.0f };
+	XMFLOAT4 pinkColor = { 1.0f,0.1f,1.0f,1.0f };
+	
+	worldTransform_.Initialize(true);
+	howColor_ = howColor;
+
+	if (howColor_ == 1) {
+		worldTransform_.SetRimColor(blueColor);
+	}
+	else if (howColor_ == 2) {
+		worldTransform_.SetRimColor(pinkColor);
+	}
+	else {
+		worldTransform_.SetRimColor({ 1.0,1.0,1.0,1.0 });
+	}
+
+	worldTransform_.SetRimEmission(100.0f);
 	worldTransform_.position = vector3;
 	worldTransform_.scale = { 1,1,1 };
 	worldTransform_.rotation = { 0,0,0 };
@@ -25,14 +42,14 @@ void Enemy::Initialize(Model* redCube, Model* model,Vector3 vector3, float kBulS
 	//予測線
 	predictionLine_.Initialize(false);
 	predictionLine_.position = vector3;
-	predictionLine_.scale = { 0.1f,0.1f,1.0f };
+	predictionLine_.scale = { 0.3f,0.3f,1.0f };
 	predictionLine_.rotation = { 0,0,0 };
 	predictionLine_.Update();
 
 	//予測ポイント
 	predictionPoint_.Initialize(false);
 	predictionPoint_.position = { vector3.x,vector3.y,0 };
-	predictionPoint_.scale = { 0.7f,0.7f,0.1f };
+	predictionPoint_.scale = { 0.7f,0.7f,0.2f };
 	predictionPoint_.rotation = { 0,0,0 };
 	predictionPoint_.Update();
 
@@ -94,4 +111,10 @@ void Enemy::OnCollision(bool isBreak)
 
 void Enemy::SetPlayer(Player* player) {
 	player_ = player;
+}
+
+int Enemy::GetColorNum()
+{
+
+	return howColor_;
 }

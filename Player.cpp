@@ -56,12 +56,12 @@ void Player::Initialize(Model* model, Model* followModel, Model* playerModel)
 
 	for (int i = 0; i < _countof(line_); i++) {
 		line_[i].worldTransform.Initialize(true);
-		line_[i].worldTransform.SetRimColor({1.0f,1.0f,1.0f,0.4f});
+		line_[i].worldTransform.SetRimColor({1.0f,1.0f,1.0f,0.9f});
 		line_[i].worldTransform.SetModel(model_);
 		line_[i].sLineVec2 = {worldTransform_.position.x,worldTransform_.position.y};
 		line_[i].eLineVec2 = { worldTransform_.position.x,worldTransform_.position.y};
 		line_[i].isDraw = false;
-		line_[i].worldTransform.scale = { 0.2,0.2,1.0f };
+		line_[i].worldTransform.scale = { 0.4,0.4,1.0f };
 		line_[i].worldTransform.position.x += i * 2;
 		line_[i].worldTransform.position = worldTransform_.position;
 		line_[i].worldTransform.Update();
@@ -418,7 +418,19 @@ void Player::Update()
 
 }
 
-void Player::Draw()
+void Player::NormalDraw()
+{
+
+	nowLineWorldTransform_.Draw();
+
+	for (int i = 0; i < _countof(line_); i++) {
+		if (line_[i].isDraw == true) {
+			line_[i].worldTransform.Draw();
+		}
+	}
+}
+
+void Player::EffectDraw()
 {
 
 	//ƒp[ƒX
@@ -427,13 +439,9 @@ void Player::Draw()
 	//}
 
 	worldTransform_.Draw();
-	nowLineWorldTransform_.Draw();
 	
-	for (int i = 0; i < _countof(line_); i++) {
-		if (line_[i].isDraw == true) {
-			line_[i].worldTransform.Draw();
-		}
-	}
+	
+	
 
 	for (int i = 0; i < _countof(followerWT_); i++) {
 		followerWT_[i].Draw();
@@ -486,6 +494,11 @@ int Player::GetNowTimeCount() {
 bool Player::GetIsAtkDraw()
 {
 	return isAtkDraw;
+}
+
+bool Player::GetReversal()
+{
+	return isReversal;
 }
 
 void Player::ColideEdgeWall() {

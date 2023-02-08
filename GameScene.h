@@ -47,6 +47,8 @@ public:
 
 	void PlayerDraw();
 
+	void PlayerNormalDraw();
+
 	void EnemyDraw();
 
 	void SkyDraw();

@@ -231,9 +231,11 @@ void GameScene::Update()
 		}
 
 		if (cameraMode == 0) {
+			Object3d::SetTarget({ 0, 0, 300.0f });
 			Object3d::SetEye(normalEyePos);
 		}
 		else if (cameraMode == 1) {
+			Object3d::SetTarget({ 0, 0, 300.0f });
 			Object3d::SetEye(extendEyePos);
 		}
 		else if (cameraMode == 2) {
@@ -250,7 +252,7 @@ void GameScene::Update()
 			float kBulSpeed = 0.4f;
 			kBulSpeed += gameLevel_ * 0.1f + 1.0f;	//ÉåÉxÉãÇ™è„Ç™ÇÈÇ∆íeÇ™â¡ë¨
 
-			newEnemy->Initialize(redCube.get(), model.get(), { 0.0f,0.0f,400.0f }, kBulSpeed);
+			newEnemy->Initialize(redCube.get(), model.get(), { 0.0f,0.0f,400.0f }, kBulSpeed , 0);
 
 			enemys_.push_back(std::move(newEnemy));
 
@@ -522,7 +524,19 @@ void GameScene::PlayerDraw()
 	Object3d::PreDraw(dxCommon_->GetCommandList());
 	if (sceneNo_ != SceneNo::Select)
 	{
-		player_->Draw();
+		player_->EffectDraw();
+		
+	}
+	Object3d::PostDraw();
+}
+
+void GameScene::PlayerNormalDraw()
+{
+	Object3d::PreDraw(dxCommon_->GetCommandList());
+	if (sceneNo_ != SceneNo::Select)
+	{
+		player_->NormalDraw();
+
 	}
 	Object3d::PostDraw();
 }
@@ -566,19 +580,36 @@ void GameScene::GenerEnemy(Vector3 EnemyPos, int ID, int lane)
 	//ê∂ê¨
 	std::unique_ptr<Enemy> newEnemy = std::make_unique<Enemy>();
 	//ìGÉLÉÉÉâÇÃèâä˙âª
-	float kBulSpeed = 0.4f;
+	float kBulSpeed;
+
+	if (select == Select::Easy ) {
+		kBulSpeed = 0.25f;
+	}
+	else if (select == Select::Normal || select == Select::Hard) {
+		kBulSpeed = 0.45f;
+	}
+	
+
 	if (gameLevel_ > 0) {
 		kBulSpeed += gameLevel_ * 0.1f + 1.0f;	//ÉåÉxÉãÇ™è„Ç™ÇÈÇ∆íeÇ™â¡ë¨
 	}
 
+	int witchColor;
+	if (select == Select::Hard) {
+		witchColor = rand() % 2 + 1;
+	}
+	else {
+		witchColor = 0;
+	}
+
 	if (lane == 0) {
-		newEnemy->Initialize(redCube.get(), model.get(), EnemyPos, kBulSpeed);
+		newEnemy->Initialize(redCube.get(), model.get(), EnemyPos, kBulSpeed, witchColor);
 	}
 	else if (lane == 1) {
-		newEnemy->Initialize(redCube.get(), model.get(), EnemyPos, kBulSpeed);
+		newEnemy->Initialize(redCube.get(), model.get(), EnemyPos, kBulSpeed, witchColor);
 	}
 	else if (lane == 2) {
-		newEnemy->Initialize(redCube.get(), model.get(), EnemyPos, kBulSpeed);
+		newEnemy->Initialize(redCube.get(), model.get(), EnemyPos, kBulSpeed, witchColor);
 	}
 
 	newEnemy->SetID(ID);
@@ -749,8 +780,20 @@ void GameScene::CheckAllCollisions() {
 						atkColideB_[i].atkTransform.position.y - atkColideB_[i].atkTransform.scale.y <
 						posA.y) {
 
-						enemy_->OnCollision(false);
-						killEnemyCount++;
+						if (select == Select::Hard) {
+							if (enemy_->GetColorNum() == 1 && player_.get()->GetReversal() == false) {
+								enemy_->OnCollision(false);
+								killEnemyCount++;
+							}
+							if (enemy_->GetColorNum() == 2 && player_.get()->GetReversal() == true) {
+								enemy_->OnCollision(false);
+								killEnemyCount++;
+							}
+						}
+						else {
+							enemy_->OnCollision(false);
+							killEnemyCount++;
+						}
 					}
 
 				}

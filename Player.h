@@ -26,9 +26,10 @@ typedef struct atkColide {
 class Player
 {
 public:
-	void Initialize(Model* model,Model* followModel,Model* playerModel);
+	void Initialize(Model* model, Model* followModel, Model* playerModel);
 	void Update();
-	void Draw();
+	void EffectDraw();
+	void NormalDraw();
 
 	bool IsDead() const { return isDead_; }	//Ž€–SŽž
 
@@ -39,6 +40,8 @@ public:
 	std::vector<atkColide> GetAtkColide();	//‰Â•Ï’·”z—ñ
 	int GetMaxTimeCount();
 	int GetNowTimeCount();
+
+	bool GetReversal();
 
 	bool GetIsAtkDraw();
 
@@ -101,7 +104,7 @@ private:
 	Vector2 saveMinColide;
 	Vector2 saveMaxColide;
 
-	
+
 
 	std::vector<atkColide> atkColide_;
 
@@ -119,6 +122,6 @@ private:
 	XMFLOAT4 pinkColor;
 
 	bool isReversal = false;
-	
-	
+
+
 };
