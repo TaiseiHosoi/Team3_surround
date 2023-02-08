@@ -89,7 +89,7 @@ void GameScene::Initialize(DirectXCommon* dxcomon)
 	audio->Initialize();
 
 	//OBJからモデルデータを読み込む
-	model.reset(Model::LoadFormOBJ("cube",true));
+	model.reset(Model::LoadFormOBJ("cube2",true));
 	circle_.reset(Model::LoadFormOBJ("ico", true));
 	redCube.reset(Model::LoadFormOBJ("redCube", true));
 

@@ -98,7 +98,8 @@ void Player::Initialize(Model* model, Model* followModel, Model* playerModel)
 
 	//çUåÇ
 	atkTransform_.Initialize(true);
-	atkTransform_.SetRimColor({ 1.0f,1.0f,1.0f,0.1f });
+	atkTransform_.SetRimColor({ 0.2f,1.0f,0.8f,1.0f });
+	atkTransform_.SetRimEmission(100.0f);
 	
 	atkTransform_.SetModel(model_);
 	isAtk = false;
@@ -111,7 +112,8 @@ void Player::Initialize(Model* model, Model* followModel, Model* playerModel)
 		edgeLine[i].Initialize(true);
 		edgeLine[i].SetModel(model_);
 		edgeLine[i].scale = { 0.5f,0.5f,30 };
-		edgeLine[i].SetRimColor({ 0.1f,0.6f,0.5f,0.7f });
+		edgeLine[i].SetRimColor({ 0.1f,0.6f,0.5f,1.0f });
+		edgeLine[i].SetRimEmission(100.0f);
 		
 		if (i == 0) {	//Å™
 			edgeLine[i].rotation = { 0,0.5 * PI,0 };
@@ -177,11 +179,11 @@ void Player::Update()
 	nowLineWorldTransform_.rotation = worldTransform_.rotation;
 
 	//Ç∞ÇÒÇªÇ≠
-	pVelocity_.z = MathFunc::Ease::In(0.7f,0.4f,nowFlameCount_, maxFlameCount_);
+	pVelocity_.z = MathFunc::Ease::In(0.9f,0.4f,nowFlameCount_, maxFlameCount_);
 	if (attenVel_ < 0.2f) {
-		attenVel_ += 0.02f;
+		attenVel_ += 0.01f;
 	}
-	//pVelocity_.z -= attenVel_;
+	pVelocity_.z -= attenVel_;
 
 	Vector3 vel = MathFunc::bVelocity(pVelocity_, worldTransform_);
 

@@ -23,7 +23,7 @@ void Enemy::Initialize(Model* redCube, Model* model,Vector3 vector3, float kBulS
 	worldTransform_.rotation = { 0,0,0 };
 
 	//—\‘ªü
-	predictionLine_.Initialize(true);
+	predictionLine_.Initialize(false);
 	predictionLine_.position = vector3;
 	predictionLine_.scale = { 0.1f,0.1f,1.0f };
 	predictionLine_.rotation = { 0,0,0 };
@@ -32,7 +32,7 @@ void Enemy::Initialize(Model* redCube, Model* model,Vector3 vector3, float kBulS
 	//—\‘ªƒ|ƒCƒ“ƒg
 	predictionPoint_.Initialize(false);
 	predictionPoint_.position = { vector3.x,vector3.y,0 };
-	predictionPoint_.scale = { 0.4f,0.4f,0.1f };
+	predictionPoint_.scale = { 0.7f,0.7f,0.1f };
 	predictionPoint_.rotation = { 0,0,0 };
 	predictionPoint_.Update();
 
@@ -62,9 +62,12 @@ void Enemy::Update()
 
 void Enemy::Draw()
 {
+	if (worldTransform_.position.z > 0) {
+		
+		predictionLine_.Draw();
+		predictionPoint_.Draw();
+	}
 	worldTransform_.Draw();
-	predictionLine_.Draw();
-	predictionPoint_.Draw();
 }
 
 float Enemy::easeIn(float x)
