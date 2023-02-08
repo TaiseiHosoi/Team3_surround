@@ -35,6 +35,19 @@ void GameScene::Initialize(DirectXCommon* dxcomon)
 	spritecommon->LoadTexture(6, "rightKey.png");
 	spritecommon->LoadTexture(7, "leftKey.png");
 	spritecommon->LoadTexture(8, "setumei.png");
+	spritecommon->LoadTexture(9, "SPACE2.png");
+	spritecommon->LoadTexture(10, "RESULT.png");
+	spritecommon->LoadTexture(11, "MaxEnemy.png");
+	spritecommon->LoadTexture(12, "number/0.png");
+	spritecommon->LoadTexture(13, "number/1.png");
+	spritecommon->LoadTexture(14, "number/2.png");
+	spritecommon->LoadTexture(15, "number/3.png");
+	spritecommon->LoadTexture(16, "number/4.png");
+	spritecommon->LoadTexture(17, "number/5.png");
+	spritecommon->LoadTexture(18, "number/6.png");
+	spritecommon->LoadTexture(19, "number/7.png");
+	spritecommon->LoadTexture(20, "number/8.png");
+	spritecommon->LoadTexture(21, "number/9.png");
 
 
 	sprite = std::make_unique <Sprite>();
@@ -60,17 +73,53 @@ void GameScene::Initialize(DirectXCommon* dxcomon)
 	noneKeySP->SetPozition(picPos);
 	rightKeySP = std::make_unique<Sprite>();
 	rightKeySP->Initialize(spritecommon, 6);
-	rightKeySP->SetSize(picSize );
+	rightKeySP->SetSize(picSize);
 	rightKeySP->SetPozition(picPos);
 	leftKeySP = std::make_unique<Sprite>();
 	leftKeySP->Initialize(spritecommon, 7);
-	leftKeySP->SetSize( picSize );
+	leftKeySP->SetSize(picSize);
 	leftKeySP->SetPozition(picPos);
 
 	tutorial = std::make_unique<Sprite>();
 	tutorial->Initialize(spritecommon, 8);
-	tutorial->SetSize({128.0f,32.0f});
-	tutorial->SetPozition({500,100});
+	//tutorial->SetSize({128.0f,32.0f});
+	tutorial->SetPozition({ 500,100 });
+
+	space = std::make_unique<Sprite>();
+	space->Initialize(spritecommon, 9);
+	space->SetPozition({ 563,472 });
+
+	result = std::make_unique<Sprite>();
+	result->Initialize(spritecommon, 10);
+	result->SetPozition({ 384,100 });
+
+	resultMaxEnemy = std::make_unique<Sprite>();
+	resultMaxEnemy->Initialize(spritecommon, 11);
+	resultMaxEnemy->SetPozition({ 500,296 });
+
+	resultNumberTens = std::make_unique<Sprite>();
+	resultNumberTens->Initialize(spritecommon,12);
+	resultNumberTens->SetPozition({375,296});
+
+	resultNumberOnes = std::make_unique<Sprite>();
+	resultNumberOnes->Initialize(spritecommon, 12);
+	resultNumberOnes->SetPozition({ 475,296 });
+
+	gameMaxEnemy = std::make_unique<Sprite>();
+	gameMaxEnemy->Initialize(spritecommon, 11);
+	gameMaxEnemy->SetSize({ 140, 40});
+	gameMaxEnemy->SetPozition({ 1140,10 });
+
+	gameNumberTens = std::make_unique<Sprite>();
+	gameNumberTens->Initialize(spritecommon, 12);
+	gameNumberTens->SetSize({ 40, 40 });
+	gameNumberTens->SetPozition({ 1100,10 });
+
+	gameNumberOnes = std::make_unique<Sprite>();
+	gameNumberOnes->Initialize(spritecommon, 12);
+	gameNumberOnes->SetSize({ 40, 40 });
+	gameNumberOnes->SetPozition({ 1125,10 });
+
 
 	sprite->SetSize({ 1280,720 });
 	sprite2->SetSize({ 200,200 });
@@ -83,8 +132,8 @@ void GameScene::Initialize(DirectXCommon* dxcomon)
 	maxSpeedMem->SetAnchorPoint({ 0,0 });
 	maxSpeedMem->SetPozition({ 80,100 });
 	nowSpeedMem->SetAnchorPoint({ 0,0 });
-	nowSpeedMem->SetPozition({80,140});
-	
+	nowSpeedMem->SetPozition({ 80,140 });
+
 	audio = new Audio();
 	audio->Initialize();
 
@@ -96,7 +145,7 @@ void GameScene::Initialize(DirectXCommon* dxcomon)
 	object3d = Object3d::Create();
 	object3d->SetModel(model.get());
 
-	
+
 
 	audio->LoadWave("se_amd06.wav");
 	//audio->PlayWave("se_amd06.wav");
@@ -127,124 +176,177 @@ void GameScene::Initialize(DirectXCommon* dxcomon)
 	gameLevel_ = 1;
 
 	skyBoxModel.reset(Model::LoadFormOBJ("sky", true));
-	railModel.reset(Model::LoadFormOBJ("rail",true));
+	railModel.reset(Model::LoadFormOBJ("rail", true));
 	skyBox = std::make_unique<SkyBox>();
-	skyBox->Initialize(skyBoxModel.get(),railModel.get());
+	skyBox->Initialize(skyBoxModel.get(), railModel.get());
 
-	
+
 }
 
 void GameScene::Update()
 {
+	switch (sceneNo_)
+	{
+	case GameScene::SceneNo::Title:
+		if (input_->TriggerKey(DIK_SPACE))
+		{
+			sceneNo_ = SceneNo::Game;
+		}
+		break;
+	case GameScene::SceneNo::Operate:
+		break;
+	case GameScene::SceneNo::Game:
 #pragma region
-	if (input_->TriggerKey(DIK_C)) {
-		if (cameraMode <= 2) {
+		if (input_->TriggerKey(DIK_C)) {
+			if (cameraMode <= 2) {
 
-			cameraMode++;
+				cameraMode++;
 
+			}
+			else {
+				cameraMode = 0;
+			}
 		}
-		else {
-			cameraMode = 0;
-		}
-	}
 
-	if (cameraMode == 0) {
-		Object3d::SetEye(normalEyePos);
-	}
-	else if (cameraMode == 1) {
-		Object3d::SetEye(extendEyePos);
-	}
-	else if (cameraMode == 2) {
-		Vector3 P = player_.get()->GetWorldPosition();
-		Object3d::SetEye({ P.x,P.y,-50.0f });
-		Object3d::SetTarget({ P.x,P.y,P.z });
-	}
+		if (cameraMode == 0) {
+			Object3d::SetEye(normalEyePos);
+		}
+		else if (cameraMode == 1) {
+			Object3d::SetEye(extendEyePos);
+		}
+		else if (cameraMode == 2) {
+			Vector3 P = player_.get()->GetWorldPosition();
+			Object3d::SetEye({ P.x,P.y,-50.0f });
+			Object3d::SetTarget({ P.x,P.y,P.z });
+		}
 #pragma endregion
 
-	object3d->Update();
+		object3d->Update();
 
 
-	gameTimer_++;
-	if (gameTimer_ > 300) {
-		if (gameLevel_ < levelMax_) {
-			gameTimer_ = 0;
-			gameLevel_++;
+		gameTimer_++;
+		if (gameTimer_ > 300) {
+			if (gameLevel_ < levelMax_) {
+				gameTimer_ = 0;
+				gameLevel_++;
+			}
+			else {
+				gameTimer_ = 0;
+			}
+
 		}
-		else {
-			gameTimer_ = 0;
+
+		//デリート
+		enemys_.remove_if([](std::unique_ptr<Enemy>& enemy_) { return enemy_->IsDead(); });
+
+
+		//弾発生
+		UpdateEnemyPopCommands();
+
+		for (std::unique_ptr<Enemy>& enemy_ : enemys_) {
+			enemy_->Update();
 		}
 
+		if (player_->GetIsAtkDraw() == true) {
+			CheckAllCollisions();
+		}
+
+		//スピードゲージ用
+
+
+		maxSpeedMem->SetSize({ (float)player_.get()->GetMaxTimeCount() * 3.0f , 30 });
+		nowSpeedMem->SetSize({ (float)player_.get()->GetNowTimeCount() * 3.0f , 30 });
+		break;
+	case GameScene::SceneNo::Over:
+		if (input_->TriggerKey(DIK_SPACE))
+		{
+			sceneNo_ = SceneNo::Title;
+		}
+		break;
+	default:
+		break;
 	}
-
 	player_->Update();
 
-	//デリート
-	enemys_.remove_if([](std::unique_ptr<Enemy>& enemy_) { return enemy_->IsDead(); });
-
-
-	//弾発生
-	UpdateEnemyPopCommands();
-
-	for (std::unique_ptr<Enemy>& enemy_ : enemys_) {
-		enemy_->Update();
-	}
-
 	skyBox->Update();
-
-	if (player_->GetIsAtkDraw() == true) {
-		CheckAllCollisions();
-	}
-
-	//スピードゲージ用
-	
-	
-	maxSpeedMem->SetSize({ (float)player_.get()->GetMaxTimeCount() * 3.0f , 30 });
-	nowSpeedMem->SetSize({ (float)player_.get()->GetNowTimeCount() * 3.0f , 30 });
-	
 
 }
 
 void GameScene::Draw()
 {
-	spritecommon->SpritePreDraw();
-	
-	/*sprite2->Draw();
-	sprite3->Draw();*/
-	
-
-	spritecommon->SpritePostDraw();
 
 	Object3d::PreDraw(dxCommon_->GetCommandList());
 
-	//object3d->Draw();
-	player_->Draw();
-	for (std::unique_ptr<Enemy>& enemy_ : enemys_) {
-		enemy_->Draw();
+	switch (sceneNo_)
+	{
+	case GameScene::SceneNo::Title:
+		break;
+	case GameScene::SceneNo::Operate:
+		break;
+	case GameScene::SceneNo::Game:
+		//object3d->Draw();
+		for (std::unique_ptr<Enemy>& enemy_ : enemys_) {
+			enemy_->Draw();
+		}
+		break;
+	case GameScene::SceneNo::Over:
+		break;
+	default:
+		break;
 	}
+	player_->Draw();
+
 	skyBox->Draw();
 
 	Object3d::PostDraw();
 
 	//後景スプライト
 	spritecommon->SpritePreDraw();
-	//sprite->Draw();
-	//sprite2->Draw();
-	//sprite3->Draw();
-	UI01->Draw();
-	maxSpeedMem->Draw();
-	nowSpeedMem->Draw();
 
-	if (input_->PushKey(DIK_RIGHT)) {
-		rightKeySP->Draw();
+	switch (sceneNo_)
+	{
+	case GameScene::SceneNo::Title:
+		sprite->Draw();
+		space->Draw();
+		break;
+	case GameScene::SceneNo::Operate:
+		break;
+	case GameScene::SceneNo::Game:
+		UI01->Draw();
+		maxSpeedMem->Draw();
+		nowSpeedMem->Draw();
+
+		if (input_->PushKey(DIK_RIGHT)) {
+			rightKeySP->Draw();
+		}
+		else if (input_->PushKey(DIK_LEFT)) {
+			leftKeySP->Draw();
+		}
+		else {
+			noneKeySP->Draw();
+		}
+		tutorial->Draw();
+
+		gameMaxEnemy->Draw();
+
+		gameNumberTens->SetTextureIndex(popEnemyCount / 10 + 12);
+		gameNumberOnes->SetTextureIndex(popEnemyCount % 10 + 12);
+		gameNumberTens->Draw();
+		gameNumberOnes->Draw();
+		break;
+	case GameScene::SceneNo::Over:
+		result->Draw();
+		space->Draw();
+		resultMaxEnemy->Draw();
+
+		resultNumberTens->SetTextureIndex(killEnemyCount / 10 +12);	
+		resultNumberOnes->SetTextureIndex(killEnemyCount%10+12);
+		resultNumberTens->Draw();
+		resultNumberOnes->Draw();
+		break;
+	default:
+		break;
 	}
-	else if (input_->PushKey(DIK_LEFT)) {
-		leftKeySP->Draw();
-	}
-	else {
-		noneKeySP->Draw();
-	}
-	tutorial->Draw();
-	//sprite->Draw();
 
 	spritecommon->SpritePostDraw();
 }
@@ -260,13 +362,13 @@ void GameScene::GenerEnemy(Vector3 EnemyPos, int ID, int lane)
 	}
 
 	if (lane == 0) {
-		newEnemy->Initialize(redCube.get(),model.get(), EnemyPos, kBulSpeed);
+		newEnemy->Initialize(redCube.get(), model.get(), EnemyPos, kBulSpeed);
 	}
 	else if (lane == 1) {
-		newEnemy->Initialize(redCube.get(),model.get(), EnemyPos, kBulSpeed);
+		newEnemy->Initialize(redCube.get(), model.get(), EnemyPos, kBulSpeed);
 	}
 	else if (lane == 2) {
-		newEnemy->Initialize(redCube.get(),model.get(), EnemyPos, kBulSpeed);
+		newEnemy->Initialize(redCube.get(), model.get(), EnemyPos, kBulSpeed);
 	}
 
 	newEnemy->SetID(ID);
@@ -276,6 +378,7 @@ void GameScene::GenerEnemy(Vector3 EnemyPos, int ID, int lane)
 	//リストに登録する
 	enemys_.push_back(std::move(newEnemy));
 
+	popEnemyCount++;
 }
 
 void GameScene::LoadEnemyPopData()
@@ -414,7 +517,7 @@ void GameScene::EnemyReset()
 void GameScene::CheckAllCollisions() {
 
 	//判定対象AとBの座標
-	Vector3 posA; 
+	Vector3 posA;
 	std::vector<atkColide> atkColideB_;
 	atkColideB_ = player_.get()->GetAtkColide();
 
@@ -424,25 +527,26 @@ void GameScene::CheckAllCollisions() {
 	//敵キャラの座標
 	for (std::unique_ptr<Enemy>& enemy_ : enemys_) {
 		posA = enemy_->GetWorldPosition();
-		
+
 		for (int i = 0; i < std::end(atkColideB_) - std::begin(atkColideB_); ++i) {
 			if (atkColideB_[i].isColide == true) {
-				if (atkColideB_[i].atkTransform.position.x + atkColideB_[i].atkTransform.scale.x  >
+				if (atkColideB_[i].atkTransform.position.x + atkColideB_[i].atkTransform.scale.x >
 					posA.x &&
-					atkColideB_[i].atkTransform.position.x - atkColideB_[i].atkTransform.scale.x  <
+					atkColideB_[i].atkTransform.position.x - atkColideB_[i].atkTransform.scale.x <
 					posA.x) {
-					if (atkColideB_[i].atkTransform.position.y + atkColideB_[i].atkTransform.scale.y  >
+					if (atkColideB_[i].atkTransform.position.y + atkColideB_[i].atkTransform.scale.y >
 						posA.y &&
-						atkColideB_[i].atkTransform.position.y - atkColideB_[i].atkTransform.scale.y  <
+						atkColideB_[i].atkTransform.position.y - atkColideB_[i].atkTransform.scale.y <
 						posA.y) {
 
 						enemy_->OnCollision(false);
+						killEnemyCount++;
 					}
 
 				}
 			}
 		}
-		
+
 		////自弾の座標
 		//posB = { 0,0,-20 };
 
