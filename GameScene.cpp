@@ -55,6 +55,10 @@ void GameScene::Initialize(DirectXCommon* dxcomon)
 	spriteCommon->LoadTexture(26, "NORMALSelect.png");
 	spriteCommon->LoadTexture(27, "HERD.png");
 	spriteCommon->LoadTexture(28, "HERDSelect.png");
+	spriteCommon->LoadTexture(29, "titile.png");
+	spriteCommon->LoadTexture(30, "titileSelect.png");
+	spriteCommon->LoadTexture(31, "Select.png");
+	spriteCommon->LoadTexture(32, "SelectSelect.png");
 
 
 	sprite = std::make_unique <Sprite>();
@@ -142,6 +146,14 @@ void GameScene::Initialize(DirectXCommon* dxcomon)
 	hard = std::make_unique<Sprite>();
 	hard->Initialize(spriteCommon, 27);
 	hard->SetPozition({ 964,360 });
+
+	title = std::make_unique<Sprite>();
+	title->Initialize(spriteCommon, 30);
+	title->SetPozition({ 206,500 });
+
+	select = std::make_unique<Sprite>();
+	select->Initialize(spriteCommon, 31);
+	select->SetPozition({ 804,500 });
 
 
 	sprite->SetSize({ 1280,720 });
@@ -283,20 +295,20 @@ void GameScene::Update()
 	case GameScene::SceneNo::Select:
 		if (input_->TriggerKey(DIK_LEFT))
 		{
-			switch (select)
+			switch (difficulty)
 			{
-			case GameScene::Select::Easy:
-				select = Select::Hard;
+			case GameScene::Difficulty::Easy:
+				difficulty = Difficulty::Hard;
 				easy->SetTextureIndex(23);
 				hard->SetTextureIndex(28);
 				break;
-			case GameScene::Select::Normal:
-				select = Select::Easy;
+			case GameScene::Difficulty::Normal:
+				difficulty = Difficulty::Easy;
 				easy->SetTextureIndex(24);
 				normal->SetTextureIndex(25);
 				break;
-			case GameScene::Select::Hard:
-				select = Select::Normal;
+			case GameScene::Difficulty::Hard:
+				difficulty = Difficulty::Normal;
 				normal->SetTextureIndex(26);
 				hard->SetTextureIndex(27);
 				break;
@@ -304,20 +316,20 @@ void GameScene::Update()
 		}
 		if (input_->TriggerKey(DIK_RIGHT))
 		{
-			switch (select)
+			switch (difficulty)
 			{
-			case GameScene::Select::Easy:
-				select = Select::Normal;
+			case GameScene::Difficulty::Easy:
+				difficulty = Difficulty::Normal;
 				easy->SetTextureIndex(23);
 				normal->SetTextureIndex(26);
 				break;
-			case GameScene::Select::Normal:
-				select = Select::Hard;
+			case GameScene::Difficulty::Normal:
+				difficulty = Difficulty::Hard;
 				normal->SetTextureIndex(25);
 				hard->SetTextureIndex(28);
 				break;
-			case GameScene::Select::Hard:
-				select = Select::Easy;
+			case GameScene::Difficulty::Hard:
+				difficulty = Difficulty::Easy;
 				easy->SetTextureIndex(24);
 				hard->SetTextureIndex(27);
 				break;
@@ -395,12 +407,56 @@ void GameScene::Update()
 		nowSpeedMem->SetSize({ (float)player_.get()->GetNowTimeCount() * 3.0f , 30 });
 		break;
 	case GameScene::SceneNo::Over:
+		if (input_->TriggerKey(DIK_LEFT))
+		{
+			switch (resultSelect)
+			{
+			case GameScene::ResultSelect::Title:
+				resultSelect = ResultSelect::Select;
+				title->SetTextureIndex(29);
+				select->SetTextureIndex(32);
+				break;
+			case GameScene::ResultSelect::Select:
+				resultSelect = ResultSelect::Title;
+				title->SetTextureIndex(30);
+				select->SetTextureIndex(31);
+				break;
+			}
+		}
+		if (input_->TriggerKey(DIK_RIGHT))
+		{
+			switch (resultSelect)
+			{
+			case GameScene::ResultSelect::Title:
+				resultSelect = ResultSelect::Select;
+				title->SetTextureIndex(29);
+				select->SetTextureIndex(32);
+				break;
+			case GameScene::ResultSelect::Select:
+				resultSelect = ResultSelect::Title;
+				title->SetTextureIndex(30);
+				select->SetTextureIndex(31);
+				break;
+			}
+		}
+
 		if (input_->TriggerKey(DIK_SPACE))
 		{
-			sceneNo_ = SceneNo::Title;
-			killEnemyCount = 0;
-			player_->Reset();
-			ReSet();
+			if (resultSelect == ResultSelect::Title)
+			{
+				sceneNo_ = SceneNo::Title;
+				killEnemyCount = 0;
+				player_->Reset();
+				EnemyReset();
+			}
+			if (resultSelect == ResultSelect::Select)
+			{
+				sceneNo_ = SceneNo::Select;
+				killEnemyCount = 0;
+				player_->Reset();
+				EnemyReset();
+			}
+
 		}
 		break;
 	}
@@ -466,7 +522,7 @@ void GameScene::Draw()
 
 		gameMaxEnemy->Draw();
 
-		gameNumberTens->SetTextureIndex(player_->GetIsAtkDraw() + 12);
+		gameNumberTens->SetTextureIndex(killEnemyCount % 10 + 12);
 		gameNumberOnes->SetTextureIndex(killEnemyCount % 10 + 12);
 		gameNumberTens->Draw();
 		gameNumberOnes->Draw();
@@ -476,9 +532,6 @@ void GameScene::Draw()
 		easy->Draw();
 		normal->Draw();
 		hard->Draw();
-
-		gameNumberTens->SetTextureIndex(static_cast<int>(select) + 12);
-		gameNumberTens->Draw();
 
 		break;
 	case GameScene::SceneNo::Game:
@@ -506,7 +559,8 @@ void GameScene::Draw()
 		break;
 	case GameScene::SceneNo::Over:
 		result->Draw();
-		space->Draw();
+		title->Draw();
+		select->Draw();
 		resultMaxEnemy->Draw();
 
 		resultNumberTens->SetTextureIndex(killEnemyCount / 10 + 12);
@@ -584,10 +638,10 @@ void GameScene::GenerEnemy(Vector3 EnemyPos, int ID, int lane)
 	//ìGÉLÉÉÉâÇÃèâä˙âª
 	float kBulSpeed;
 
-	if (select == Select::Easy ) {
+	if (difficulty == Difficulty::Easy ) {
 		kBulSpeed = 0.25f;
 	}
-	else if (select == Select::Normal || select == Select::Hard) {
+	else if (difficulty == Difficulty::Normal || difficulty == Difficulty::Hard) {
 		kBulSpeed = 0.45f;
 	}
 	
@@ -597,7 +651,7 @@ void GameScene::GenerEnemy(Vector3 EnemyPos, int ID, int lane)
 	}
 
 	int witchColor;
-	if (select == Select::Hard) {
+	if (difficulty == Difficulty::Hard) {
 		witchColor = rand() % 2 + 1;
 	}
 	else {
@@ -782,7 +836,7 @@ void GameScene::CheckAllCollisions() {
 						atkColideB_[i].atkTransform.position.y - atkColideB_[i].atkTransform.scale.y <
 						posA.y) {
 
-						if (select == Select::Hard) {
+						if (difficulty == Difficulty::Hard) {
 							if (enemy_->GetColorNum() == 1 && player_.get()->GetReversal() == false) {
 								enemy_->OnCollision(false);
 								killEnemyCount++;
@@ -853,5 +907,5 @@ void GameScene::ReSet()
 	popEnemyCount = 0;
 	killEnemyCount = 0;
 	player_->Reset();
-	select = Select::Easy;
+	difficulty = Difficulty::Easy;
 }

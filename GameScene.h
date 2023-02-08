@@ -90,11 +90,17 @@ public:
 		Over   //ゲメオーバー
 	};
 
-	enum class Select
+	enum class Difficulty
 	{
 		Easy,
 		Normal,
 		Hard,
+	};
+
+	enum class ResultSelect
+	{
+		Title,
+		Select,
 	};
 
 private:
@@ -124,6 +130,9 @@ private:
 	std::unique_ptr<Sprite> easy;
 	std::unique_ptr<Sprite> normal;
 	std::unique_ptr<Sprite> hard;
+	std::unique_ptr<Sprite> title;
+	std::unique_ptr<Sprite> select;
+
 
 
 	
@@ -161,7 +170,9 @@ private:
 	/// </summary>
 	SceneNo sceneNo_ = SceneNo::Title;
 
-	Select select = Select::Easy;
+	Difficulty difficulty = Difficulty::Easy;
+
+	ResultSelect resultSelect = ResultSelect::Title;
 
 	//レーン
 	int popLane_ = 0;
