@@ -852,4 +852,6 @@ void GameScene::ReSet()
 
 	popEnemyCount = 0;
 	killEnemyCount = 0;
+	player_->Reset();
+	select = Select::Easy;
 }
