@@ -305,8 +305,8 @@ void Player::Update()
 
 	if (isAtkDraw == true) {
 		atkTransform_.position.z += 30.0f;	//velocity
-		if (atkTransform_.position.z > 200) {
-			isAtkDraw == false;
+		if (atkTransform_.position.z > 1000) {
+			isAtkDraw = false;
 		}
 	}
 

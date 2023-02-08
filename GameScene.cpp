@@ -12,7 +12,7 @@ GameScene::GameScene()
 
 GameScene::~GameScene()
 {
-	delete spritecommon;
+	delete spriteCommon;
 	delete audio;
 	delete object3d;
 }
@@ -24,101 +24,124 @@ void GameScene::Initialize(DirectXCommon* dxcomon)
 	////DirectX初期化処理　ここから
 	//dxCommon_->Initialize(winApp_);
 	//スプライト共通部分の初期化
-	spritecommon = new SpriteCommon;
-	spritecommon->Initialize(dxCommon_);
-	spritecommon->LoadTexture(0, "title1.png");
-	spritecommon->LoadTexture(1, "mario.png");
-	spritecommon->LoadTexture(2, "reimu.png");
-	spritecommon->LoadTexture(3, "UI01.png");
-	spritecommon->LoadTexture(4, "speedMemorie.png");
-	spritecommon->LoadTexture(5, "noneKey.png");
-	spritecommon->LoadTexture(6, "rightKey.png");
-	spritecommon->LoadTexture(7, "leftKey.png");
-	spritecommon->LoadTexture(8, "setumei.png");
-	spritecommon->LoadTexture(9, "SPACE2.png");
-	spritecommon->LoadTexture(10, "RESULT.png");
-	spritecommon->LoadTexture(11, "MaxEnemy.png");
-	spritecommon->LoadTexture(12, "number/0.png");
-	spritecommon->LoadTexture(13, "number/1.png");
-	spritecommon->LoadTexture(14, "number/2.png");
-	spritecommon->LoadTexture(15, "number/3.png");
-	spritecommon->LoadTexture(16, "number/4.png");
-	spritecommon->LoadTexture(17, "number/5.png");
-	spritecommon->LoadTexture(18, "number/6.png");
-	spritecommon->LoadTexture(19, "number/7.png");
-	spritecommon->LoadTexture(20, "number/8.png");
-	spritecommon->LoadTexture(21, "number/9.png");
+	spriteCommon = new SpriteCommon;
+	spriteCommon->Initialize(dxCommon_);
+	spriteCommon->LoadTexture(0, "title1.png");
+	spriteCommon->LoadTexture(1, "mario.png");
+	spriteCommon->LoadTexture(2, "reimu.png");
+	spriteCommon->LoadTexture(3, "UI01.png");
+	spriteCommon->LoadTexture(4, "speedMemorie.png");
+	spriteCommon->LoadTexture(5, "noneKey.png");
+	spriteCommon->LoadTexture(6, "rightKey.png");
+	spriteCommon->LoadTexture(7, "leftKey.png");
+	spriteCommon->LoadTexture(8, "setumei.png");
+	spriteCommon->LoadTexture(9, "SPACE2.png");
+	spriteCommon->LoadTexture(10, "RESULT.png");
+	spriteCommon->LoadTexture(11, "MaxEnemy.png");
+	spriteCommon->LoadTexture(12, "number/0.png");
+	spriteCommon->LoadTexture(13, "number/1.png");
+	spriteCommon->LoadTexture(14, "number/2.png");
+	spriteCommon->LoadTexture(15, "number/3.png");
+	spriteCommon->LoadTexture(16, "number/4.png");
+	spriteCommon->LoadTexture(17, "number/5.png");
+	spriteCommon->LoadTexture(18, "number/6.png");
+	spriteCommon->LoadTexture(19, "number/7.png");
+	spriteCommon->LoadTexture(20, "number/8.png");
+	spriteCommon->LoadTexture(21, "number/9.png");
+	spriteCommon->LoadTexture(22, "stageselect.png");
+	spriteCommon->LoadTexture(23, "EASY.png");
+	spriteCommon->LoadTexture(24, "EASYSelect.png");
+	spriteCommon->LoadTexture(25, "NORMAL.png");
+	spriteCommon->LoadTexture(26, "NORMALSelect.png");
+	spriteCommon->LoadTexture(27, "HERD.png");
+	spriteCommon->LoadTexture(28, "HERDSelect.png");
 
 
 	sprite = std::make_unique <Sprite>();
-	sprite->Initialize(spritecommon, 0);
+	sprite->Initialize(spriteCommon, 0);
 	sprite2 = std::make_unique <Sprite>();
-	sprite2->Initialize(spritecommon, 1);
+	sprite2->Initialize(spriteCommon, 1);
 	sprite3 = std::make_unique <Sprite>();
-	sprite3->Initialize(spritecommon, 2);
+	sprite3->Initialize(spriteCommon, 2);
 
 
 	UI01 = std::make_unique <Sprite>();
-	UI01->Initialize(spritecommon, 3);
+	UI01->Initialize(spriteCommon, 3);
 	maxSpeedMem = std::make_unique<Sprite>();
-	maxSpeedMem->Initialize(spritecommon, 4);
+	maxSpeedMem->Initialize(spriteCommon, 4);
 	nowSpeedMem = std::make_unique<Sprite>();
-	nowSpeedMem->Initialize(spritecommon, 4);
+	nowSpeedMem->Initialize(spriteCommon, 4);
 
 	noneKeySP = std::make_unique<Sprite>();
-	noneKeySP->Initialize(spritecommon, 5);
+	noneKeySP->Initialize(spriteCommon, 5);
 	XMFLOAT2 picSize = { 150,90 };
 	XMFLOAT2 picPos = { 60,550 };
 	noneKeySP->SetSize(picSize);
 	noneKeySP->SetPozition(picPos);
 	rightKeySP = std::make_unique<Sprite>();
-	rightKeySP->Initialize(spritecommon, 6);
+	rightKeySP->Initialize(spriteCommon, 6);
 	rightKeySP->SetSize(picSize);
 	rightKeySP->SetPozition(picPos);
 	leftKeySP = std::make_unique<Sprite>();
-	leftKeySP->Initialize(spritecommon, 7);
+	leftKeySP->Initialize(spriteCommon, 7);
 	leftKeySP->SetSize(picSize);
 	leftKeySP->SetPozition(picPos);
 
 	tutorial = std::make_unique<Sprite>();
-	tutorial->Initialize(spritecommon, 8);
+	tutorial->Initialize(spriteCommon, 8);
 	//tutorial->SetSize({128.0f,32.0f});
 	tutorial->SetPozition({ 500,100 });
 
 	space = std::make_unique<Sprite>();
-	space->Initialize(spritecommon, 9);
+	space->Initialize(spriteCommon, 9);
 	space->SetPozition({ 563,472 });
 
 	result = std::make_unique<Sprite>();
-	result->Initialize(spritecommon, 10);
+	result->Initialize(spriteCommon, 10);
 	result->SetPozition({ 384,100 });
 
 	resultMaxEnemy = std::make_unique<Sprite>();
-	resultMaxEnemy->Initialize(spritecommon, 11);
+	resultMaxEnemy->Initialize(spriteCommon, 11);
 	resultMaxEnemy->SetPozition({ 500,296 });
 
 	resultNumberTens = std::make_unique<Sprite>();
-	resultNumberTens->Initialize(spritecommon, 12);
+	resultNumberTens->Initialize(spriteCommon, 12);
 	resultNumberTens->SetPozition({ 375,296 });
 
 	resultNumberOnes = std::make_unique<Sprite>();
-	resultNumberOnes->Initialize(spritecommon, 12);
+	resultNumberOnes->Initialize(spriteCommon, 12);
 	resultNumberOnes->SetPozition({ 475,296 });
 
 	gameMaxEnemy = std::make_unique<Sprite>();
-	gameMaxEnemy->Initialize(spritecommon, 11);
+	gameMaxEnemy->Initialize(spriteCommon, 11);
 	gameMaxEnemy->SetSize({ 140, 40 });
 	gameMaxEnemy->SetPozition({ 1140,10 });
 
 	gameNumberTens = std::make_unique<Sprite>();
-	gameNumberTens->Initialize(spritecommon, 12);
+	gameNumberTens->Initialize(spriteCommon, 12);
 	gameNumberTens->SetSize({ 40, 40 });
 	gameNumberTens->SetPozition({ 1100,10 });
 
 	gameNumberOnes = std::make_unique<Sprite>();
-	gameNumberOnes->Initialize(spritecommon, 12);
+	gameNumberOnes->Initialize(spriteCommon, 12);
 	gameNumberOnes->SetSize({ 40, 40 });
 	gameNumberOnes->SetPozition({ 1125,10 });
+
+	stageSelect = std::make_unique<Sprite>();
+	stageSelect->Initialize(spriteCommon, 22);
+	stageSelect->SetPozition({ 353,100 });
+
+	easy = std::make_unique<Sprite>();
+	easy->Initialize(spriteCommon, 24);
+	easy->SetPozition({ 139,360 });
+
+	normal = std::make_unique<Sprite>();
+	normal->Initialize(spriteCommon, 25);
+	normal->SetPozition({ 493,360 });
+
+	hard = std::make_unique<Sprite>();
+	hard->Initialize(spriteCommon, 27);
+	hard->SetPozition({ 964,360 });
 
 
 	sprite->SetSize({ 1280,720 });
@@ -220,7 +243,7 @@ void GameScene::Update()
 		}
 #pragma endregion
 
-		if (enemys_.size() <= 0&& player_->GetIsAtkDraw() == false)
+		if (enemys_.size() <= 0 && player_->GetIsAtkDraw() == false)
 		{
 			std::unique_ptr<Enemy> newEnemy = std::make_unique<Enemy>();
 
@@ -248,7 +271,6 @@ void GameScene::Update()
 
 		maxSpeedMem->SetSize({ (float)player_.get()->GetMaxTimeCount() * 3.0f , 30 });
 		nowSpeedMem->SetSize({ (float)player_.get()->GetNowTimeCount() * 3.0f , 30 });
-		break;
 
 		if (killEnemyCount >= 3)
 		{
@@ -256,7 +278,53 @@ void GameScene::Update()
 		}
 		break;
 	case GameScene::SceneNo::Select:
+		if (input_->TriggerKey(DIK_LEFT))
+		{
+			switch (select)
+			{
+			case GameScene::Select::Easy:
+				select = Select::Hard;
+				easy->SetTextureIndex(23);
+				hard->SetTextureIndex(28);
+				break;
+			case GameScene::Select::Normal:
+				select = Select::Easy;
+				easy->SetTextureIndex(24);
+				normal->SetTextureIndex(25);
+				break;
+			case GameScene::Select::Hard:
+				select = Select::Normal;
+				normal->SetTextureIndex(26);
+				hard->SetTextureIndex(27);
+				break;
+			}
+		}
+		if (input_->TriggerKey(DIK_RIGHT))
+		{
+			switch (select)
+			{
+			case GameScene::Select::Easy:
+				select = Select::Normal;
+				easy->SetTextureIndex(23);
+				normal->SetTextureIndex(26);
+				break;
+			case GameScene::Select::Normal:
+				select = Select::Hard;
+				normal->SetTextureIndex(25);
+				hard->SetTextureIndex(28);
+				break;
+			case GameScene::Select::Hard:
+				select = Select::Easy;
+				easy->SetTextureIndex(24);
+				hard->SetTextureIndex(27);
+				break;
+			}
+		}
 
+		if (input_->TriggerKey(DIK_SPACE))
+		{
+			sceneNo_ = SceneNo::Game;
+		}
 		break;
 	case GameScene::SceneNo::Game:
 #pragma region
@@ -365,7 +433,7 @@ void GameScene::Draw()
 	Object3d::PostDraw();
 
 	//後景スプライト
-	spritecommon->SpritePreDraw();
+	spriteCommon->SpritePreDraw();
 
 	switch (sceneNo_)
 	{
@@ -391,10 +459,20 @@ void GameScene::Draw()
 
 		gameMaxEnemy->Draw();
 
-		gameNumberTens->SetTextureIndex(enemys_.size() / 10 + 12);
-		gameNumberOnes->SetTextureIndex(player_->GetIsAtkDraw() + 12);
+		gameNumberTens->SetTextureIndex(killEnemyCount / 10 + 12);
+		gameNumberOnes->SetTextureIndex(killEnemyCount % 10 + 12);
 		gameNumberTens->Draw();
 		gameNumberOnes->Draw();
+		break;
+	case GameScene::SceneNo::Select:
+		stageSelect->Draw();
+		easy->Draw();
+		normal->Draw();
+		hard->Draw();
+
+		gameNumberTens->SetTextureIndex(static_cast<int>(select) + 12);
+		gameNumberTens->Draw();
+
 		break;
 	case GameScene::SceneNo::Game:
 		UI01->Draw();
@@ -433,13 +511,16 @@ void GameScene::Draw()
 		break;
 	}
 
-	spritecommon->SpritePostDraw();
+	spriteCommon->SpritePostDraw();
 }
 
 void GameScene::PlayerDraw()
 {
 	Object3d::PreDraw(dxCommon_->GetCommandList());
-	player_->Draw();
+	if (sceneNo_ != SceneNo::Select)
+	{
+		player_->Draw();
+	}
 	Object3d::PostDraw();
 }
 

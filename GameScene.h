@@ -86,11 +86,18 @@ public:
 		Over   //ゲメオーバー
 	};
 
+	enum class Select
+	{
+		Easy,
+		Normal,
+		Hard,
+	};
+
 private:
 	DirectXCommon* dxCommon_ = nullptr;
 	
 	Audio* audio = nullptr;
-	SpriteCommon* spritecommon = nullptr;
+	SpriteCommon* spriteCommon = nullptr;
 	std::unique_ptr<Sprite> sprite;
 	std::unique_ptr<Sprite> sprite2;
 	std::unique_ptr<Sprite> sprite3;
@@ -109,6 +116,11 @@ private:
 	std::unique_ptr<Sprite> gameMaxEnemy;
 	std::unique_ptr<Sprite> gameNumberTens;
 	std::unique_ptr<Sprite> gameNumberOnes;
+	std::unique_ptr<Sprite> stageSelect;
+	std::unique_ptr<Sprite> easy;
+	std::unique_ptr<Sprite> normal;
+	std::unique_ptr<Sprite> hard;
+
 
 	
 
@@ -143,7 +155,9 @@ private:
 	/// <summary>
 	/// ゲームシーン用
 	/// </summary>
-	SceneNo sceneNo_ = SceneNo::Over;
+	SceneNo sceneNo_ = SceneNo::Title;
+
+	Select select = Select::Easy;
 
 	//スコア
 	int hit_ = 0;
