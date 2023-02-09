@@ -61,6 +61,13 @@ void GameScene::Initialize(DirectXCommon* dxcomon)
 	spriteCommon->LoadTexture(30, "titileSelect.png");
 	spriteCommon->LoadTexture(31, "Select.png");
 	spriteCommon->LoadTexture(32, "SelectSelect.png");
+	spriteCommon->LoadTexture(33, "setumei1.png");
+	spriteCommon->LoadTexture(34, "setumei2.png");
+	spriteCommon->LoadTexture(35, "setumei3.png");
+	spriteCommon->LoadTexture(36, "setumei4.png");
+	spriteCommon->LoadTexture(37, "herdsetumei1.png");
+	spriteCommon->LoadTexture(38, "herdsetumei2.png");
+	spriteCommon->LoadTexture(39, "herdsetumei3.png");
 
 
 	sprite = std::make_unique <Sprite>();
@@ -96,7 +103,7 @@ void GameScene::Initialize(DirectXCommon* dxcomon)
 	tutorial = std::make_unique<Sprite>();
 	tutorial->Initialize(spriteCommon, 8);
 	//tutorial->SetSize({128.0f,32.0f});
-	tutorial->SetPozition({ 500,100 });
+	tutorial->SetPozition({ 500,68 });
 
 	space = std::make_unique<Sprite>();
 	space->Initialize(spriteCommon, 9);
@@ -156,6 +163,34 @@ void GameScene::Initialize(DirectXCommon* dxcomon)
 	select = std::make_unique<Sprite>();
 	select->Initialize(spriteCommon, 31);
 	select->SetPozition({ 804,500 });
+
+	setumei1 = std::make_unique<Sprite>();
+	setumei1->Initialize(spriteCommon,33);
+	setumei1->SetPozition({ 452,100 });
+
+	setumei2 = std::make_unique<Sprite>();
+	setumei2->Initialize(spriteCommon, 34);
+	setumei2->SetPozition({ 452,132 });
+
+	setumei3 = std::make_unique<Sprite>();
+	setumei3->Initialize(spriteCommon, 35);
+	setumei3->SetPozition({ 452,164 });
+
+	setumei4 = std::make_unique<Sprite>();
+	setumei4->Initialize(spriteCommon, 36);
+	setumei4->SetPozition({ 452,196 });
+
+	herdSetumei1 = std::make_unique<Sprite>();
+	herdSetumei1->Initialize(spriteCommon, 37);
+	herdSetumei1->SetPozition({ 418,100 });
+
+	herdSetumei2 = std::make_unique<Sprite>();
+	herdSetumei2->Initialize(spriteCommon, 38);
+	herdSetumei2->SetPozition({ 418,132 });
+
+	herdSetumei3 = std::make_unique<Sprite>();
+	herdSetumei3->Initialize(spriteCommon, 39);
+	herdSetumei3->SetPozition({ 418,164 });
 
 
 	sprite->SetSize({ 1280,720 });
@@ -267,7 +302,7 @@ void GameScene::Update()
 			float kBulSpeed = 0.4f;
 			kBulSpeed += gameLevel_ * 0.1f + 1.0f;	//ƒŒƒxƒ‹‚ªã‚ª‚é‚Æ’e‚ª‰Á‘¬
 
-			newEnemy->Initialize(redCube.get(), model.get(), { 0.0f,0.0f,400.0f }, kBulSpeed , 0);
+			newEnemy->Initialize(redCube.get(), model.get(), { 20.0f,20.0f,400.0f }, kBulSpeed, 0);
 
 			enemys_.push_back(std::move(newEnemy));
 
@@ -466,7 +501,7 @@ void GameScene::Update()
 		}
 		break;
 	}
-	if (sceneNo_!=SceneNo::Select)
+	if (sceneNo_ != SceneNo::Select)
 	{
 		player_->Update();
 	}
@@ -527,14 +562,18 @@ void GameScene::Draw()
 		else {
 			noneKeySP->Draw();
 		}
-		tutorial->Draw();
+		//tutorial->Draw();
 
 		gameMaxEnemy->Draw();
 
-		gameNumberTens->SetTextureIndex(killEnemyCount % 10 + 12);
+		gameNumberTens->SetTextureIndex(killEnemyCount / 10 + 12);
 		gameNumberOnes->SetTextureIndex(killEnemyCount % 10 + 12);
 		gameNumberTens->Draw();
 		gameNumberOnes->Draw();
+		setumei1->Draw();
+		setumei2->Draw();
+		setumei3->Draw();
+		setumei4->Draw();
 		break;
 	case GameScene::SceneNo::Select:
 		stageSelect->Draw();
@@ -565,6 +604,13 @@ void GameScene::Draw()
 		gameNumberOnes->SetTextureIndex(killEnemyCount % 10 + 12);
 		gameNumberTens->Draw();
 		gameNumberOnes->Draw();
+		if (difficulty == Difficulty::Hard)
+		{
+			herdSetumei1->Draw();
+			herdSetumei2->Draw();
+			herdSetumei3->Draw();
+
+		}
 		break;
 	case GameScene::SceneNo::Over:
 		result->Draw();
@@ -590,7 +636,7 @@ void GameScene::PlayerDraw()
 	if (sceneNo_ != SceneNo::Select)
 	{
 		player_->EffectDraw();
-		
+
 	}
 	Object3d::PostDraw();
 }
@@ -647,13 +693,13 @@ void GameScene::GenerEnemy(Vector3 EnemyPos, int ID, int lane)
 	//“GƒLƒƒƒ‰‚Ì‰Šú‰»
 	float kBulSpeed;
 
-	if (difficulty == Difficulty::Easy ) {
+	if (difficulty == Difficulty::Easy) {
 		kBulSpeed = 0.25f;
 	}
 	else if (difficulty == Difficulty::Normal || difficulty == Difficulty::Hard) {
 		kBulSpeed = 0.45f;
 	}
-	
+
 
 	if (gameLevel_ > 0) {
 		kBulSpeed += gameLevel_ * 0.1f + 1.0f;	//ƒŒƒxƒ‹‚ªã‚ª‚é‚Æ’e‚ª‰Á‘¬

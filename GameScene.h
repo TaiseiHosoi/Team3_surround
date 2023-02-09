@@ -137,10 +137,13 @@ private:
 	std::unique_ptr<Sprite> hard;
 	std::unique_ptr<Sprite> title;
 	std::unique_ptr<Sprite> select;
-
-
-
-	
+	std::unique_ptr<Sprite> setumei1;
+	std::unique_ptr<Sprite> setumei2;
+	std::unique_ptr<Sprite> setumei3;
+	std::unique_ptr<Sprite> setumei4;
+	std::unique_ptr<Sprite> herdSetumei1;
+	std::unique_ptr<Sprite> herdSetumei2;
+	std::unique_ptr<Sprite> herdSetumei3;
 
 	Object3d* object3d = nullptr;
 	std::unique_ptr<Model> model;
